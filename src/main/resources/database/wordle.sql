@@ -45,7 +45,7 @@ DROP TABLE IF EXISTS `wordle`.`game` ;
 
 CREATE TABLE IF NOT EXISTS `wordle`.`game` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `game_status` ENUM('complited', 'search', 'in_progress', 'canceled') NOT NULL DEFAULT 'search',
+  `game_status` ENUM('COMPLETE', 'SEARCH', 'IN_PROGRESS', 'CANCELED') NOT NULL DEFAULT 'SEARCH',
   `datetime` TIMESTAMP NOT NULL,
   `start_time` TIME NULL DEFAULT NULL,
   `end_time` VARCHAR(45) NULL,
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `wordle`.`user` (
   `username` VARCHAR(45) NOT NULL,
   `email` VARCHAR(45) NOT NULL,
   `password` VARCHAR(45) NOT NULL,
-  `role` ENUM('admin', 'player') NOT NULL DEFAULT 'player',
+  `role` ENUM('ADMIN', 'PLAYER') NOT NULL DEFAULT 'PLAYER',
   `is_banned` TINYINT NOT NULL DEFAULT '0',
   `game_win_count` INT NOT NULL DEFAULT '0',
   `game_count` INT NOT NULL DEFAULT '0',
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `wordle`.`user_game` (
   `user_id` INT NOT NULL,
   `game_id` INT NOT NULL,
   `attempt_id` INT NOT NULL,
-  `player_status` ENUM('win', 'lose', 'draw') NULL DEFAULT NULL,
+  `player_status` ENUM('WIN', 'LOSE', 'DRAW') NULL DEFAULT NULL,
   `word` VARCHAR(6) NULL DEFAULT NULL,
   `is_game_over` TINYINT NOT NULL,
   PRIMARY KEY (`user_id`, `game_id`),
