@@ -1,15 +1,12 @@
 package ua.nure.wordle.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalTime;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -17,8 +14,9 @@ import java.time.LocalTime;
 @Table(name = "attempt")
 public class Attempt {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Size(max = 6)
     @NotNull
@@ -26,7 +24,10 @@ public class Attempt {
     private String attemptedWord;
 
     @NotNull
-    @Column(name = "attempt_time", nullable = false)
-    private LocalTime attemptTime;
+    @Column(name = "started_at", nullable = false)
+    private Instant startedAt;
+
+    @Column(name = "ended_at")
+    private Instant endedAt;
 
 }

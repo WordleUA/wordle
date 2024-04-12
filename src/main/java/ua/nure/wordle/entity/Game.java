@@ -15,7 +15,8 @@ import java.time.Instant;
 public class Game {
     @Id
     @Column(name = "id", nullable = false)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @NotNull
     @ColumnDefault("SEARCH")
