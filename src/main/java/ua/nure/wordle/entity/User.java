@@ -11,6 +11,7 @@ import ua.nure.wordle.entity.Enum.UserRole;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name = "user")
 public class User {
     @Id
     @Column(name = "id")
@@ -18,18 +19,15 @@ public class User {
     private Long id;
 
     @Column(name = "username", nullable = false)
-    @NotEmpty
     private String username;
 
     @Column(name = "email", nullable = false)
-    @NotEmpty
     private String email;
 
     @Column(name = "password", nullable = false)
-    @NotEmpty
     private String password;
 
-    @Column(name = "role", nullable = false, columnDefinition = "ENUM")
+    @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
