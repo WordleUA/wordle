@@ -1,34 +1,36 @@
 package ua.nure.wordle.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import ua.nure.wordle.entity.Enum.GameStatus;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
-import java.security.Timestamp;
+import java.time.Instant;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "game")
 public class Game {
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id", nullable = false)
+    private Integer id;
 
-    @Column(name = "game_status", nullable = false, columnDefinition = "ENUM")
-    @Enumerated(EnumType.STRING)
-    private GameStatus game_status;
+    @NotNull
+    @ColumnDefault("SEARCH")
+    @Lob
+    @Column(name = "game_status", nullable = false)
+    private String gameStatus;
 
+    @NotNull
     @Column(name = "created_at", nullable = false)
-    private Timestamp created_at;
+    private Instant createdAt;
 
     @Column(name = "started_at")
-    private Timestamp started_at;
+    private Instant startedAt;
 
     @Column(name = "ended_at")
-    private Timestamp ended_at;
+    private Instant endedAt;
+
 }

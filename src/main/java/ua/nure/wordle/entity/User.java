@@ -1,42 +1,55 @@
 package ua.nure.wordle.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import ua.nure.wordle.entity.Enum.UserRole;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "user")
 public class User {
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id", nullable = false)
+    private Integer id;
 
-    @Column(name = "username", nullable = false)
+    @Size(max = 45)
+    @NotNull
+    @Column(name = "username", nullable = false, length = 45)
     private String username;
 
-    @Column(name = "email", nullable = false)
+    @Size(max = 45)
+    @NotNull
+    @Column(name = "email", nullable = false, length = 45)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Size(max = 45)
+    @NotNull
+    @Column(name = "password", nullable = false, length = 45)
     private String password;
 
+    @NotNull
+    @ColumnDefault("PLAYER")
+    @Lob
     @Column(name = "role", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private UserRole role;
+    private String role;
 
-    @Column(name = "is_banned", nullable = false, columnDefinition = "TINYINT")
-    private Boolean is_banned;
+    @NotNull
+    @ColumnDefault("0")
+    @Column(name = "is_banned", nullable = false)
+    private Byte isBanned;
 
+    @NotNull
+    @ColumnDefault("0")
     @Column(name = "game_win_count", nullable = false)
-    private Integer game_win_count;
+    private Integer gameWinCount;
 
+    @NotNull
+    @ColumnDefault("0")
     @Column(name = "game_count", nullable = false)
-    private Integer game_count;
+    private Integer gameCount;
+
 }
