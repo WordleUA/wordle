@@ -5,14 +5,8 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema wordle
+-- Schema mydb
 -- -----------------------------------------------------
-DROP SCHEMA IF EXISTS `wordle` ;
-
--- -----------------------------------------------------
--- Schema wordle
--- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `wordle` DEFAULT CHARACTER SET utf8 ;
 -- -----------------------------------------------------
 -- Schema wordle
 -- -----------------------------------------------------
@@ -34,9 +28,9 @@ CREATE TABLE IF NOT EXISTS `wordle`.`attempt` (
   `attempted_word` VARCHAR(6) NOT NULL,
   `attempt_time` TIME NOT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
 
-USE `wordle` ;
 
 -- -----------------------------------------------------
 -- Table `wordle`.`game`
@@ -46,9 +40,9 @@ DROP TABLE IF EXISTS `wordle`.`game` ;
 CREATE TABLE IF NOT EXISTS `wordle`.`game` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `game_status` ENUM('COMPLETE', 'SEARCH', 'IN_PROGRESS', 'CANCELED') NOT NULL DEFAULT 'SEARCH',
-  `datetime` TIMESTAMP NOT NULL,
-  `start_time` TIME NULL DEFAULT NULL,
-  `end_time` VARCHAR(45) NULL,
+  `created_at` TIMESTAMP NOT NULL,
+  `started_at` TIMESTAMP NULL DEFAULT NULL,
+  `ended_at` TIMESTAMP NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
@@ -70,6 +64,7 @@ CREATE TABLE IF NOT EXISTS `wordle`.`user` (
   `game_count` INT NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
+AUTO_INCREMENT = 6
 DEFAULT CHARACTER SET = utf8mb3;
 
 
@@ -89,17 +84,15 @@ CREATE TABLE IF NOT EXISTS `wordle`.`user_game` (
   INDEX `fk_user_has_game_game1_idx` (`game_id` ASC) VISIBLE,
   INDEX `fk_user_has_game_user_idx` (`user_id` ASC) VISIBLE,
   INDEX `fk_user_game_attempt1_idx` (`attempt_id` ASC) VISIBLE,
+  CONSTRAINT `fk_user_game_attempt1`
+    FOREIGN KEY (`attempt_id`)
+    REFERENCES `wordle`.`attempt` (`id`),
   CONSTRAINT `fk_user_has_game_game1`
     FOREIGN KEY (`game_id`)
     REFERENCES `wordle`.`game` (`id`),
   CONSTRAINT `fk_user_has_game_user`
     FOREIGN KEY (`user_id`)
-    REFERENCES `wordle`.`user` (`id`),
-  CONSTRAINT `fk_user_game_attempt1`
-    FOREIGN KEY (`attempt_id`)
-    REFERENCES `wordle`.`attempt` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    REFERENCES `wordle`.`user` (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 
