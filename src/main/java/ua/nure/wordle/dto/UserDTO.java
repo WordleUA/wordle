@@ -1,12 +1,12 @@
 package ua.nure.wordle.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
 import ua.nure.wordle.entity.Enum.UserRole;
 
 @Data
@@ -34,13 +34,15 @@ public class UserDTO {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotEmpty
-    private boolean is_banned;
+    private Boolean is_banned;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotEmpty
-    private int game_win_count;
+    private Integer game_win_count;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotEmpty
-    private int game_count;
+    private Integer game_count;
+
+
 }

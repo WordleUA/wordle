@@ -29,16 +29,16 @@ public class User {
     @NotEmpty
     private String password;
 
-    @Column(name = "role", nullable = false)
+    @Column(name = "role", nullable = false, columnDefinition = "ENUM")
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @Column(name = "is_banned", nullable = false)
-    private boolean is_banned;
+    @Column(name = "is_banned", nullable = false, columnDefinition = "TINYINT")
+    private Boolean is_banned;
 
     @Column(name = "game_win_count", nullable = false)
-    private int game_win_count;
+    private Integer game_win_count;
 
     @Column(name = "game_count", nullable = false)
-    private int game_count;
+    private Integer game_count;
 }
