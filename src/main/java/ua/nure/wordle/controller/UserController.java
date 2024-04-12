@@ -2,6 +2,7 @@ package ua.nure.wordle.controller;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.UserDTO;
 import ua.nure.wordle.entity.User;
@@ -32,13 +33,13 @@ public class UserController {
     }
 
     @PostMapping
-    public List<UserDTO> save(@RequestBody UserDTO userDTO) {
+    public List<UserDTO> save(@Validated @RequestBody UserDTO userDTO) {
         userService.create(convertToEntity(userDTO));
         return findAll();
     }
 
     @PatchMapping("/{id}")
-    public List<UserDTO> update(@PathVariable("id") Long id,
+    public List<UserDTO> update(@Validated @PathVariable("id") Long id,
                                              @RequestBody UserDTO userDTO) {
         User existingUser = userService.readById(id).
                 orElseThrow(() -> new NotFoundException("User not found with id: " + id));

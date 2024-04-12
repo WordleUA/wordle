@@ -1,21 +1,25 @@
 package ua.nure.wordle.dto;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Value;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.Instant;
 
-/**
- * DTO for {@link ua.nure.wordle.entity.Game}
- */
-@Value
-public class GameDto implements Serializable {
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class AttemptDTO implements Serializable {
     Integer id;
+
     @NotNull
-    String gameStatus;
+    @Size(max = 6)
+    String attemptedWord;
+
     @NotNull
-    Instant createdAt;
     Instant startedAt;
+
     Instant endedAt;
 }
