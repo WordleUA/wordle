@@ -3,6 +3,7 @@ package ua.nure.wordle.service.implementation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ua.nure.wordle.entity.Enum.UserRole;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.repository.UserRepository;
 import ua.nure.wordle.service.interfaces.UserService;
@@ -20,6 +21,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User user) {
+        if(user.getRole() == null) {
+            user.setRole(UserRole.PLAYER);
+        }
         return userRepository.save(user);
     }
 
@@ -30,7 +34,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(long id, User user) {
-        //user.setId(id);
+        user.setId(id);
         return userRepository.save(user);
     }
 

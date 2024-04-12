@@ -1,10 +1,13 @@
 package ua.nure.wordle.controller;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ua.nure.wordle.dto.UserDTO;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.exceptions.NotFoundException;
 import ua.nure.wordle.service.interfaces.UserService;
+import ua.nure.wordle.utils.Patcher;
 
 import java.util.List;
 
@@ -13,38 +16,53 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
+    private final ModelMapper modelMapper;
+    private final Patcher<User> patcher;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ModelMapper modelMapper, Patcher<User> patcher) {
         this.userService = userService;
+        this.modelMapper = modelMapper;
+        this.patcher = patcher;
     }
 
     @GetMapping()
-    public List<User> findAll() {
-        return userService.getAll();
+    public List<UserDTO> findAll() {
+        return userService.getAll().stream().map(this::convertToDTO).toList();
     }
 
     @PostMapping
-    public List<User> save(@RequestBody User user) {
-        userService.create(user);
+    public List<UserDTO> save(@RequestBody UserDTO userDTO) {
+        userService.create(convertToEntity(userDTO));
         return findAll();
     }
 
-
-    //не працює, на скору руку робив, там шось в сервісі
     @PatchMapping("/{id}")
-    public List<User> update(@PathVariable("id") Long id,
-                                             @RequestBody User user) {
-        User existingDepartment = userService.readById(id).
+    public List<UserDTO> update(@PathVariable("id") Long id,
+                                             @RequestBody UserDTO userDTO) {
+        User existingUser = userService.readById(id).
                 orElseThrow(() -> new NotFoundException("User not found with id: " + id));
-
-        userService.update(id, user);
+        User updatedUser = convertToEntity(userDTO);
+        try {
+            patcher.patch(existingUser, updatedUser);
+            userService.update(id, existingUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return findAll();
     }
 
     @DeleteMapping("/{id}")
-    public List<User> delete(@PathVariable Long id) {
+    public List<UserDTO> delete(@PathVariable Long id) {
         userService.delete(id);
         return findAll();
+    }
+
+    private User convertToEntity(UserDTO userDTO){
+        return modelMapper.map(userDTO, User.class);
+    }
+
+    private UserDTO convertToDTO(User user){
+        return modelMapper.map(user, UserDTO.class);
     }
 }
