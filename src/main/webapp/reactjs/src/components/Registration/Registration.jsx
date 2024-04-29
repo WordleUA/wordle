@@ -8,7 +8,7 @@ function Registration() {
 
             <div className="registration-form">
 
-                <form className="registration-form--form">
+                  <form className="registration-form--form">
                     <h1 className="registration-header">Реєстрація</h1>
                     <input className="registration-form-input"
                            type="text"
