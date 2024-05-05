@@ -4,39 +4,46 @@ import "./Registration.css"
 
 function Registration() {
     return (
-        <div className="registration">
+        <div className="registration-page">
+            <h3 className="logo">WORLDE UA</h3>
+            <div className="registration">
 
-            <div className="registration-form">
+                <div className="registration-form">
 
-                  <form className="registration-form--form">
-                    <h1 className="registration-header">Реєстрація</h1>
-                    <input className="registration-form-input"
-                           type="text"
-                           name="login"
+                    <form className="registration-form--form">
+                        <h1 className="registration-header">РEЄСТРАЦІЯ</h1>
+                        <input className="registration-form-input"
+                               type="text"
+                               name="login"
+                               placeholder="Логін"
 
-                    />
-                    <input className="registration-form-input"
-                           type="email"
-                           name="email"
-                    />
+                        />
+                        <input className="registration-form-input"
+                               type="email"
+                               name="email"
+                               placeholder="Email"
+                        />
 
-                    <input className="registration-form-input"
-                           type="password"
-                           name="password"
+                        <input className="registration-form-input"
+                               type="password"
+                               name="password"
+                               placeholder="Пароль"
 
+                        />
+                        <input className="registration-form-input"
+                               type="password"
+                               name="password"
+                               placeholder="Повторіть пароль"
+                        />
 
-                    />
-                    <input className="registration-form-input"
-                           type="password"
-                           name="password"
-                    />
-
-                    <button className="registration-form-btn" type="submit">Зареєструватись
-                    </button>
-                    <p>Вже маєте акаунт? <button>Увійти</button></p>
-                </form>
+                        <button className="registration-form-btn" type="submit">ЗАРЕЄСТРУВАТИСЬ
+                        </button>
+                        <p className="registration-form-p">Вже маєте акаунт? <button className="registration-form-btn-tologin">Увійти</button></p>
+                    </form>
+                </div>
             </div>
         </div>
+
     );
 
 }
