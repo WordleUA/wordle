@@ -1,0 +1,38 @@
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 100px;
+    font-size: 14px;
+
+}
+
+
+
+.nav-list {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    column-gap: 70px;
+
+
+}
+
+
+.nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    gap: 500px;
+
+}
+.nav-list__item {
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.nav-list__item:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}

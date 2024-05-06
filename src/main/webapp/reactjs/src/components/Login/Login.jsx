@@ -5,7 +5,7 @@ import "./Login.css"
 function Login() {
     return (
         <div className="login-page">
-            <h3 className="logo">WORLDE UA</h3>
+
             <div className="login">
 
                 <div className="login-form">
@@ -28,7 +28,7 @@ function Login() {
 
                         <button className="login-form-btn" type="submit">УВІЙТИ
                         </button>
-                        <p className="login-form-p">Не маєте акаунта? <button className="login-form-btn-toregistration">Зареєтруватись</button></p>
+                        <p className="login-form-p">Не маєте акаунта? <button className="login-form-btn-toregistration">Зареєcтруватись</button></p>
                     </form>
                 </div>
             </div>
