@@ -5,7 +5,7 @@ import "./Registration.css"
 function Registration() {
     return (
         <div className="registration-page">
-            <h3 className="logo">WORLDE UA</h3>
+
             <div className="registration">
 
                 <div className="registration-form">
