@@ -31,18 +31,14 @@ public class UserDTO implements Serializable {
     String password;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotEmpty
     UserRole role;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotEmpty
     Boolean isBanned;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotEmpty
     Integer gameWinCount;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotEmpty
     Integer gameCount;
 }
