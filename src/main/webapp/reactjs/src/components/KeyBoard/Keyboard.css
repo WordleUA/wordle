@@ -1,0 +1,23 @@
+.gamefield-keyboard {
+    display: flex;
+    flex-direction: row;
+    max-width: 60%;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.gamefield-keyboard-el {
+    background: #d9d9d9;
+    border-radius: 7px;
+    height: 45px;
+    width: 45px;
+    border-color: transparent;
+    cursor: pointer;
+}
+
+.gamefield-keyboard-el:hover {
+    background: #cecdcd;
+
+}
