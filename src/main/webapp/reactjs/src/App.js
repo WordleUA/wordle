@@ -5,12 +5,13 @@ import ClientCabinet from "./components/ClientCabinet/ClientCabinet.jsx"
 import NavbarClient from "./components/Navbar/NavbarClient/NavbarClient.jsx"
 import HowToPlay from "./components/HowToPlay/HowToPlay";
 import DictateWord from "./components/DictateWord/DictateWord";
+import GameField from "./components/GameField/GameField";
 
 function App() {
   return (
       <div>
         <NavbarClient/>
-        <DictateWord/>
+        <GameField/>
       </div>
   );
 }

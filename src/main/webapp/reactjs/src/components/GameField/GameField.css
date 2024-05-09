@@ -1,0 +1,63 @@
+.gamefield {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 50px;
+}
+
+.gamefield-tries {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.gamefield-tries-row {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.gamefield-tries-row-el {
+    background: #d9d9d9;
+    border-radius: 5px;
+    height: 50px;
+    width: 50px;
+    border-color: transparent;
+    font-size: 26px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.gamefield-keyboard-btn-submit {
+    background: #86C14C;
+    border-radius: 7px;
+    height: 45px;
+    width: 60px;
+    border-color: transparent;
+}
+.gamefield-keyboard-btn-submit:hover {
+    background: #59a248;
+    cursor: pointer;
+}
+
+.gamefield-keyboard-btn-backspace {
+    background: #4ca2c1;
+    border-radius: 7px;
+    height: 45px;
+    width: 60px;
+    border-color: transparent;
+}
+.gamefield-keyboard-btn-backspace:hover {
+    background: #4595b2;
+    cursor: pointer;
+}
+
+.gamefield-keyboard-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+
+}
