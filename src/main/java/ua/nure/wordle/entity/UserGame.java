@@ -24,11 +24,6 @@ public class UserGame {
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "attempt_id", nullable = false)
-    private Attempt attempt;
-
     @Lob
     @Column(name = "player_status")
     private String playerStatus;

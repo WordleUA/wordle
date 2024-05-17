@@ -19,9 +19,6 @@ public class UserGameDTO implements Serializable {
 
     GameDTO game;
 
-    @NotNull
-    AttemptDTO attempt;
-
     String playerStatus;
 
     @Size(max = 6)
