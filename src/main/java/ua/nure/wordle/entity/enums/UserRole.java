@@ -6,8 +6,10 @@ import lombok.Getter;
 public enum UserRole {
     ADMIN("ADMIN"),
     PLAYER("PLAYER");
-    private String name;
-    private UserRole(String name) {
+
+    private final String name;
+
+    UserRole(String name) {
         this.name = name;
     }
 }
