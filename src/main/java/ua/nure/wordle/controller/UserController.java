@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.UserDTO;
 import ua.nure.wordle.entity.User;
+import ua.nure.wordle.entity.enums.UserRole;
 import ua.nure.wordle.exceptions.NotFoundException;
 import ua.nure.wordle.service.interfaces.UserService;
 import ua.nure.wordle.utils.Patcher;
@@ -60,7 +61,18 @@ public class UserController {
     }
 
     private User convertToEntity(UserDTO userDTO){
-        return modelMapper.map(userDTO, User.class);
+        return User.builder()
+                .username(userDTO.getUsername())
+                .email(userDTO.getEmail())
+                .passwordHash(userDTO.getPasswordHash())
+                .role(UserRole.PLAYER)
+                .isBanned(false)
+                .gameWinCount(0L)
+                .gameLoseCount(0L)
+                .gameCount(0L)
+                .coinsTotal(0L)
+                .build();
+
     }
 
     private UserDTO convertToDTO(User user){

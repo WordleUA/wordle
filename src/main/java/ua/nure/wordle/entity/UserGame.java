@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import ua.nure.wordle.entity.enums.PlayerStatus;
 
 @Getter
 @Setter
@@ -26,7 +27,7 @@ public class UserGame {
 
     @Lob
     @Column(name = "player_status")
-    private String playerStatus;
+    private PlayerStatus playerStatus;
 
     @Size(max = 6)
     @Column(name = "word", length = 6)
@@ -35,5 +36,9 @@ public class UserGame {
     @NotNull
     @Column(name = "is_game_over", nullable = false)
     private Byte isGameOver;
+
+    @NotNull
+    @Column(name = "attempts", nullable = false)
+    private Long attempts;
 
 }

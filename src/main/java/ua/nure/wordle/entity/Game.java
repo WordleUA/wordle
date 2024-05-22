@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import ua.nure.wordle.entity.enums.GameStatus;
 
 import java.time.Instant;
 
@@ -14,15 +15,15 @@ import java.time.Instant;
 @Table(name = "game")
 public class Game {
     @Id
-    @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     @NotNull
     @ColumnDefault("SEARCH")
     @Lob
     @Column(name = "game_status", nullable = false)
-    private String gameStatus;
+    private GameStatus gameStatus;
 
     @NotNull
     @Column(name = "created_at", nullable = false)
