@@ -3,13 +3,15 @@ package ua.nure.wordle.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ua.nure.wordle.entity.enums.PlayerStatus;
 
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "user_game")
 public class UserGame {
     @EmbeddedId
@@ -27,6 +29,7 @@ public class UserGame {
 
     @Lob
     @Column(name = "player_status")
+    @Enumerated(EnumType.STRING)
     private PlayerStatus playerStatus;
 
     @Size(max = 6)
@@ -35,10 +38,9 @@ public class UserGame {
 
     @NotNull
     @Column(name = "is_game_over", nullable = false)
-    private Byte isGameOver;
+    private Boolean isGameOver;
 
-    @NotNull
-    @Column(name = "attempts", nullable = false)
-    private Long attempts;
+    @Column(name = "attempts")
+    private Integer attempts;
 
 }

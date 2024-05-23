@@ -2,17 +2,21 @@ package ua.nure.wordle.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import ua.nure.wordle.entity.enums.GameStatus;
 
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "game")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +26,7 @@ public class Game {
     @NotNull
     @ColumnDefault("SEARCH")
     @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "game_status", nullable = false)
     private GameStatus gameStatus;
 
@@ -34,5 +39,8 @@ public class Game {
 
     @Column(name = "ended_at")
     private Instant endedAt;
+
+    @OneToMany(mappedBy = "game")
+    private Set<UserGame> userGames = new LinkedHashSet<>();
 
 }

@@ -12,7 +12,8 @@ import java.util.Optional;
 
 @Service
 public class GameServiceImpl implements GameService {
-    private GameRepository gameRepository;
+
+    private final GameRepository gameRepository;
 
     public GameServiceImpl(GameRepository gameRepository) {
         this.gameRepository = gameRepository;
@@ -20,31 +21,32 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public Game create(Game game) {
-        return null;
+        return gameRepository.save(game);
     }
 
     @Override
     public Optional<Game> readById(long id) {
-        return Optional.empty();
+        return gameRepository.findById(id);
     }
 
     @Override
     public Game update(long id, Game game) {
-        return null;
+        game.setId(id);
+        return gameRepository.save(game);
     }
 
     @Override
     public void delete(long id) {
-
+        gameRepository.deleteById(id);
     }
 
     @Override
     public List<Game> getAll() {
-        return List.of();
+        return gameRepository.findAll();
     }
 
     @Override
     public Page<Game> getAll(Pageable pageable) {
-        return null;
+        return gameRepository.findAll(pageable);
     }
 }
