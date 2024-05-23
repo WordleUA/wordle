@@ -20,31 +20,31 @@ public class UserGameServiceImpl implements UserGameService {
 
     @Override
     public UserGame create(UserGame userGame) {
-        return null;
+        return userGameRepository.save(userGame);
     }
 
     @Override
     public Optional<UserGame> readById(long id) {
-        return Optional.empty();
+        return userGameRepository.findById(id);
     }
 
     @Override
     public UserGame update(long id, UserGame userGame) {
-        return null;
+        return userGameRepository.save(userGame);
     }
 
     @Override
     public void delete(long id) {
-
+        userGameRepository.deleteById(id);
     }
 
     @Override
     public List<UserGame> getAll() {
-        return List.of();
+        return userGameRepository.findAll();
     }
 
     @Override
     public Page<UserGame> getAll(Pageable pageable) {
-        return null;
+        return userGameRepository.findAll(pageable);
     }
 }

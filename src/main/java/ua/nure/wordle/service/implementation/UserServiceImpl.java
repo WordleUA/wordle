@@ -3,7 +3,6 @@ package ua.nure.wordle.service.implementation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ua.nure.wordle.entity.enums.UserRole;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.repository.UserRepository;
 import ua.nure.wordle.service.interfaces.UserService;

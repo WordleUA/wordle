@@ -9,9 +9,9 @@ public enum GameStatus {
     IN_PROGRESS("IN_PROGRESS"),
     CANCELED("CANCELED");
 
-    private final String gameStatus;
+    private final String name;
 
-    GameStatus(String gameStatus) {
-        this.gameStatus = gameStatus;
+    GameStatus(String name) {
+        this.name = name;
     }
 }

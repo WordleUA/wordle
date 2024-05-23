@@ -1,22 +1,34 @@
 package ua.nure.wordle.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
-import lombok.Value;
+import lombok.*;
 import ua.nure.wordle.entity.enums.GameStatus;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-/**
- * DTO for {@link ua.nure.wordle.entity.Game}
- */
-@Value
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class GameDTO implements Serializable {
-    Long id;
+    private Long id;
+
     @NotNull
-    GameStatus gameStatus;
+    private GameStatus gameStatus;
+
     @NotNull
-    Instant createdAt;
-    Instant startedAt;
-    Instant endedAt;
+    private Instant createdAt;
+
+    private Instant startedAt;
+
+    private Instant endedAt;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Set<UserGameDTO> userGames = new LinkedHashSet<>();
+
 }

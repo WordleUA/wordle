@@ -8,9 +8,9 @@ public enum PlayerStatus {
     LOSE("PLAYER"),
     DRAW("DRAW");
 
-    private final String playerStatus;
+    private final String name;
 
-    PlayerStatus(String playerStatus) {
-        this.playerStatus = playerStatus;
+    PlayerStatus(String name) {
+        this.name = name;
     }
 }

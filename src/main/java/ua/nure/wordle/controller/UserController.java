@@ -1,5 +1,6 @@
 package ua.nure.wordle.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
+@Slf4j
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
@@ -41,15 +43,15 @@ public class UserController {
 
     @PatchMapping("/{id}")
     public List<UserDTO> update(@Validated @PathVariable("id") Long id,
-                                             @RequestBody UserDTO userDTO) {
+                                @RequestBody UserDTO userDTO) {
         User existingUser = userService.readById(id).
                 orElseThrow(() -> new NotFoundException("User not found with id: " + id));
         User updatedUser = convertToEntity(userDTO);
         try {
             patcher.patch(existingUser, updatedUser);
             userService.update(id, existingUser);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            log.error("Error occurred while updating user with id: {}", id, e);
         }
         return findAll();
     }
@@ -60,22 +62,22 @@ public class UserController {
         return findAll();
     }
 
-    private User convertToEntity(UserDTO userDTO){
+    private User convertToEntity(UserDTO userDTO) {
         return User.builder()
                 .username(userDTO.getUsername())
                 .email(userDTO.getEmail())
                 .passwordHash(userDTO.getPasswordHash())
                 .role(UserRole.PLAYER)
                 .isBanned(false)
-                .gameWinCount(0L)
-                .gameLoseCount(0L)
-                .gameCount(0L)
-                .coinsTotal(0L)
+                .gameWinCount(0)
+                .gameLoseCount(0)
+                .gameCount(0)
+                .coinsTotal(0)
                 .build();
 
     }
 
-    private UserDTO convertToDTO(User user){
+    private UserDTO convertToDTO(User user) {
         return modelMapper.map(user, UserDTO.class);
     }
 }
