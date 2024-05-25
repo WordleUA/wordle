@@ -68,7 +68,6 @@ CREATE TABLE IF NOT EXISTS `wordle`.`user_game`
     `game_id`       INT                          NOT NULL,
     `player_status` ENUM ('WIN', 'LOSE', 'DRAW') NULL DEFAULT NULL,
     `word`          VARCHAR(6)                   NULL DEFAULT NULL,
-    `is_game_over`  TINYINT                      NOT NULL,
     `attempts`      INT                          NULL,
     PRIMARY KEY (`user_id`, `game_id`),
     INDEX `fk_user_has_game_game1_idx` (`game_id` ASC) VISIBLE,

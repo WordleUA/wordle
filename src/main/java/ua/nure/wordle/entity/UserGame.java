@@ -36,10 +36,6 @@ public class UserGame {
     @Column(name = "word", length = 6)
     private String word;
 
-    @NotNull
-    @Column(name = "is_game_over", nullable = false)
-    private Boolean isGameOver;
-
     @Column(name = "attempts")
     private Integer attempts;
 
