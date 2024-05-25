@@ -61,3 +61,24 @@
     align-items: center;
 
 }
+
+.gamefield-tries-row-el.green {
+    background: #59a248;
+    color: white;
+}
+
+.gamefield-tries-row-el.yellow {
+    background-color: #E2DE7F;
+    color: white;
+}
+
+.gamefield-tries-row-el.darkgrey {
+    background-color: #B3B3B3;
+    color: white;
+}
+
+.gamefield-status {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+}

@@ -2,44 +2,106 @@ import React, { useState } from "react";
 import "./GameField.css";
 import Keyboard from "../KeyBoard/Keyboard";
 
+const TARGET_WORD = "ШКОЛА"; // Загадане слово
+
 function GameField() {
-    const [inputValues, setInputValues] = useState(Array(30).fill("")); // Масив для зберігання значень полів введення
+    const [inputValues, setInputValues] = useState(Array(30).fill(""));
+    const [currentRow, setCurrentRow] = useState(0);
+    const [rowColors, setRowColors] = useState(Array(30).fill(""));
+    const [gameStatus, setGameStatus] = useState("");
 
     const handleKeyboardClick = (key) => {
-        const newInputValues = [...inputValues]; // Копіюємо поточний масив значень
-        const emptyIndex = newInputValues.indexOf(""); // Шукаємо перше порожнє поле введення
+        const newInputValues = [...inputValues];
+        const emptyIndex = newInputValues.indexOf("");
 
-        if (emptyIndex !== -1) {
-            newInputValues[emptyIndex] = key; // Встановлюємо значення клавіші в порожнє поле введення
-            setInputValues(newInputValues); // Оновлюємо стан значень полів вводу
+        if (emptyIndex !== -1 && emptyIndex < (currentRow + 1) * 5) {
+            newInputValues[emptyIndex] = key;
+            setInputValues(newInputValues);
         }
     };
 
     const handleKeyPress = (index, event) => {
         if (event.key === "Enter") {
-            const word = inputValues.slice(currentRow * 5, (currentRow + 1) * 5).join(""); // Об'єднуємо всі символи введені у поточному рядку
-            console.log("Виведене слово:", word);
-            // Переносимо фокус на перше поле введення наступного рядка
-            const nextIndex = index + 5;
-            if (nextIndex < inputValues.length) {
-                document.getElementById(`input-${nextIndex}`).focus();
+            if (index % 5 === 4) {
+                validateCurrentRow();
             }
-            // Збільшуємо номер поточного рядка
-            setCurrentRow(currentRow + 1);
-            // Забороняємо подальше додавання символів
             event.preventDefault();
         } else if (event.key === "Backspace") {
-            const currentValue = inputValues[index];
-            if (currentValue) {
-                const newInputValues = [...inputValues];
+            handleBackspace(index);
+            event.preventDefault();
+        }
+    };
+
+    const handleBackspace = (index) => {
+        if (index >= 0) {
+            const newInputValues = [...inputValues];
+            if (newInputValues[index] === "") {
+                handleBackspace(index - 1);
+            } else {
                 newInputValues[index] = "";
                 setInputValues(newInputValues);
-            } else if (index > 0) {
-                document.getElementById(`input-${index - 1}`).focus();
+                if (index > 0) {
+                    document.getElementById(`input-${index - 1}`).focus();
+                }
             }
         }
     };
 
+    const handleInputChange = (index, event) => {
+        const newInputValues = [...inputValues];
+        newInputValues[index] = event.target.value;
+        setInputValues(newInputValues);
+    };
+
+    const validateCurrentRow = () => {
+        const startIndex = currentRow * 5;
+        const word = inputValues.slice(startIndex, startIndex + 5).join("");
+
+        validateWord(word);
+    };
+
+    const validateWord = (word) => {
+        const newRowColors = [...rowColors];
+        const startIndex = currentRow * 5;
+
+        if (word === TARGET_WORD) {
+            for (let i = 0; i < 5; i++) {
+                newRowColors[startIndex + i] = "green";
+            }
+            setRowColors(newRowColors);
+            setGameStatus("Ви виграли!");
+        } else {
+            const targetWordArray = TARGET_WORD.split("");
+            const wordArray = word.split("");
+            const correctLetterCounts = {};
+
+
+            wordArray.forEach((char, index) => {
+                if (char === TARGET_WORD[index]) {
+                    newRowColors[startIndex + index] = "green";
+                    correctLetterCounts[char] = (correctLetterCounts[char] || 0) + 1;
+                }
+            });
+
+
+            wordArray.forEach((char, index) => {
+                if (newRowColors[startIndex + index] !== "green") {
+                    if (targetWordArray.includes(char) && (correctLetterCounts[char] || 0) < targetWordArray.filter(c => c === char).length) {
+                        newRowColors[startIndex + index] = "yellow";
+                        correctLetterCounts[char] = (correctLetterCounts[char] || 0) + 1;
+                    } else {
+                        newRowColors[startIndex + index] = "darkgrey";
+                    }
+                }
+            });
+
+            setRowColors(newRowColors);
+            setCurrentRow(currentRow + 1);
+            if (currentRow === 5) {
+                setGameStatus("Ви програли! Слово було: " + TARGET_WORD);
+            }
+        }
+    };
 
     const renderInputRows = () => {
         const rows = [];
@@ -51,7 +113,7 @@ function GameField() {
                     <input
                         key={index}
                         id={`input-${index}`}
-                        className="gamefield-tries-row-el"
+                        className={`gamefield-tries-row-el ${rowColors[index]}`}
                         value={inputValues[index]}
                         onChange={(e) => handleInputChange(index, e)}
                         onKeyDown={(e) => handleKeyPress(index, e)}
@@ -71,18 +133,16 @@ function GameField() {
     return (
         <div className="gamefield">
             <div className="gamefield-tries">{renderInputRows()}</div>
+            {gameStatus && <div className="gamefield-status">{gameStatus}</div>}
             <div className="gamefield-keyboard">
                 <Keyboard onClick={handleKeyboardClick} />
                 <div className="gamefield-keyboard-btns">
-
-                    <button className="gamefield-keyboard-btn-backspace">⭠</button>
-                    <button className="gamefield-keyboard-btn-submit">ОК</button>
+                    <button className="gamefield-keyboard-btn-backspace" onClick={() => handleBackspace(inputValues.lastIndexOf(""))}>⭠</button>
+                    <button className="gamefield-keyboard-btn-submit" onClick={validateCurrentRow}>ОК</button>
                 </div>
-
             </div>
         </div>
     );
 }
 
 export default GameField;
-
