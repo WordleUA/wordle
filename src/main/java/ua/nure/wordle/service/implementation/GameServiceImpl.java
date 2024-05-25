@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ua.nure.wordle.entity.Game;
+import ua.nure.wordle.entity.enums.GameStatus;
 import ua.nure.wordle.repository.GameRepository;
 import ua.nure.wordle.service.interfaces.GameService;
 
@@ -48,5 +49,10 @@ public class GameServiceImpl implements GameService {
     @Override
     public Page<Game> getAll(Pageable pageable) {
         return gameRepository.findAll(pageable);
+    }
+
+    @Override
+    public Optional<Game> findByStatus(GameStatus gameStatus) {
+        return gameRepository.findByGameStatus(gameStatus);
     }
 }
