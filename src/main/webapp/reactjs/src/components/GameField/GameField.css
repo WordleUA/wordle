@@ -67,6 +67,8 @@
     display: flex;
     margin-left: 70%;
 }
+
+
 .gamefield-tries-row-el.green {
     background: #59a248;
     color: white;
