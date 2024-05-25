@@ -109,7 +109,8 @@ function GameField() {
 
             setRowColors(newRowColors);
             setCurrentRow(currentRow + 1);
-            if (currentRow === 5) {
+            const maxTries = 5;
+            if (currentRow === maxTries) {
                 setGameStatus("Ви програли! Слово було: " + TARGET_WORD);
             }
         }
