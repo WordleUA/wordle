@@ -164,6 +164,4 @@ function GameField() {
     );
 }
 
-
-
 export default GameField;

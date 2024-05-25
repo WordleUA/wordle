@@ -64,6 +64,7 @@
 .gamefield-timer {
     font-size: 18px;
     margin-bottom: 20px;
+
     display: flex;
     margin-left: 70%;
 }
