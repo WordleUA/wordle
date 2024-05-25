@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./GameField.css";
 import Keyboard from "../KeyBoard/Keyboard";
 
@@ -9,6 +9,18 @@ function GameField() {
     const [currentRow, setCurrentRow] = useState(0);
     const [rowColors, setRowColors] = useState(Array(30).fill(""));
     const [gameStatus, setGameStatus] = useState("");
+    const [timeLeft, setTimeLeft] = useState(600);
+
+    useEffect(() => {
+        if (timeLeft > 0 && !gameStatus) {
+            const timer = setInterval(() => {
+                setTimeLeft(timeLeft - 1);
+            }, 1000);
+            return () => clearInterval(timer);
+        } else if (timeLeft === 0) {
+            setGameStatus("Час вийшов! Ви програли!");
+        }
+    }, [timeLeft, gameStatus]);
 
     const handleKeyboardClick = (key) => {
         const newInputValues = [...inputValues];
@@ -117,7 +129,7 @@ function GameField() {
                         value={inputValues[index]}
                         onChange={(e) => handleInputChange(index, e)}
                         onKeyDown={(e) => handleKeyPress(index, e)}
-                        maxLength="1" // Обмеження на 1 символ
+                        maxLength="1"
                     />
                 );
             }
@@ -130,8 +142,15 @@ function GameField() {
         return rows;
     };
 
+    const formatTime = (seconds) => {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    };
+
     return (
         <div className="gamefield">
+            <div className="gamefield-timer">Час: {formatTime(timeLeft)}</div>
             <div className="gamefield-tries">{renderInputRows()}</div>
             {gameStatus && <div className="gamefield-status">{gameStatus}</div>}
             <div className="gamefield-keyboard">
