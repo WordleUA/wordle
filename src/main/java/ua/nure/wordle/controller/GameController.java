@@ -16,6 +16,7 @@ import ua.nure.wordle.service.interfaces.GameService;
 import ua.nure.wordle.service.interfaces.UserGameService;
 import ua.nure.wordle.service.interfaces.UserService;
 import ua.nure.wordle.utils.Patcher;
+import ua.nure.wordle.websocket.GameWebSocketHandler;
 
 import java.time.Instant;
 import java.util.List;
@@ -32,7 +33,7 @@ public class GameController {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final Patcher<Game> patcher;
-
+    private final GameWebSocketHandler gameWebSocketHandler;
 
     @GetMapping()
     public List<GameDTO> findAll() {
@@ -45,13 +46,9 @@ public class GameController {
                 orElseThrow(() -> new NotFoundException("Game not found with id: " + id)));
     }
 
-    @PostMapping
-    public List<GameDTO> save(@RequestBody UserGameDTO gameDTO) {
-        User user = userService.readById(gameDTO.getUserId())
-                .orElseThrow(() -> new NotFoundException("User not found with id: " + gameDTO.getUserId()));
-        Game game = gameService.create(buildGame());
-        userGameService.create(convertToUserGame(gameDTO, game, user));
-
+    @PostMapping("/start")
+    public List<GameDTO> save(@RequestBody UserGameDTO userGameDTO) {
+        gameWebSocketHandler.handleJoinGame(userGameDTO);
         return findAll();
     }
 
