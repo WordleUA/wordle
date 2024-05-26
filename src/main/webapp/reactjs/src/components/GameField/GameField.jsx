@@ -1,26 +1,36 @@
 import React, { useState, useEffect } from "react";
 import "./GameField.css";
 import Keyboard from "../KeyBoard/Keyboard";
+import Modal from "../Modal/Modal"; // Import the Modal component
 
 const TARGET_WORD = "ШКОЛА"; // Загадане слово
 
 function GameField() {
-    const [inputValues, setInputValues] = useState(Array(30).fill(""));
-    const [currentRow, setCurrentRow] = useState(0);
-    const [rowColors, setRowColors] = useState(Array(30).fill(""));
-    const [gameStatus, setGameStatus] = useState("");
-    const [timeLeft, setTimeLeft] = useState(600);
+    const [inputValues, setInputValues] = useState(Array(30).fill("")); // Масив для зберігання значень полів введення
+    const [currentRow, setCurrentRow] = useState(0); // Додаємо стан для поточного рядка
+    const [rowColors, setRowColors] = useState(Array(30).fill("")); // Масив для зберігання кольорів літер
+    const [gameStatus, setGameStatus] = useState(""); // Стан для відображення повідомлення про виграш або програш
+    const [showModal, setShowModal] = useState(false); // State to control the modal visibility
+    const [timeLeft, setTimeLeft] = useState(600); // Timer state in seconds (10 minutes)
+    const [timeTaken, setTimeTaken] = useState(0); // State to store the time taken
 
     useEffect(() => {
-        if (timeLeft > 0 && !gameStatus) {
+        if (timeLeft > 0 && !showModal) {
             const timer = setInterval(() => {
                 setTimeLeft(timeLeft - 1);
             }, 1000);
             return () => clearInterval(timer);
         } else if (timeLeft === 0) {
             setGameStatus("Час вийшов! Ви програли!");
+            setShowModal(true);
         }
-    }, [timeLeft, gameStatus]);
+    }, [timeLeft, showModal]);
+
+    useEffect(() => {
+        if (gameStatus === "Ви виграли!") {
+            setTimeTaken(600 - timeLeft); // Calculate the time taken
+        }
+    }, [gameStatus]);
 
     const handleKeyboardClick = (key) => {
         const newInputValues = [...inputValues];
@@ -82,12 +92,13 @@ function GameField() {
             }
             setRowColors(newRowColors);
             setGameStatus("Ви виграли!");
+            setShowModal(true); // Show the modal on win
         } else {
             const targetWordArray = TARGET_WORD.split("");
             const wordArray = word.split("");
             const correctLetterCounts = {};
 
-
+            // First pass: Mark correct letters (green)
             wordArray.forEach((char, index) => {
                 if (char === TARGET_WORD[index]) {
                     newRowColors[startIndex + index] = "green";
@@ -95,7 +106,7 @@ function GameField() {
                 }
             });
 
-
+            // Second pass: Mark present letters (yellow) and absent letters (darkgrey)
             wordArray.forEach((char, index) => {
                 if (newRowColors[startIndex + index] !== "green") {
                     if (targetWordArray.includes(char) && (correctLetterCounts[char] || 0) < targetWordArray.filter(c => c === char).length) {
@@ -109,9 +120,9 @@ function GameField() {
 
             setRowColors(newRowColors);
             setCurrentRow(currentRow + 1);
-            const maxTries = 5;
-            if (currentRow === maxTries) {
+            if (currentRow === 5) {
                 setGameStatus("Ви програли! Слово було: " + TARGET_WORD);
+                setShowModal(true); // Show the modal on loss
             }
         }
     };
@@ -130,7 +141,7 @@ function GameField() {
                         value={inputValues[index]}
                         onChange={(e) => handleInputChange(index, e)}
                         onKeyDown={(e) => handleKeyPress(index, e)}
-                        maxLength="1"
+                        maxLength="1" // Обмеження на 1 символ
                     />
                 );
             }
@@ -143,6 +154,10 @@ function GameField() {
         return rows;
     };
 
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
+
     const formatTime = (seconds) => {
         const minutes = Math.floor(seconds / 60);
         const secs = seconds % 60;
@@ -153,7 +168,7 @@ function GameField() {
         <div className="gamefield">
             <div className="gamefield-timer">Час: {formatTime(timeLeft)}</div>
             <div className="gamefield-tries">{renderInputRows()}</div>
-            {gameStatus && <div className="gamefield-status">{gameStatus}</div>}
+            {showModal && <Modal message={gameStatus} timeTaken={gameStatus === "Ви виграли!" ? formatTime(timeTaken) : null} onClose={handleCloseModal} />}
             <div className="gamefield-keyboard">
                 <Keyboard onClick={handleKeyboardClick} />
                 <div className="gamefield-keyboard-btns">
