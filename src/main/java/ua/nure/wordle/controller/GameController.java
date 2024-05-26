@@ -16,11 +16,10 @@ import ua.nure.wordle.service.interfaces.GameService;
 import ua.nure.wordle.service.interfaces.UserGameService;
 import ua.nure.wordle.service.interfaces.UserService;
 import ua.nure.wordle.utils.Patcher;
-import ua.nure.wordle.websocket.GameWebSocketHandler;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -34,7 +33,6 @@ public class GameController {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final Patcher<Game> patcher;
-    private final GameWebSocketHandler gameWebSocketHandler;
 
     @GetMapping()
     public List<GameDTO> findAll() {
@@ -47,45 +45,12 @@ public class GameController {
                 orElseThrow(() -> new NotFoundException("Game not found with id: " + id)));
     }
 
-    @PostMapping("/start")
-    public GameDTO save(@RequestBody UserGameDTO userGameDTO) {
+    @PostMapping("/connect")
+    public GameDTO connect(@RequestBody UserGameDTO userGameDTO) {
         User user = userService.readById(userGameDTO.getUserId())
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + userGameDTO.getUserId()));
-        Optional<Game> optionalGame = gameService.findByStatus(GameStatus.SEARCH);
-        if (optionalGame.isPresent()) {
-            Game game = optionalGame.get();
-            UserGame userGame = UserGame.builder()
-                    .id(new UserGameId(user.getId(), game.getId()))
-                    .game(game)
-                    .user(user)
-                    .playerStatus(null)
-                    .word(userGameDTO.getWord())
-                    .attempts(null)
-                    .build();
-            game.setGameStatus(GameStatus.IN_PROGRESS);
-            gameService.update(game.getId(), game);
-            userGameService.create(userGame);
-            gameWebSocketHandler.notifyGameStart(game.getId());
-            return convertToDTO(game);
-        } else {
-            Game game = Game.builder()
-                    .gameStatus(GameStatus.SEARCH)
-                    .createdAt(Instant.now())
-                    .startedAt(null)
-                    .endedAt(null)
-                    .build();
-            gameService.create(game);
-            UserGame userGame = UserGame.builder()
-                    .id(new UserGameId(user.getId(), game.getId()))
-                    .game(game)
-                    .user(user)
-                    .playerStatus(null)
-                    .word(userGameDTO.getWord())
-                    .attempts(null)
-                    .build();
-            userGameService.create(userGame);
-            return convertToDTO(game);
-        }
+        Game game = gameService.connectGame(user, userGameDTO.getWord());
+        return convertToDTO(game);
     }
 
     @PatchMapping("/{id}")
@@ -123,7 +88,7 @@ public class GameController {
     private Game buildGame() {
         return Game.builder()
                 .gameStatus(GameStatus.SEARCH)
-                .createdAt(Instant.now())
+                .createdAt(Timestamp.from(Instant.now()))
                 .startedAt(null)
                 .endedAt(null)
                 .build();
