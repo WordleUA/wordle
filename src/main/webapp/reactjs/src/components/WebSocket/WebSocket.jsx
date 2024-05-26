@@ -6,7 +6,9 @@ import { Client } from '@stomp/stompjs';
 function WebSocket() {
     const [messages, setMessages] = useState([]);
     const [connected, setConnected] = useState(false);
-    const gameId = '10'; // замініть на реальний ідентифікатор гри
+    const gameId = '25'; // приклад
+
+    //фетч на /game - повернеться гра
 
     useEffect(() => {
         // Підключення до SockJS endpoint
@@ -18,9 +20,9 @@ function WebSocket() {
                 setConnected(true);
 
                 // Підписка на канал гри
-                stompClient.subscribe(`/topic/game/start/${gameId}`, (message) => {
+                stompClient.subscribe(`/topic/game/${gameId}`, (message) => {
                     const messageBody = message.body;
-                    console.log('Received message:', messageBody);
+                    console.log(messageBody);
                     setMessages((prevMessages) => [...prevMessages, messageBody]);
                 });
             },
@@ -29,6 +31,9 @@ function WebSocket() {
                 setConnected(false);
             },
         });
+
+        //якщо гейм - сьорч, то чекати від сокету
+        //якщо гейм - ін прогрес - запускати
 
         // Активація WebSocket з'єднання
         stompClient.activate();

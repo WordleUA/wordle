@@ -29,8 +29,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        // Визначаємо префікс для каналів, на які клієнти можуть підписуватися
+        // ось сюди будть приходити повідомлення
         registry.enableSimpleBroker("/topic");
+        // Це для надсилання повідомлення від клієнта на сокет (не використовуємо)
         registry.setApplicationDestinationPrefixes("/app");
     }
 

@@ -6,7 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import ua.nure.wordle.entity.enums.GameStatus;
 
-import java.time.Instant;
+import java.sql.Timestamp;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -32,13 +32,13 @@ public class Game {
 
     @NotNull
     @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+    private Timestamp createdAt;
 
     @Column(name = "started_at")
-    private Instant startedAt;
+    private Timestamp startedAt;
 
     @Column(name = "ended_at")
-    private Instant endedAt;
+    private Timestamp endedAt;
 
     @OneToMany(mappedBy = "game")
     private Set<UserGame> userGames = new LinkedHashSet<>();

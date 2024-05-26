@@ -27,7 +27,6 @@ public class UserDTO implements Serializable {
     @Size(max = 45, message = "Email have to contain up to 45 symbols")
     private String email;
 
-
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotEmpty
     @Size(max = 45, message = "Password have to contain up to 45 symbols")
