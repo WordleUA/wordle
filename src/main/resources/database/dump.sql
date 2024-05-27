@@ -17,9 +17,12 @@ VALUES ('COMPLETE', '2021-01-01 00:00:00', '2021-01-01 00:00:00'),
        ('COMPLETE', '2021-01-01 00:00:00', '2021-01-01 00:00:00'),
        ('COMPLETE', '2021-01-01 00:00:00', '2021-01-01 00:00:00'),
        ('IN_PROGRESS', '2021-01-01 00:00:00', '2021-01-01 00:00:00'),
+       ('IN_PROGRESS', '2021-01-01 00:00:00', '2021-01-01 00:00:00'),
+       ('IN_PROGRESS', '2021-01-01 00:00:00', '2021-01-01 00:00:00'),
+       ('IN_PROGRESS', '2021-01-01 00:00:00', '2021-01-01 00:00:00'),
        ('CANCELED', '2021-01-01 00:00:00', '2021-01-01 00:00:00');
 
-
+select * from game;
 INSERT INTO user_game (user_id, game_id, player_status, word, attempts)
 VALUES (1, 1, 'WIN', 'word1', 1),
        (2, 2, 'LOSE', 'word2', 3),
@@ -30,3 +33,10 @@ VALUES (1, 1, 'WIN', 'word1', 1),
        (7, 7, 'WIN', 'word7', 1),
        (8, 8, 'LOSE', 'word8', 3);
 
+INSERT INTO user_game (user_id, game_id, word)
+VALUES (1, 9, 'word1');
+INSERT INTO user_game (user_id, game_id, word)
+VALUES (2, 9, 'word1');
+
+select * from game;
+select * from wordle.user_game;
