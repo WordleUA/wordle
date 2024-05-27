@@ -23,6 +23,7 @@ import ua.nure.wordle.websocket.GameWebSocketHandler;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,12 +71,15 @@ public class GameController {
         try {
             userGamePatcher.patch(userGame, endedGame);
             userGameService.update(userGame);
-//            Optional<UserGame> secondPlayer = userGameService.findSecondPlayer(userGameDTO.getGameId(), userGameDTO.getUserId());
-//            if(secondPlayer.isPresent() && Boolean.TRUE.equals(!secondPlayer.get().getIsGameOver())){
-//            }
-            gameService.updateEndTime(userGameDTO.getGameId(), new Timestamp(System.currentTimeMillis()));
-            List<GameEndedDTO> results = null;
-            gameWebSocketHandler.notifyGameEnded(results, userGameDTO.getGameId());
+            Optional<UserGame> secondPlayer = userGameService.findSecondPlayer(userGameDTO.getGameId(), userGameDTO.getUserId());
+            if(secondPlayer.isPresent() && Boolean.FALSE.equals(secondPlayer.get().getIsGameOver())){
+                gameService.updateEndTime(userGameDTO.getGameId(), new Timestamp(System.currentTimeMillis()));
+                secondPlayer.get().determinePlayerStatus(userGameDTO.getPlayerStatus());
+                List<GameEndedDTO> results = new ArrayList<>();
+                results.add(new GameEndedDTO().builder().userId(userGameDTO.getUserId()).playerStatus(userGameDTO.getPlayerStatus()).build());
+                results.add(new GameEndedDTO().builder().userId(secondPlayer.get().getUser().getId()).playerStatus(secondPlayer.get().getPlayerStatus()).build());
+                gameWebSocketHandler.notifyGameEnded(results, userGameDTO.getGameId());
+            }
         } catch (IllegalAccessException e) {
             log.error("Error occurred while updating userGame with id: {}, {}", userGameDTO.getGameId(), userGameDTO.getUserId(), e);
         }

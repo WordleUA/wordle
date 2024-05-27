@@ -41,4 +41,18 @@ public class UserGame {
     @Column(name = "attempts")
     private Integer attempts;
 
+    public void determinePlayerStatus(PlayerStatus playerStatus){
+        switch (playerStatus) {
+            case WIN:
+                this.playerStatus = PlayerStatus.LOSE;
+                break;
+            case LOSE:
+                this.playerStatus = PlayerStatus.WIN;
+                break;
+            default:
+                this.playerStatus = PlayerStatus.DRAW;
+                break;
+        }
+    }
+
 }
