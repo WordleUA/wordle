@@ -29,6 +29,6 @@ public class GameDTO implements Serializable {
     private Timestamp endedAt;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Set<GameStartDTO> userGames = new LinkedHashSet<>();
+    private Set<UserGameDTO> userGames = new LinkedHashSet<>();
 
 }

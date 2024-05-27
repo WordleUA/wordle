@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ua.nure.wordle.dto.response.ConnectGameResponse;
 import ua.nure.wordle.entity.Game;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.UserGame;
@@ -68,42 +69,41 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public Game connectGame(User user, String word) {
+    public ConnectGameResponse connectGame(User user, String word) {
         Optional<Game> optionalGame = findByStatus(GameStatus.SEARCH);
         if (optionalGame.isPresent()) {
             Game game = optionalGame.get();
             UserGame userGame = UserGame.builder()
-                    .id(new UserGameId(user.getId(), game.getId()))
-                    .game(game)
-                    .user(user)
-                    .playerStatus(null)
-                    .word(word)
-                    .attempts(null)
-                    .build();
+                    .id(new UserGameId(user.getId(), game.getId())).game(game)
+                    .user(user).playerStatus(null).word(word).attempts(null).build();
             game.setGameStatus(GameStatus.IN_PROGRESS);
             game.setStartedAt(Timestamp.from(Instant.now()));
             game = update(game.getId(), game);
             userGameService.create(userGame);
-            gameWebSocketHandler.notifyGameStart(game.getId(), word);
-            return game;
+
+            Optional<UserGame> opponentUserGame = game.getUserGames().stream()
+                    .filter(ug -> !ug.getUser().getId().equals(user.getId()))
+                    .findFirst();
+
+            String opponentWord = opponentUserGame.map(UserGame::getWord).orElse(null);
+            Long opponentId = opponentUserGame.map(ug -> ug.getUser().getId()).orElse(null);
+
+            ConnectGameResponse connectGameSocketResponse = ConnectGameResponse.builder().gameId(game.getId())
+                    .userId(opponentId).gameStatus(game.getGameStatus()).word(userGame.getWord()).build();
+
+            ConnectGameResponse connectGameResponse = ConnectGameResponse.builder().gameId(game.getId())
+                    .userId(user.getId()).gameStatus(game.getGameStatus()).word(opponentWord).build();
+
+            gameWebSocketHandler.notifyGameStart(connectGameSocketResponse);
+            return connectGameResponse;
         } else {
-            Game game = Game.builder()
-                    .gameStatus(GameStatus.SEARCH)
-                    .createdAt(Timestamp.from(Instant.now()))
-                    .startedAt(null)
-                    .endedAt(null)
-                    .build();
+            Game game = Game.builder().gameStatus(GameStatus.SEARCH)
+                    .createdAt(Timestamp.from(Instant.now())).startedAt(null).endedAt(null).build();
+            UserGame userGame = UserGame.builder().id(new UserGameId(user.getId(), game.getId()))
+                    .game(game).user(user).playerStatus(null).word(word).attempts(null).build();
             create(game);
-            UserGame userGame = UserGame.builder()
-                    .id(new UserGameId(user.getId(), game.getId()))
-                    .game(game)
-                    .user(user)
-                    .playerStatus(null)
-                    .word(word)
-                    .attempts(null)
-                    .build();
             userGameService.create(userGame);
-            return game;
+            return ConnectGameResponse.builder().gameId(game.getId()).userId(user.getId()).gameStatus(game.getGameStatus()).build();
         }
     }
 

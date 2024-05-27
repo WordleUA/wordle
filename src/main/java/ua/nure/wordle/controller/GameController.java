@@ -7,8 +7,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.GameDTO;
 import ua.nure.wordle.dto.GameEndedDTO;
-import ua.nure.wordle.dto.GameStartDTO;
 import ua.nure.wordle.dto.UserGameDTO;
+import ua.nure.wordle.dto.request.ConnectGameRequest;
+import ua.nure.wordle.dto.response.ConnectGameResponse;
 import ua.nure.wordle.entity.Game;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.UserGame;
@@ -55,11 +56,10 @@ public class GameController {
     }
 
     @PostMapping("/connect")
-    public GameDTO connect(@RequestBody GameStartDTO gameStartDTO) {
-        User user = userService.readById(gameStartDTO.getUserId())
-                .orElseThrow(() -> new NotFoundException("User not found with id: " + gameStartDTO.getUserId()));
-        Game game = gameService.connectGame(user, gameStartDTO.getWord());
-        return convertToDTO(game);
+    public ConnectGameResponse connect(@RequestBody ConnectGameRequest connectGameRequest) {
+        User user = userService.readById(connectGameRequest.getUserId())
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + connectGameRequest.getUserId()));
+        return gameService.connectGame(user, connectGameRequest.getWord());
     }
 
     @PatchMapping("/end")

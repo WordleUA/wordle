@@ -6,7 +6,7 @@ import { Client } from '@stomp/stompjs';
 function WebSocket() {
     const [messages, setMessages] = useState([]);
     const [connected, setConnected] = useState(false);
-    const gameId = '25'; // приклад
+    const gameId = '33'; // приклад
 
     //фетч на /game - повернеться гра
 
