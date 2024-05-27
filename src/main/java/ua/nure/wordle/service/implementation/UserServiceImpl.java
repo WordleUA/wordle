@@ -1,17 +1,27 @@
 package ua.nure.wordle.service.implementation;
 
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ua.nure.wordle.entity.Game;
 import ua.nure.wordle.entity.User;
+import ua.nure.wordle.entity.UserGame;
+import ua.nure.wordle.entity.enums.PlayerStatus;
+import ua.nure.wordle.repository.UserGameRepository;
 import ua.nure.wordle.repository.UserRepository;
+import ua.nure.wordle.service.interfaces.GameService;
 import ua.nure.wordle.service.interfaces.UserService;
+import ua.nure.wordle.utils.Patcher;
+import ua.nure.wordle.websocket.GameWebSocketHandler;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
+
     private final UserRepository userRepository;
 
     public UserServiceImpl(UserRepository userRepository) {
@@ -48,4 +58,24 @@ public class UserServiceImpl implements UserService {
     public Page<User> getAll(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
+
+    @Override
+    public User updateGameWinCount(long id, int attempts, PlayerStatus playerStatus) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+        switch (playerStatus) {
+            case WIN:
+                user.setCoinsTotal(user.getCoinsTotal() + (7 - attempts));
+                break;
+            case LOSE:
+                user.setCoinsTotal(user.getCoinsTotal() - 1);
+                break;
+            case DRAW:
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid player status: " + playerStatus);
+        }
+        return userRepository.save(user);
+    }
+
 }
