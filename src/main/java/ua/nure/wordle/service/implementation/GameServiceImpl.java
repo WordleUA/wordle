@@ -109,6 +109,24 @@ public class GameServiceImpl implements GameService {
         }
     }
 
+    public void endGame(UserGameDTO userGameDTO, UserGame userGame, UserGame endedGame) throws IllegalAccessException {
+        userGamePatcher.patch(userGame, endedGame);
+        userGameService.update(userGame);
+        userService.updateGameWinCount(userGame.getUser().getId(), userGame.getAttempts(), userGameDTO.getPlayerStatus());
+        if (userGame.getGame().getGameStatus() == GameStatus.IN_PROGRESS) {
+            Optional<UserGame> secondPlayer = userGameService.findSecondPlayer(userGameDTO.getGameId(), userGameDTO.getUserId());
+            if(secondPlayer.isEmpty()) throw new EntityNotFoundException("UserGame not found with gameId: " + userGameDTO.getGameId() + ", userId: " + userGameDTO.getUserId());
+            updateEndTime(userGameDTO.getGameId(), new Timestamp(System.currentTimeMillis()));
+            updateIsGameOver(userGameDTO.getGameId(), GameStatus.COMPLETE);
+            secondPlayer.get().determinePlayerStatus(userGameDTO.getPlayerStatus());
+            userGameService.update(userGame.getGame().getId(), secondPlayer.orElseThrow(() -> new EntityNotFoundException("Game not found with id: " + userGame.getGame().getId())));
+            List<GameEndedSocketRequest> results = new ArrayList<>();
+            results.add(new GameEndedSocketRequest().builder().userId(userGameDTO.getUserId()).playerStatus(userGameDTO.getPlayerStatus()).build());
+            results.add(new GameEndedSocketRequest().builder().userId(secondPlayer.get().getUser().getId()).playerStatus(secondPlayer.get().getPlayerStatus()).build());
+            gameWebSocketHandler.notifyGameEnded(results, userGameDTO.getGameId());
+        }
+    }
+
     @Override
     public Game updateEndTime(long id, Timestamp dateTime) {
         Game game = gameRepository.findById(id)

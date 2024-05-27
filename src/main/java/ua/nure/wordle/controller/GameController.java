@@ -40,8 +40,6 @@ public class GameController {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final Patcher<Game> gamePatcher;
-    GameWebSocketHandler gameWebSocketHandler;
-    Patcher<UserGame> userGamePatcher;
 
     @GetMapping()
     public List<GameDTO> findAll() {
@@ -67,22 +65,7 @@ public class GameController {
                 .orElseThrow(() -> new NotFoundException("UserGame not found with userId: " + userGameDTO.getUserId() + ", gameId: "));
         UserGame endedGame = convertToUserGame(userGameDTO);
         try {
-            userGamePatcher.patch(userGame, endedGame);
-            userGameService.update(userGame);
-            userService.updateGameWinCount(userGame.getUser().getId(), userGame.getAttempts(), userGameDTO.getPlayerStatus());
-            if (userGame.getGame().getGameStatus() == GameStatus.IN_PROGRESS) {
-                Optional<UserGame> secondPlayer = userGameService.findSecondPlayer(userGameDTO.getGameId(), userGameDTO.getUserId());
-                if (secondPlayer.isEmpty())
-                    throw new EntityNotFoundException("UserGame not found with gameId: " + userGameDTO.getGameId() + ", userId: " + userGameDTO.getUserId());
-                gameService.updateEndTime(userGameDTO.getGameId(), new Timestamp(System.currentTimeMillis()));
-                gameService.updateIsGameOver(userGameDTO.getGameId(), GameStatus.COMPLETE);
-                secondPlayer.get().determinePlayerStatus(userGameDTO.getPlayerStatus());
-                userGameService.update(userGame.getGame().getId(), secondPlayer.orElseThrow(() -> new EntityNotFoundException("Game not found with id: " + userGame.getGame().getId())));
-                List<GameEndedSocketRequest> results = new ArrayList<>();
-                results.add(new GameEndedSocketRequest().builder().userId(userGameDTO.getUserId()).playerStatus(userGameDTO.getPlayerStatus()).build());
-                results.add(new GameEndedSocketRequest().builder().userId(secondPlayer.get().getUser().getId()).playerStatus(secondPlayer.get().getPlayerStatus()).build());
-                gameWebSocketHandler.notifyGameEnded(results, userGameDTO.getGameId());
-            }
+            gameService.endGame(userGameDTO, userGame, endedGame);
         } catch (IllegalAccessException e) {
             log.error("Error occurred while updating userGame with id: {}, {}", userGameDTO.getGameId(), userGameDTO.getUserId(), e);
         }
