@@ -1,21 +1,25 @@
 package ua.nure.wordle.dto;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.*;
-
-import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import ua.nure.wordle.entity.enums.PlayerStatus;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserGameDTO implements Serializable {
-    @NotNull
-//    @JsonProperty("user_id")
+public class UserGameDTO {
     private Long userId;
-
-    @NotNull
-    @Size (max = 5)
+    private Long gameId;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private PlayerStatus playerStatus;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String word;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean isGameOver;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer attempts;
 }

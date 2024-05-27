@@ -1,10 +1,13 @@
 package ua.nure.wordle.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.GameDTO;
+import ua.nure.wordle.dto.GameEndedDTO;
+import ua.nure.wordle.dto.GameStartDTO;
 import ua.nure.wordle.dto.UserGameDTO;
 import ua.nure.wordle.entity.Game;
 import ua.nure.wordle.entity.User;
@@ -16,10 +19,12 @@ import ua.nure.wordle.service.interfaces.GameService;
 import ua.nure.wordle.service.interfaces.UserGameService;
 import ua.nure.wordle.service.interfaces.UserService;
 import ua.nure.wordle.utils.Patcher;
+import ua.nure.wordle.websocket.GameWebSocketHandler;
 
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -32,7 +37,10 @@ public class GameController {
     private final UserGameService userGameService;
     private final UserService userService;
     private final ModelMapper modelMapper;
-    private final Patcher<Game> patcher;
+    private final Patcher<Game> gamePatcher;
+    private final Patcher<UserGame> userGamePatcher;
+    private final GameWebSocketHandler gameWebSocketHandler;
+
 
     @GetMapping()
     public List<GameDTO> findAll() {
@@ -46,13 +54,33 @@ public class GameController {
     }
 
     @PostMapping("/connect")
-    public GameDTO connect(@RequestBody UserGameDTO userGameDTO) {
-        User user = userService.readById(userGameDTO.getUserId())
-                .orElseThrow(() -> new NotFoundException("User not found with id: " + userGameDTO.getUserId()));
-        Game game = gameService.connectGame(user, userGameDTO.getWord());
+    public GameDTO connect(@RequestBody GameStartDTO gameStartDTO) {
+        User user = userService.readById(gameStartDTO.getUserId())
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + gameStartDTO.getUserId()));
+        Game game = gameService.connectGame(user, gameStartDTO.getWord());
         return convertToDTO(game);
     }
 
+    @PatchMapping("/end")
+    public GameDTO endGame(@RequestBody UserGameDTO userGameDTO) {
+        UserGame userGame = userGameService.readById(userGameDTO.getUserId(), userGameDTO.getGameId())
+                .orElseThrow(() -> new NotFoundException("UserGame not found with userId: " + userGameDTO.getUserId() + ", gameId: "));
+        userGame.setIsGameOver(true);
+        UserGame endedGame = convertToUserGame(userGameDTO);
+        try {
+            userGamePatcher.patch(userGame, endedGame);
+            userGameService.update(userGame);
+//            Optional<UserGame> secondPlayer = userGameService.findSecondPlayer(userGameDTO.getGameId(), userGameDTO.getUserId());
+//            if(secondPlayer.isPresent() && Boolean.TRUE.equals(!secondPlayer.get().getIsGameOver())){
+//            }
+            gameService.updateEndTime(userGameDTO.getGameId(), new Timestamp(System.currentTimeMillis()));
+            List<GameEndedDTO> results = null;
+            gameWebSocketHandler.notifyGameEnded(results, userGameDTO.getGameId());
+        } catch (IllegalAccessException e) {
+            log.error("Error occurred while updating userGame with id: {}, {}", userGameDTO.getGameId(), userGameDTO.getUserId(), e);
+        }
+        return null;
+    }
     @PatchMapping("/{id}")
     public List<GameDTO> update(@PathVariable("id") Long id,
                                 @RequestBody GameDTO gameDTO) {
@@ -60,7 +88,7 @@ public class GameController {
                 orElseThrow(() -> new NotFoundException("Game not found with id: " + id));
         Game updatedGame = convertToEntity(gameDTO);
         try {
-            patcher.patch(existingGame, updatedGame);
+            gamePatcher.patch(existingGame, updatedGame);
             gameService.update(id, existingGame);
         } catch (IllegalAccessException e) {
             log.error("Error occurred while updating game with id: {}", id, e);
@@ -74,14 +102,16 @@ public class GameController {
         return findAll();
     }
 
-    private UserGame convertToUserGame(UserGameDTO gameDTO, Game game, User user) {
+    private UserGame convertToUserGame(UserGameDTO userGameDTO) {
+        Game game = gameService.readById(userGameDTO.getGameId()).orElseThrow(() -> new EntityNotFoundException("Game not found with id: " + userGameDTO.getGameId()));
+        User user = userService.readById(userGameDTO.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userGameDTO.getUserId()));
         return UserGame.builder()
-                .id(new UserGameId(user.getId(), game.getId()))
+                .id(new UserGameId(userGameDTO.getUserId(), userGameDTO.getGameId()))
                 .game(game)
                 .user(user)
-                .playerStatus(null)
-                .word(gameDTO.getWord())
-                .attempts(null)
+                .playerStatus(userGameDTO.getPlayerStatus())
+                .word(userGameDTO.getWord())
+                .attempts(userGameDTO.getAttempts())
                 .build();
     }
 

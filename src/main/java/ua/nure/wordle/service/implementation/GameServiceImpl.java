@@ -1,5 +1,6 @@
 package ua.nure.wordle.service.implementation;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import ua.nure.wordle.websocket.GameWebSocketHandler;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -105,6 +107,14 @@ public class GameServiceImpl implements GameService {
             userGameService.create(userGame);
             return game;
         }
+    }
+
+    @Override
+    public Game updateEndTime(long id, Timestamp dateTime) {
+        Game game = gameRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Game not found with id: " + id));
+        game.setEndedAt(dateTime);
+        return gameRepository.save(game);
     }
 
 }
