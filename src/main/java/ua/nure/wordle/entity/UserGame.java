@@ -31,9 +31,6 @@ public class UserGame {
     @Enumerated(EnumType.STRING)
     private PlayerStatus playerStatus;
 
-    @Column(name = "is_game_over")
-    private Boolean isGameOver;
-
     @Size(max = 6)
     @Column(name = "word", length = 6)
     private String word;
