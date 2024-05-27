@@ -5,14 +5,23 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ua.nure.wordle.entity.UserGame;
 import ua.nure.wordle.repository.UserGameRepository;
+import ua.nure.wordle.service.interfaces.GameService;
 import ua.nure.wordle.service.interfaces.UserGameService;
+import ua.nure.wordle.service.interfaces.UserService;
+import ua.nure.wordle.utils.Patcher;
+import ua.nure.wordle.websocket.GameWebSocketHandler;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserGameServiceImpl implements UserGameService {
-    private final UserGameRepository userGameRepository;
+
+    private UserGameRepository userGameRepository;
+    private UserService userService;
+    private GameService gameService;
+    private GameWebSocketHandler gameWebSocketHandler;
+    private Patcher<UserGame> userGamePatcher;
 
     public UserGameServiceImpl(UserGameRepository userGameRepository) {
         this.userGameRepository = userGameRepository;
@@ -59,5 +68,4 @@ public class UserGameServiceImpl implements UserGameService {
     public Optional<UserGame> findSecondPlayer(Long gameId, Long userId) {
         return userGameRepository.findByGameIdAndUserIdNot(gameId, userId);
     }
-
 }

@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.GameDTO;
-import ua.nure.wordle.dto.GameEndedDTO;
+import ua.nure.wordle.dto.response.GameEndedSocketRequest;
 import ua.nure.wordle.dto.UserGameDTO;
 import ua.nure.wordle.dto.request.ConnectGameRequest;
 import ua.nure.wordle.dto.response.ConnectGameResponse;
@@ -68,23 +68,12 @@ public class GameController {
                 .orElseThrow(() -> new NotFoundException("UserGame not found with userId: " + userGameDTO.getUserId() + ", gameId: "));
         UserGame endedGame = convertToUserGame(userGameDTO);
         try {
-            userGamePatcher.patch(userGame, endedGame);
-            userGameService.update(userGame);
-            if(userGame.getGame().getGameStatus()==GameStatus.IN_PROGRESS){
-                Optional<UserGame> secondPlayer = userGameService.findSecondPlayer(userGameDTO.getGameId(), userGameDTO.getUserId());
-                gameService.updateEndTime(userGameDTO.getGameId(), new Timestamp(System.currentTimeMillis()));
-                gameService.updateIsGameOver(userGameDTO.getGameId(),GameStatus.COMPLETE);
-                secondPlayer.get().determinePlayerStatus(userGameDTO.getPlayerStatus());
-                userGameService.update(userGame.getGame().getId(), secondPlayer.orElseThrow(()-> new EntityNotFoundException("Game not found with id: " + userGame.getGame().getId())));
-                List<GameEndedDTO> results = new ArrayList<>();
-                results.add(new GameEndedDTO().builder().userId(userGameDTO.getUserId()).playerStatus(userGameDTO.getPlayerStatus()).build());
-                results.add(new GameEndedDTO().builder().userId(secondPlayer.get().getUser().getId()).playerStatus(secondPlayer.get().getPlayerStatus()).build());
-                gameWebSocketHandler.notifyGameEnded(results, userGameDTO.getGameId());
-            }
+            gameService.endGame(userGameDTO, userGame, endedGame);
         } catch (IllegalAccessException e) {
             log.error("Error occurred while updating userGame with id: {}, {}", userGameDTO.getGameId(), userGameDTO.getUserId(), e);
         }
     }
+
     @PatchMapping("/{id}")
     public List<GameDTO> update(@PathVariable("id") Long id,
                                 @RequestBody GameDTO gameDTO) {
