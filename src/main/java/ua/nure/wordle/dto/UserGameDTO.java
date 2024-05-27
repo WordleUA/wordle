@@ -19,7 +19,5 @@ public class UserGameDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String word;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Boolean isGameOver;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer attempts;
 }

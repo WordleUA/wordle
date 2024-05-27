@@ -14,6 +14,4 @@ public class GameEndedDTO {
     private Long userId;
     @JsonProperty("player_status")
     private PlayerStatus playerStatus;
-    @JsonProperty("game_win_count")
-    private Long gameWinCount;
 }

@@ -66,15 +66,16 @@ public class GameController {
     public GameDTO endGame(@RequestBody UserGameDTO userGameDTO) {
         UserGame userGame = userGameService.readById(userGameDTO.getUserId(), userGameDTO.getGameId())
                 .orElseThrow(() -> new NotFoundException("UserGame not found with userId: " + userGameDTO.getUserId() + ", gameId: "));
-        userGame.setIsGameOver(true);
         UserGame endedGame = convertToUserGame(userGameDTO);
         try {
             userGamePatcher.patch(userGame, endedGame);
             userGameService.update(userGame);
-            Optional<UserGame> secondPlayer = userGameService.findSecondPlayer(userGameDTO.getGameId(), userGameDTO.getUserId());
-            if(secondPlayer.isPresent() && Boolean.FALSE.equals(secondPlayer.get().getIsGameOver())){
+            if(userGame.getGame().getGameStatus()==GameStatus.IN_PROGRESS){
+                Optional<UserGame> secondPlayer = userGameService.findSecondPlayer(userGameDTO.getGameId(), userGameDTO.getUserId());
                 gameService.updateEndTime(userGameDTO.getGameId(), new Timestamp(System.currentTimeMillis()));
+                gameService.updateIsGameOver(userGameDTO.getGameId(),GameStatus.COMPLETE);
                 secondPlayer.get().determinePlayerStatus(userGameDTO.getPlayerStatus());
+                userGameService.update(userGame.getGame().getId(), secondPlayer.orElseThrow(()-> new EntityNotFoundException("Game not found with id: " + userGame.getGame().getId())));
                 List<GameEndedDTO> results = new ArrayList<>();
                 results.add(new GameEndedDTO().builder().userId(userGameDTO.getUserId()).playerStatus(userGameDTO.getPlayerStatus()).build());
                 results.add(new GameEndedDTO().builder().userId(secondPlayer.get().getUser().getId()).playerStatus(secondPlayer.get().getPlayerStatus()).build());

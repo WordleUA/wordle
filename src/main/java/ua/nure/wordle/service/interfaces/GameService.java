@@ -11,4 +11,5 @@ public interface GameService extends Service<Game>{
     Optional<Game> findByStatus(GameStatus gameStatus);
     Game connectGame(User user, String word);
     Game updateEndTime(long id, Timestamp dateTime);
+    Game updateIsGameOver(long id, GameStatus isGameOver);
 }

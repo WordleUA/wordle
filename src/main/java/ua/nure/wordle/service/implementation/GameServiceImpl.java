@@ -10,14 +10,12 @@ import ua.nure.wordle.entity.UserGame;
 import ua.nure.wordle.entity.UserGameId;
 import ua.nure.wordle.entity.enums.GameStatus;
 import ua.nure.wordle.repository.GameRepository;
-import ua.nure.wordle.repository.UserRepository;
 import ua.nure.wordle.service.interfaces.GameService;
 import ua.nure.wordle.service.interfaces.UserGameService;
 import ua.nure.wordle.websocket.GameWebSocketHandler;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -114,6 +112,14 @@ public class GameServiceImpl implements GameService {
         Game game = gameRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Game not found with id: " + id));
         game.setEndedAt(dateTime);
+        return gameRepository.save(game);
+    }
+
+    @Override
+    public Game updateIsGameOver(long id, GameStatus isGameOver) {
+        Game game = gameRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Game not found with id: " + id));
+        game.setGameStatus(isGameOver);
         return gameRepository.save(game);
     }
 
