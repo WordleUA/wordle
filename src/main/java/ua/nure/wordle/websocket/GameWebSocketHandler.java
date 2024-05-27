@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 import ua.nure.wordle.dto.GameEndedDTO;
+import ua.nure.wordle.dto.response.ConnectGameResponse;
 
 import java.util.List;
 
@@ -13,9 +14,9 @@ public class GameWebSocketHandler {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    public void notifyGameStart(Long gameId, String word) {
-        String destination = "/topic/game/" + gameId;
-        messagingTemplate.convertAndSend(destination, word);
+    public void notifyGameStart(ConnectGameResponse connectGameResponse) {
+        String destination = "/topic/game/" + connectGameResponse.getGameId();
+        messagingTemplate.convertAndSend(destination, connectGameResponse);
     }
 
     public void notifyGameEnded(List<GameEndedDTO> results, Long gameId) {

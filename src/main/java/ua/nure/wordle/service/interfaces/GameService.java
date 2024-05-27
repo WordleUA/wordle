@@ -1,5 +1,6 @@
 package ua.nure.wordle.service.interfaces;
 
+import ua.nure.wordle.dto.response.ConnectGameResponse;
 import ua.nure.wordle.entity.Game;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.enums.GameStatus;
@@ -9,7 +10,7 @@ import java.util.Optional;
 
 public interface GameService extends Service<Game>{
     Optional<Game> findByStatus(GameStatus gameStatus);
-    Game connectGame(User user, String word);
+    ConnectGameResponse connectGame(User user, String word);
     Game updateEndTime(long id, Timestamp dateTime);
     Game updateIsGameOver(long id, GameStatus isGameOver);
 }
