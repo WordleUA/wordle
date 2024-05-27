@@ -1,7 +1,6 @@
 package ua.nure.wordle.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import ua.nure.wordle.entity.enums.PlayerStatus;
@@ -31,6 +30,9 @@ public class UserGame {
     @Column(name = "player_status")
     @Enumerated(EnumType.STRING)
     private PlayerStatus playerStatus;
+
+    @Column(name = "is_game_over")
+    private Boolean isGameOver;
 
     @Size(max = 6)
     @Column(name = "word", length = 6)

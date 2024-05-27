@@ -47,4 +47,17 @@ public class UserGameServiceImpl implements UserGameService {
     public Page<UserGame> getAll(Pageable pageable) {
         return userGameRepository.findAll(pageable);
     }
+
+    @Override
+    public Optional<UserGame> readById(Long userId, Long gameId) {
+        return userGameRepository.findByUserIdAndGameId(userId, gameId);
+    }
+    @Override
+    public UserGame update(UserGame userGame) {
+        return userGameRepository.save(userGame);
+    }
+    public Optional<UserGame> findSecondPlayer(Long gameId, Long userId) {
+        return userGameRepository.findByGameIdAndUserIdNot(gameId, userId);
+    }
+
 }
