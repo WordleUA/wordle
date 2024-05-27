@@ -1,6 +1,7 @@
 package ua.nure.wordle.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,24 +25,14 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+@AllArgsConstructor
 @Service
 public class GameServiceImpl implements GameService {
     private final GameRepository gameRepository;
     private final UserGameService userGameService;
     private final UserService userService;
-    private final GameService gameService;
     private final GameWebSocketHandler gameWebSocketHandler;
     private final Patcher<UserGame> userGamePatcher;
-
-    public GameServiceImpl(GameRepository gameRepository, UserGameService userGameService, UserService userService, GameService gameService, GameWebSocketHandler gameWebSocketHandler, Patcher<UserGame> userGamePatcher) {
-        this.gameRepository = gameRepository;
-        this.userGameService = userGameService;
-        this.userService = userService;
-        this.gameService = gameService;
-        this.gameWebSocketHandler = gameWebSocketHandler;
-        this.userGamePatcher = userGamePatcher;
-    }
 
     @Override
     public Game create(Game game) {
@@ -115,24 +106,6 @@ public class GameServiceImpl implements GameService {
             create(game);
             userGameService.create(userGame);
             return ConnectGameResponse.builder().gameId(game.getId()).userId(user.getId()).gameStatus(game.getGameStatus()).build();
-        }
-    }
-
-    public void endGame(UserGameDTO userGameDTO, UserGame userGame, UserGame endedGame) throws IllegalAccessException {
-        userGamePatcher.patch(userGame, endedGame);
-        userGameService.update(userGame);
-        userService.updateGameWinCount(userGame.getUser().getId(), userGame.getAttempts(), userGameDTO.getPlayerStatus());
-        if (userGame.getGame().getGameStatus() == GameStatus.IN_PROGRESS) {
-            Optional<UserGame> secondPlayer = userGameService.findSecondPlayer(userGameDTO.getGameId(), userGameDTO.getUserId());
-            if(secondPlayer.isEmpty()) throw new EntityNotFoundException("UserGame not found with gameId: " + userGameDTO.getGameId() + ", userId: " + userGameDTO.getUserId());
-            gameService.updateEndTime(userGameDTO.getGameId(), new Timestamp(System.currentTimeMillis()));
-            gameService.updateIsGameOver(userGameDTO.getGameId(), GameStatus.COMPLETE);
-            secondPlayer.get().determinePlayerStatus(userGameDTO.getPlayerStatus());
-            userGameService.update(userGame.getGame().getId(), secondPlayer.orElseThrow(() -> new EntityNotFoundException("Game not found with id: " + userGame.getGame().getId())));
-            List<GameEndedSocketRequest> results = new ArrayList<>();
-            results.add(new GameEndedSocketRequest().builder().userId(userGameDTO.getUserId()).playerStatus(userGameDTO.getPlayerStatus()).build());
-            results.add(new GameEndedSocketRequest().builder().userId(secondPlayer.get().getUser().getId()).playerStatus(secondPlayer.get().getPlayerStatus()).build());
-            gameWebSocketHandler.notifyGameEnded(results, userGameDTO.getGameId());
         }
     }
 
