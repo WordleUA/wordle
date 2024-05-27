@@ -1,9 +1,15 @@
 import "./DictateWord.css";
 import React, { useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 
 function DictateWord() {
+    const navigate = useNavigate();
+
     const [letters, setLetters] = useState(["", "", "", "", ""]);
+    const [message, setMessage] = useState("");
     const inputRefs = useRef([]);
+    const user_id = 1;
+
 
     useEffect(() => {
         inputRefs.current = inputRefs.current.slice(0, letters.length);
@@ -11,8 +17,9 @@ function DictateWord() {
 
     const handleChange = (index, event) => {
         const newLetters = [...letters];
+        newLetters[index] = event.target.value;
         setLetters(newLetters);
-        if (index < inputRefs.current.length - 1) {
+        if (index < inputRefs.current.length - 1 && event.target.value) {
             inputRefs.current[index + 1].focus();
         }
     };
@@ -34,9 +41,39 @@ function DictateWord() {
         }
     };
 
-
-
     const word = letters.join("");
+
+    const handleSubmit = async () => {
+        const gameStartDTO = {
+            user_id: user_id,
+            word: word
+        };
+
+        try {
+            const response = await fetch('http://localhost:8080/game/connect', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(gameStartDTO)
+            });
+
+            if (response.ok) {
+                const gameData = await response.json();
+                setMessage("Game connected successfully!");
+                console.log("Game connected:", gameData);
+                navigate('/waitingPage', { state: { gameData } }); 
+            } else {
+                const gameDTO = await response.json();
+                setMessage("Failed to connect game");
+                console.error("Failed to connect game");
+                console.log("Game connected:", gameDTO);
+            }
+        } catch (error) {
+            setMessage("Error: " + error.message);
+            console.error("Error:", error);
+        }
+    };
 
     return (
         <div className="dictate-word">
@@ -56,10 +93,11 @@ function DictateWord() {
                         />
                     ))}
                 </div>
-                <button className="dictate-word-form-btn" onClick={() => console.log(word)}>ЗАГАДАТИ СЛОВО</button>
+                <button className="dictate-word-form-btn" onClick={handleSubmit}>ЗАГАДАТИ СЛОВО</button>
             </div>
-
+            {message && <p className="message">{message}</p>}
         </div>
     );
 }
+
 export default DictateWord;

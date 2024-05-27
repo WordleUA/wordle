@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from 'react-router-dom';
 import "./GameField.css";
 import Keyboard from "../KeyBoard/Keyboard";
-import Modal from "../Modal/Modal"; // Import the Modal component
-
-const TARGET_WORD = "ШКОЛА"; // Загадане слово
+import Modal from "../Modal/Modal";
+import {useNavigate} from "react-router";
 
 function GameField() {
-    const [inputValues, setInputValues] = useState(Array(30).fill("")); // Масив для зберігання значень полів введення
-    const [currentRow, setCurrentRow] = useState(0); // Додаємо стан для поточного рядка
-    const [rowColors, setRowColors] = useState(Array(30).fill("")); // Масив для зберігання кольорів літер
-    const [gameStatus, setGameStatus] = useState(""); // Стан для відображення повідомлення про виграш або програш
-    const [showModal, setShowModal] = useState(false); // State to control the modal visibility
-    const [timeLeft, setTimeLeft] = useState(600); // Timer state in seconds (10 minutes)
-    const [timeTaken, setTimeTaken] = useState(0); // State to store the time taken
+    const navigate = useNavigate();
+    const location = useLocation();
+    const gameData = location.state?.gameData;
+    const TARGET_WORD = gameData.opponent_word;
+
+    const [inputValues, setInputValues] = useState(Array(30).fill(""));
+    const [currentRow, setCurrentRow] = useState(0);
+    const [rowColors, setRowColors] = useState(Array(30).fill(""));
+    const [gameStatus, setGameStatus] = useState("");
+    const [showModal, setShowModal] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(600);
+    const [timeTaken, setTimeTaken] = useState(0);
 
     useEffect(() => {
         if (timeLeft > 0 && !showModal) {
@@ -28,7 +33,7 @@ function GameField() {
 
     useEffect(() => {
         if (gameStatus === "Ви виграли!") {
-            setTimeTaken(600 - timeLeft); // Calculate the time taken
+            setTimeTaken(600 - timeLeft);
         }
     }, [gameStatus]);
 
@@ -92,13 +97,12 @@ function GameField() {
             }
             setRowColors(newRowColors);
             setGameStatus("Ви виграли!");
-            setShowModal(true); // Show the modal on win
+            setShowModal(true);
         } else {
             const targetWordArray = TARGET_WORD.split("");
             const wordArray = word.split("");
             const correctLetterCounts = {};
 
-            // First pass: Mark correct letters (green)
             wordArray.forEach((char, index) => {
                 if (char === TARGET_WORD[index]) {
                     newRowColors[startIndex + index] = "green";
@@ -106,7 +110,6 @@ function GameField() {
                 }
             });
 
-            // Second pass: Mark present letters (yellow) and absent letters (darkgrey)
             wordArray.forEach((char, index) => {
                 if (newRowColors[startIndex + index] !== "green") {
                     if (targetWordArray.includes(char) && (correctLetterCounts[char] || 0) < targetWordArray.filter(c => c === char).length) {
@@ -122,7 +125,7 @@ function GameField() {
             setCurrentRow(currentRow + 1);
             if (currentRow === 5) {
                 setGameStatus("Ви програли! Слово було: " + TARGET_WORD);
-                setShowModal(true); // Show the modal on loss
+                setShowModal(true);
             }
         }
     };
@@ -141,7 +144,7 @@ function GameField() {
                         value={inputValues[index]}
                         onChange={(e) => handleInputChange(index, e)}
                         onKeyDown={(e) => handleKeyPress(index, e)}
-                        maxLength="1" // Обмеження на 1 символ
+                        maxLength="1"
                     />
                 );
             }
@@ -156,6 +159,7 @@ function GameField() {
 
     const handleCloseModal = () => {
         setShowModal(false);
+        navigate('/howToPlay');
     };
 
     const formatTime = (seconds) => {
@@ -172,8 +176,9 @@ function GameField() {
             <div className="gamefield-keyboard">
                 <Keyboard onClick={handleKeyboardClick} />
                 <div className="gamefield-keyboard-btns">
-                    <button className="gamefield-keyboard-btn-backspace" onClick={() => handleBackspace(inputValues.lastIndexOf(""))}>⭠</button>
-                    <button className="gamefield-keyboard-btn-submit" onClick={validateCurrentRow}>ОК</button>
+                    <button className="gamefield-keyboard-btn-backspace" onClick={() => handleBackspace(inputValues.lastIndexOf(""))}>←</button>
+
+                    <button className="gamefield-keyboard-btn-submit" onClick={validateCurrentRow}>OK</button>
                 </div>
             </div>
         </div>
