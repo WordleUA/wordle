@@ -63,7 +63,7 @@ public class GameController {
     }
 
     @PatchMapping("/end")
-    public GameDTO endGame(@RequestBody UserGameDTO userGameDTO) {
+    public void endGame(@RequestBody UserGameDTO userGameDTO) {
         UserGame userGame = userGameService.readById(userGameDTO.getUserId(), userGameDTO.getGameId())
                 .orElseThrow(() -> new NotFoundException("UserGame not found with userId: " + userGameDTO.getUserId() + ", gameId: "));
         UserGame endedGame = convertToUserGame(userGameDTO);
@@ -84,7 +84,6 @@ public class GameController {
         } catch (IllegalAccessException e) {
             log.error("Error occurred while updating userGame with id: {}, {}", userGameDTO.getGameId(), userGameDTO.getUserId(), e);
         }
-        return null;
     }
     @PatchMapping("/{id}")
     public List<GameDTO> update(@PathVariable("id") Long id,
