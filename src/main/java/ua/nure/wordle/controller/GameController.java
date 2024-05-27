@@ -40,9 +40,6 @@ public class GameController {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final Patcher<Game> gamePatcher;
-    private final Patcher<UserGame> userGamePatcher;
-    private final GameWebSocketHandler gameWebSocketHandler;
-
 
     @GetMapping()
     public List<GameDTO> findAll() {

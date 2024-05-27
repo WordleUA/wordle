@@ -40,3 +40,4 @@ VALUES (2, 9, 'word1');
 
 select * from game;
 select * from wordle.user_game;
+select * from wordle.user;
