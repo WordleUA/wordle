@@ -26,6 +26,7 @@ public class ConnectGameResponse {
     private GameStatus gameStatus;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("opponent_word")
     @Size(max = 5)
-    private String word;
+    private String opponentWord;
 }

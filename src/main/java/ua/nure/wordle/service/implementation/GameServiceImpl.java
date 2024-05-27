@@ -89,10 +89,10 @@ public class GameServiceImpl implements GameService {
             Long opponentId = opponentUserGame.map(ug -> ug.getUser().getId()).orElse(null);
 
             ConnectGameResponse connectGameSocketResponse = ConnectGameResponse.builder().gameId(game.getId())
-                    .userId(opponentId).gameStatus(game.getGameStatus()).word(userGame.getWord()).build();
+                    .userId(opponentId).gameStatus(game.getGameStatus()).opponentWord(userGame.getWord()).build();
 
             ConnectGameResponse connectGameResponse = ConnectGameResponse.builder().gameId(game.getId())
-                    .userId(user.getId()).gameStatus(game.getGameStatus()).word(opponentWord).build();
+                    .userId(user.getId()).gameStatus(game.getGameStatus()).opponentWord(opponentWord).build();
 
             gameWebSocketHandler.notifyGameStart(connectGameSocketResponse);
             return connectGameResponse;
