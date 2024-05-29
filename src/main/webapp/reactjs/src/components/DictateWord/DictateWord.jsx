@@ -51,7 +51,7 @@ function DictateWord() {
         };
 
         try {
-            const response = await fetch('http://localhost:8080/game/connect', {
+            const response = await fetch('https://wordle-4fel.onrender.com/game/connect', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
