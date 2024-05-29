@@ -12,7 +12,7 @@ function WebSocket() {
 
     useEffect(() => {
         // Підключення до SockJS endpoint
-        const socket = new SockJS('http://localhost:8080/ws');
+        const socket = new SockJS('https://wordle-4fel.onrender.com/ws');
         const stompClient = new Client({
             webSocketFactory: () => socket,
             onConnect: () => {
