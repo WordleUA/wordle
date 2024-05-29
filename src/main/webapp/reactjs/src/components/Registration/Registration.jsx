@@ -1,6 +1,7 @@
 import React from 'react';
 
 import "./Registration.css"
+import {Link} from "react-router-dom";
 
 function Registration() {
     return (
@@ -38,7 +39,7 @@ function Registration() {
 
                         <button className="registration-form-btn" type="submit">ЗАРЕЄСТРУВАТИСЬ
                         </button>
-                        <p className="registration-form-p">Вже маєте акаунт? <button className="registration-form-btn-tologin">Увійти</button></p>
+                        <p className="registration-form-p">Вже маєте акаунт? <Link to="/" className="registration-form-btn-tologin">Увійти</Link></p>
                     </form>
                 </div>
             </div>

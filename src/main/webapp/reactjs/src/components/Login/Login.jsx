@@ -1,6 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom'; // Додайте імпорт Link з react-router-dom
 
-import "./Login.css"
+import "./Login.css";
 
 function Login() {
     return (
@@ -28,14 +29,13 @@ function Login() {
 
                         <button className="login-form-btn" type="submit">УВІЙТИ
                         </button>
-                        <p className="login-form-p">Не маєте акаунта? <button className="login-form-btn-toregistration">Зареєcтруватись</button></p>
+
+                        <p className="login-form-p">Не маєте акаунта? <Link to="/registration" className="login-form-btn-toregistration">Зареєcтруватись</Link></p>
                     </form>
                 </div>
             </div>
         </div>
-
     );
-
 }
 
 export default Login;
