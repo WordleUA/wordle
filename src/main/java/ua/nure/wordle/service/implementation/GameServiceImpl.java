@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ua.nure.wordle.dto.UserGameDTO;
 import ua.nure.wordle.dto.response.ConnectGameResponse;
-import ua.nure.wordle.dto.response.GameEndedSocketRequest;
+import ua.nure.wordle.dto.request.GameEndedSocketRequest;
 import ua.nure.wordle.entity.Game;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.UserGame;
