@@ -18,7 +18,29 @@ function GameField() {
     const [showModal, setShowModal] = useState(false);
     const [timeLeft, setTimeLeft] = useState(600);
     const [timeTaken, setTimeTaken] = useState(0);
+    const [canSubmit, setCanSubmit] = useState(false); // Додайте стан для вказівки на можливість натискання кнопки
 
+    useEffect(() => {
+        // Перевірте, чи введено 5 літер у поточному рядку, та оновіть canSubmit відповідно
+        if (inputValues.slice(currentRow * 5, (currentRow + 1) * 5).join("").length === 5) {
+            setCanSubmit(true);
+        } else {
+            setCanSubmit(false);
+        }
+    }, [inputValues, currentRow]);
+
+    const validateCurrentRow = () => {
+        const startIndex = currentRow * 5;
+        const word = inputValues.slice(startIndex, startIndex + 5).join("");
+
+        if (word.length === 5) {
+            validateWord(word);
+        } else {
+
+        }
+    };
+
+    // таймер
     useEffect(() => {
         if (timeLeft > 0 && !showModal) {
             const timer = setInterval(() => {
@@ -76,16 +98,11 @@ function GameField() {
 
     const handleInputChange = (index, event) => {
         const newInputValues = [...inputValues];
-        newInputValues[index] = event.target.value;
+        newInputValues[index] = event.target.value.toUpperCase();
         setInputValues(newInputValues);
     };
 
-    const validateCurrentRow = () => {
-        const startIndex = currentRow * 5;
-        const word = inputValues.slice(startIndex, startIndex + 5).join("");
 
-        validateWord(word);
-    };
 
     const validateWord = (word) => {
         const newRowColors = [...rowColors];
@@ -123,13 +140,14 @@ function GameField() {
 
             setRowColors(newRowColors);
             setCurrentRow(currentRow + 1);
+            // кількість спроб обмежена
             if (currentRow === 5) {
                 setGameStatus("Ви програли! Слово було: " + TARGET_WORD);
                 setShowModal(true);
             }
         }
     };
-
+    // кількість спроб
     const renderInputRows = () => {
         const rows = [];
         for (let i = 0; i < 6; i++) {
@@ -178,7 +196,7 @@ function GameField() {
                 <div className="gamefield-keyboard-btns">
                     <button className="gamefield-keyboard-btn-backspace" onClick={() => handleBackspace(inputValues.lastIndexOf(""))}>←</button>
 
-                    <button className="gamefield-keyboard-btn-submit" onClick={validateCurrentRow}>OK</button>
+                    <button className="gamefield-keyboard-btn-submit" onClick={canSubmit ? validateCurrentRow : null}>OK</button>
                 </div>
             </div>
         </div>

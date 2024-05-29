@@ -17,12 +17,13 @@ function DictateWord() {
 
     const handleChange = (index, event) => {
         const newLetters = [...letters];
-        newLetters[index] = event.target.value;
+        newLetters[index] = event.target.value.toUpperCase();
         setLetters(newLetters);
         if (index < inputRefs.current.length - 1 && event.target.value) {
             inputRefs.current[index + 1].focus();
         }
     };
+
 
     const handleBackspace = (index, event) => {
         if (event.key === "Backspace" && letters[index] === "") {

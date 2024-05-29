@@ -58,8 +58,8 @@ function WaitingPage() {
                 <></>
             ) : (
                 <>
-                    <h1>ОЧІКУЄМО СУПЕРНИКА...</h1>
-                    {message && <p>{message}</p>}
+                    <h1 className="waiting-page-header">ОЧІКУЄМО СУПЕРНИКА...</h1>
+
                 </>
             )}
         </div>
