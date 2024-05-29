@@ -6,7 +6,7 @@ function Keyboard({ onClick }) {
         onClick(key);
     };
 
-    const ukrainianAlphabet = "АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ";
+    const ukrainianAlphabet = "ЙЦУКЕНГШЩЗХЇФІВАПРОЛДЖЄЯЧСМИТЬБЮ";
 
     return (
         <div className="gamefield-keyboard">

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from 'react-router-dom';
 import "./GameField.css";
 import Keyboard from "../KeyBoard/Keyboard";
 import Modal from "../Modal/Modal";
-import {useNavigate} from "react-router";
+import { useNavigate } from "react-router";
 
 function GameField() {
     const navigate = useNavigate();
@@ -18,10 +18,12 @@ function GameField() {
     const [showModal, setShowModal] = useState(false);
     const [timeLeft, setTimeLeft] = useState(600);
     const [timeTaken, setTimeTaken] = useState(0);
-    const [canSubmit, setCanSubmit] = useState(false); // Додайте стан для вказівки на можливість натискання кнопки
+    const [canSubmit, setCanSubmit] = useState(false);
+
+    // Create refs for input fields
+    const inputRefs = useRef([]);
 
     useEffect(() => {
-        // Перевірте, чи введено 5 літер у поточному рядку, та оновіть canSubmit відповідно
         if (inputValues.slice(currentRow * 5, (currentRow + 1) * 5).join("").length === 5) {
             setCanSubmit(true);
         } else {
@@ -36,11 +38,9 @@ function GameField() {
         if (word.length === 5) {
             validateWord(word);
         } else {
-
         }
     };
 
-    // таймер
     useEffect(() => {
         if (timeLeft > 0 && !showModal) {
             const timer = setInterval(() => {
@@ -100,54 +100,54 @@ function GameField() {
         const newInputValues = [...inputValues];
         newInputValues[index] = event.target.value.toUpperCase();
         setInputValues(newInputValues);
+
+        // Move focus to next input if a letter is entered and not the last input in the row
+        if (event.target.value && index < (currentRow + 1) * 5 - 1) {
+            inputRefs.current[index + 1].focus();
+        }
     };
-
-
 
     const validateWord = (word) => {
         const newRowColors = [...rowColors];
         const startIndex = currentRow * 5;
+        const targetWordArray = TARGET_WORD.split("");
+        const wordArray = word.split("");
+
+        // Reset correctLetterCounts
+        const correctLetterCounts = {};
+
+        // First pass: Green letters
+        wordArray.forEach((char, index) => {
+            if (char === targetWordArray[index]) {
+                newRowColors[startIndex + index] = "green";
+                correctLetterCounts[char] = (correctLetterCounts[char] || 0) + 1;
+            }
+        });
+
+        // Second pass: Yellow letters
+        wordArray.forEach((char, index) => {
+            if (newRowColors[startIndex + index] !== "green") {
+                if (targetWordArray.includes(char) && (correctLetterCounts[char] || 0) < targetWordArray.filter(c => c === char).length) {
+                    newRowColors[startIndex + index] = "yellow";
+                    correctLetterCounts[char] = (correctLetterCounts[char] || 0) + 1;
+                } else {
+                    newRowColors[startIndex + index] = "darkgrey";
+                }
+            }
+        });
+
+        setRowColors(newRowColors);
 
         if (word === TARGET_WORD) {
-            for (let i = 0; i < 5; i++) {
-                newRowColors[startIndex + i] = "green";
-            }
-            setRowColors(newRowColors);
             setGameStatus("Ви виграли!");
             setShowModal(true);
+        } else if (currentRow === 5) {
+            setGameStatus("Ви програли! Слово було: " + TARGET_WORD);
+            setShowModal(true);
         } else {
-            const targetWordArray = TARGET_WORD.split("");
-            const wordArray = word.split("");
-            const correctLetterCounts = {};
-
-            wordArray.forEach((char, index) => {
-                if (char === TARGET_WORD[index]) {
-                    newRowColors[startIndex + index] = "green";
-                    correctLetterCounts[char] = (correctLetterCounts[char] || 0) + 1;
-                }
-            });
-
-            wordArray.forEach((char, index) => {
-                if (newRowColors[startIndex + index] !== "green") {
-                    if (targetWordArray.includes(char) && (correctLetterCounts[char] || 0) < targetWordArray.filter(c => c === char).length) {
-                        newRowColors[startIndex + index] = "yellow";
-                        correctLetterCounts[char] = (correctLetterCounts[char] || 0) + 1;
-                    } else {
-                        newRowColors[startIndex + index] = "darkgrey";
-                    }
-                }
-            });
-
-            setRowColors(newRowColors);
             setCurrentRow(currentRow + 1);
-            // кількість спроб обмежена
-            if (currentRow === 5) {
-                setGameStatus("Ви програли! Слово було: " + TARGET_WORD);
-                setShowModal(true);
-            }
         }
     };
-    // кількість спроб
     const renderInputRows = () => {
         const rows = [];
         for (let i = 0; i < 6; i++) {
@@ -158,6 +158,7 @@ function GameField() {
                     <input
                         key={index}
                         id={`input-${index}`}
+                        ref={(el) => (inputRefs.current[index] = el)}
                         className={`gamefield-tries-row-el ${rowColors[index]}`}
                         value={inputValues[index]}
                         onChange={(e) => handleInputChange(index, e)}
@@ -195,7 +196,6 @@ function GameField() {
                 <Keyboard onClick={handleKeyboardClick} />
                 <div className="gamefield-keyboard-btns">
                     <button className="gamefield-keyboard-btn-backspace" onClick={() => handleBackspace(inputValues.lastIndexOf(""))}>←</button>
-
                     <button className="gamefield-keyboard-btn-submit" onClick={canSubmit ? validateCurrentRow : null}>OK</button>
                 </div>
             </div>
