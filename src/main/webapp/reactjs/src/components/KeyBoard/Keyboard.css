@@ -1,7 +1,7 @@
 .gamefield-keyboard {
     display: flex;
     flex-direction: row;
-    max-width: 60%;
+    max-width: 65%;
     align-items: center;
     justify-content: center;
     gap: 5px;

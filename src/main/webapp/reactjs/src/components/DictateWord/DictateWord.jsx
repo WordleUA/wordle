@@ -8,7 +8,7 @@ function DictateWord() {
     const [letters, setLetters] = useState(["", "", "", "", ""]);
     const [message, setMessage] = useState("");
     const inputRefs = useRef([]);
-    const user_id = 1;
+    const user_id = 2;
 
 
     useEffect(() => {
