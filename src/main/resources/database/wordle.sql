@@ -8,18 +8,12 @@ SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE =
 -- -----------------------------------------------------
 -- Schema wordle
 -- -----------------------------------------------------
-DROP SCHEMA IF EXISTS `wordle`;
-
--- -----------------------------------------------------
--- Schema wordle
--- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `wordle` DEFAULT CHARACTER SET utf8mb3;
 USE `wordle`;
 
 -- -----------------------------------------------------
 -- Table `wordle`.`game`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `wordle`.`game`;
 
 CREATE TABLE IF NOT EXISTS `wordle`.`game`
 (
@@ -37,7 +31,6 @@ CREATE TABLE IF NOT EXISTS `wordle`.`game`
 -- -----------------------------------------------------
 -- Table `wordle`.`user`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `wordle`.`user`;
 
 CREATE TABLE IF NOT EXISTS `wordle`.`user`
 (
@@ -60,7 +53,6 @@ CREATE TABLE IF NOT EXISTS `wordle`.`user`
 -- -----------------------------------------------------
 -- Table `wordle`.`user_game`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `wordle`.`user_game`;
 
 CREATE TABLE IF NOT EXISTS `wordle`.`user_game`
 (

@@ -3,7 +3,7 @@ package ua.nure.wordle.websocket;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
-import ua.nure.wordle.dto.response.GameEndedSocketRequest;
+import ua.nure.wordle.dto.request.GameEndedSocketRequest;
 import ua.nure.wordle.dto.response.ConnectGameResponse;
 
 import java.util.List;

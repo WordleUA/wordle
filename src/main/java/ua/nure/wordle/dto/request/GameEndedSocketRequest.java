@@ -1,4 +1,4 @@
-package ua.nure.wordle.dto.response;
+package ua.nure.wordle.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

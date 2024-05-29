@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.GameDTO;
-import ua.nure.wordle.dto.response.GameEndedSocketRequest;
 import ua.nure.wordle.dto.UserGameDTO;
 import ua.nure.wordle.dto.request.ConnectGameRequest;
 import ua.nure.wordle.dto.response.ConnectGameResponse;
@@ -20,13 +19,10 @@ import ua.nure.wordle.service.interfaces.GameService;
 import ua.nure.wordle.service.interfaces.UserGameService;
 import ua.nure.wordle.service.interfaces.UserService;
 import ua.nure.wordle.utils.Patcher;
-import ua.nure.wordle.websocket.GameWebSocketHandler;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin
 @RestController
