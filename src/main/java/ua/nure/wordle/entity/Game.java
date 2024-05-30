@@ -14,7 +14,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Builder
-@Table(name = "game")
+@Table(name = "game", schema = "wordle_uzmi")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Game {

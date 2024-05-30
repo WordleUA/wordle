@@ -11,7 +11,7 @@ import ua.nure.wordle.entity.enums.PlayerStatus;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user_game")
+@Table(name = "user_game", schema = "wordle_uzmi")
 public class UserGame {
     @EmbeddedId
     private UserGameId id;
