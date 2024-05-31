@@ -67,7 +67,7 @@ public class UserController {
                 .username(userDTO.getUsername())
                 .email(userDTO.getEmail())
                 .passwordHash(userDTO.getPasswordHash())
-                .role(UserRole.PLAYER)
+                .role(String.valueOf(UserRole.PLAYER))
                 .isBanned(false)
                 .gameWinCount(0)
                 .gameLoseCount(0)
