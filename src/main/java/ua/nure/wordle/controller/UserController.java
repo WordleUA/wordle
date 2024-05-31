@@ -60,11 +60,6 @@ public class UserController {
         return findAll();
     }
 
-    @DeleteMapping("/{id}")
-    public List<UserDTO> delete(@PathVariable Long id) {
-        userService.delete(id);
-        return findAll();
-    }
 
     @GetMapping("/cabinet")
     public CabinetResponse getCabinet(@PathVariable Long id) {
@@ -75,6 +70,14 @@ public class UserController {
                 .username(existingUser.getUsername())
                 .email(existingUser.getEmail()).coinsTotal(existingUser.getCoinsTotal()).build()).userGames(null).wins(1).losses(1).build();
     }
+
+    @PatchMapping("/block/{id}")
+    public UserDTO blockUser(@PathVariable("id") Long id) {
+        User existingUser = userService.readById(id).
+                orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+        return convertToDTO(userService.blockUser(existingUser));
+    }
+
 
     private User convertToEntity(UserDTO userDTO) {
         return User.builder()
@@ -88,7 +91,6 @@ public class UserController {
                 .gameCount(0L)
                 .coinsTotal(0L)
                 .build();
-
     }
 
     private UserDTO convertToDTO(User user) {
