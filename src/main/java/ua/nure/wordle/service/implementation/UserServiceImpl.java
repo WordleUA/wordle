@@ -71,4 +71,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
+    @Override
+    public User blockUser(User user) {
+        if(Boolean.FALSE.equals(user.getIsBanned())){
+            user.setIsBanned(Boolean.TRUE);
+        } else user.setIsBanned(Boolean.FALSE);
+        return update(user.getId(), user);
+    }
+
 }
