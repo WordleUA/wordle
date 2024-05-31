@@ -59,7 +59,7 @@ public class UserController {
     public List<UserDTO> update(@Validated @PathVariable("id") Long id,
                                 @RequestBody UserDTO userDTO) {
         User existingUser = userService.readById(id).
-                orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+                orElseThrow(() -> new NotFoundException("User not found with id: " + id + ". Please, write valid user."));
         User updatedUser = convertToEntity(userDTO);
 
         try {
