@@ -56,6 +56,7 @@ public class UserController {
         User existingUser = userService.readById(id).
                 orElseThrow(() -> new NotFoundException("User not found with id: " + id));
         User updatedUser = convertToEntity(userDTO);
+
         try {
             patcher.patch(existingUser, updatedUser);
             userService.update(id, existingUser);
