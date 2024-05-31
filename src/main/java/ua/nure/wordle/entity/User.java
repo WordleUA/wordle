@@ -49,21 +49,21 @@ public class User {
     @NotNull
     @ColumnDefault("0")
     @Column(name = "game_win_count", nullable = false)
-    private Integer gameWinCount;
+    private Long gameWinCount;
 
     @NotNull
     @ColumnDefault("0")
     @Column(name = "game_lose_count", nullable = false)
-    private Integer gameLoseCount;
+    private Long gameLoseCount;
 
     @NotNull
     @ColumnDefault("0")
     @Column(name = "game_count", nullable = false)
-    private Integer gameCount;
+    private Long gameCount;
 
     @NotNull
     @ColumnDefault("0")
     @Column(name = "coins_total", nullable = false)
-    private Integer coinsTotal;
+    private Long coinsTotal;
 
 }
