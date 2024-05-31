@@ -1,12 +1,16 @@
 package ua.nure.wordle.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.UserDTO;
+import ua.nure.wordle.dto.UserGameDTO;
+import ua.nure.wordle.dto.response.CabinetResponse;
 import ua.nure.wordle.entity.User;
+import ua.nure.wordle.entity.UserGame;
 import ua.nure.wordle.entity.enums.UserRole;
 import ua.nure.wordle.exceptions.NotFoundException;
 import ua.nure.wordle.service.interfaces.UserService;
@@ -62,6 +66,16 @@ public class UserController {
         return findAll();
     }
 
+    @GetMapping("/cabinet")
+    public CabinetResponse getCabinet(@PathVariable Long id) {
+        User existingUser = userService.readById(id).
+                orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+//        List<UserGame>
+        return CabinetResponse.builder().user(UserDTO.builder()
+                .username(existingUser.getUsername())
+                .email(existingUser.getEmail()).coinsTotal(existingUser.getCoinsTotal()).build()).userGames(null).wins(1).losses(1).build();
+    }
+
     private User convertToEntity(UserDTO userDTO) {
         return User.builder()
                 .username(userDTO.getUsername())
@@ -69,10 +83,10 @@ public class UserController {
                 .passwordHash(userDTO.getPasswordHash())
                 .role(String.valueOf(UserRole.PLAYER))
                 .isBanned(false)
-                .gameWinCount(0)
-                .gameLoseCount(0)
-                .gameCount(0)
-                .coinsTotal(0)
+                .gameWinCount(0L)
+                .gameLoseCount(0L)
+                .gameCount(0L)
+                .coinsTotal(0L)
                 .build();
 
     }
