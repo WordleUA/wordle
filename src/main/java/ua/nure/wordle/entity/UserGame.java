@@ -3,6 +3,7 @@ package ua.nure.wordle.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import ua.nure.wordle.entity.enums.PlayerStatus;
 
 @Getter
@@ -11,7 +12,7 @@ import ua.nure.wordle.entity.enums.PlayerStatus;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user_game", schema = "wordle_uzmi")
+@Table(name = "user_game")
 public class UserGame {
     @EmbeddedId
     private UserGameId id;
@@ -26,12 +27,13 @@ public class UserGame {
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
 
-    @Lob
-    @Column(name = "player_status")
-    @Enumerated(EnumType.STRING)
-    private PlayerStatus playerStatus;
+    @Size(max = 4)
+    @ColumnDefault("NULL")
+    @Column(name = "player_status", length = 4)
+    private String playerStatus;
 
     @Size(max = 6)
+    @ColumnDefault("NULL")
     @Column(name = "word", length = 6)
     private String word;
 
@@ -41,15 +43,14 @@ public class UserGame {
     public void determinePlayerStatus(PlayerStatus playerStatus){
         switch (playerStatus) {
             case WIN:
-                this.playerStatus = PlayerStatus.LOSE;
+                this.playerStatus = String.valueOf(PlayerStatus.LOSE);
                 break;
             case LOSE:
-                this.playerStatus = PlayerStatus.WIN;
+                this.playerStatus = String.valueOf(PlayerStatus.WIN);
                 break;
             default:
-                this.playerStatus = PlayerStatus.DRAW;
+                this.playerStatus = String.valueOf(PlayerStatus.DRAW);
                 break;
         }
     }
-
 }

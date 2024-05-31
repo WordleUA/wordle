@@ -95,7 +95,7 @@ public class GameController {
                 .id(new UserGameId(userGameDTO.getUserId(), userGameDTO.getGameId()))
                 .game(game)
                 .user(user)
-                .playerStatus(userGameDTO.getPlayerStatus())
+                .playerStatus(String.valueOf(userGameDTO.getPlayerStatus()))
                 .word(userGameDTO.getWord())
                 .attempts(userGameDTO.getAttempts())
                 .build();

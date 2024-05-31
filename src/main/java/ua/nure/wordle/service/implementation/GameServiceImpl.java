@@ -13,6 +13,7 @@ import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.UserGame;
 import ua.nure.wordle.entity.UserGameId;
 import ua.nure.wordle.entity.enums.GameStatus;
+import ua.nure.wordle.entity.enums.PlayerStatus;
 import ua.nure.wordle.repository.GameRepository;
 import ua.nure.wordle.service.interfaces.GameService;
 import ua.nure.wordle.service.interfaces.UserGameService;
@@ -121,8 +122,11 @@ public class GameServiceImpl implements GameService {
             secondPlayer.get().determinePlayerStatus(userGameDTO.getPlayerStatus());
             userGameService.update(userGame.getGame().getId(), secondPlayer.orElseThrow(() -> new EntityNotFoundException("Game not found with id: " + userGame.getGame().getId())));
             List<GameEndedSocketRequest> results = new ArrayList<>();
-            results.add(new GameEndedSocketRequest().builder().userId(userGameDTO.getUserId()).playerStatus(userGameDTO.getPlayerStatus()).build());
-            results.add(new GameEndedSocketRequest().builder().userId(secondPlayer.get().getUser().getId()).playerStatus(secondPlayer.get().getPlayerStatus()).build());
+            results.add(new GameEndedSocketRequest().builder()
+                    .userId(userGameDTO.getUserId()).playerStatus(userGameDTO.getPlayerStatus()).build());
+            results.add(new GameEndedSocketRequest().builder()
+                    .userId(secondPlayer.get().getUser().getId())
+                    .playerStatus(PlayerStatus.valueOf(secondPlayer.get().getPlayerStatus())).build());
             gameWebSocketHandler.notifyGameEnded(results, userGameDTO.getGameId());
         }
     }

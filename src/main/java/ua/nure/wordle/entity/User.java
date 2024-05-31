@@ -5,17 +5,17 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import ua.nure.wordle.entity.enums.UserRole;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Entity
-@Table(name = "users", schema = "wordle_uzmi")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "users")
 public class User {
     @Id
+    @ColumnDefault("nextval('wordle_uzmi.user_id_seq'")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
@@ -35,15 +35,16 @@ public class User {
     @Column(name = "password_hash", nullable = false, length = 45)
     private String passwordHash;
 
+    @Size(max = 6)
     @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
-    private UserRole role;
+    @ColumnDefault("PLAYER")
+    @Column(name = "role", nullable = false, length = 6)
+    private String role;
 
     @NotNull
-    @ColumnDefault("0")
+    @ColumnDefault("false")
     @Column(name = "is_banned", nullable = false)
-    private Boolean isBanned;
+    private Boolean isBanned = false;
 
     @NotNull
     @ColumnDefault("0")
