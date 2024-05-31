@@ -9,4 +9,5 @@ public interface UserService extends Service<User> {
     Long getGameWinCount(int attempts, PlayerStatus playerStatus);
     User blockUser(User user);
     CabinetResponse getCabinet(Long id);
+    User getByEmail(String email);
 }

@@ -3,6 +3,8 @@ package ua.nure.wordle.service.implementation;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import ua.nure.wordle.dto.UserDTO;
@@ -28,6 +30,15 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository, UserGameService userGameService) {
         this.userRepository = userRepository;
         this.userGameService = userGameService;
+    }
+
+    public User getByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User with email " + email + " does not exist"));
+    }
+
+    public UserDetailsService userDetailsService() {
+        return this::getByEmail;
     }
 
     @Override
