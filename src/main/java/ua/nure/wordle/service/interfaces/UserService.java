@@ -6,4 +6,5 @@ import ua.nure.wordle.entity.enums.PlayerStatus;
 public interface UserService extends Service<User> {
     User updateGameWinCount(long id, int attempts, PlayerStatus playerStatus);
     User blockUser(User user);
+    User getByEmail(String email);
 }
