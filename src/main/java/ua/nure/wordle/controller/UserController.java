@@ -50,6 +50,11 @@ public class UserController {
         return findAll();
     }
 
+    @GetMapping()
+    public int notSleep() {
+        return 1;
+    }
+
     @PatchMapping("/{id}")
     public List<UserDTO> update(@Validated @PathVariable("id") Long id,
                                 @RequestBody UserDTO userDTO) {
