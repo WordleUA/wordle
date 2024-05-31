@@ -15,6 +15,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO implements Serializable {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long id;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -35,19 +36,22 @@ public class UserDTO implements Serializable {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UserRole role;
-
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("is_banned")
     private Boolean isBanned;
-
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("game_win_count")
     private Long gameWinCount;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("game_lose_count")
     private Long gameLoseCount;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("game_count")
     private Long gameCount;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("coins_total")
     private Long coinsTotal;
 }
