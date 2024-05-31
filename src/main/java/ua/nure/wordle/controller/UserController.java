@@ -1,24 +1,19 @@
 package ua.nure.wordle.controller;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.UserDTO;
-import ua.nure.wordle.dto.UserGameDTO;
 import ua.nure.wordle.dto.response.CabinetResponse;
 import ua.nure.wordle.entity.User;
-import ua.nure.wordle.entity.UserGame;
-import ua.nure.wordle.entity.enums.PlayerStatus;
 import ua.nure.wordle.entity.enums.UserRole;
-import ua.nure.wordle.exceptions.NotFoundException;
+import ua.nure.wordle.exception.NotFoundException;
 import ua.nure.wordle.service.interfaces.UserGameService;
 import ua.nure.wordle.service.interfaces.UserService;
 import ua.nure.wordle.utils.Patcher;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin
