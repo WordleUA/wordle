@@ -71,6 +71,14 @@ public class UserController {
                 .email(existingUser.getEmail()).coinsTotal(existingUser.getCoinsTotal()).build()).userGames(null).wins(1).losses(1).build();
     }
 
+    @PatchMapping("/role/{id}")
+    public UserDTO changeRole(@PathVariable("id") Long id, @RequestBody UserDTO userDTO) {
+        User existingUser = userService.readById(id).
+                orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+        existingUser.setRole(userDTO.getRole().getRole());
+        return convertToDTO(userService.update(id, existingUser));
+    }
+
     @PatchMapping("/block/{id}")
     public UserDTO blockUser(@PathVariable("id") Long id) {
         User existingUser = userService.readById(id).
