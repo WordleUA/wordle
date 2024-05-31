@@ -14,7 +14,7 @@ import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.UserGame;
 import ua.nure.wordle.entity.UserGameId;
 import ua.nure.wordle.entity.enums.GameStatus;
-import ua.nure.wordle.exceptions.NotFoundException;
+import ua.nure.wordle.exception.NotFoundException;
 import ua.nure.wordle.service.interfaces.GameService;
 import ua.nure.wordle.service.interfaces.UserGameService;
 import ua.nure.wordle.service.interfaces.UserService;

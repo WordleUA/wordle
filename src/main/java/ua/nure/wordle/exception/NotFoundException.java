@@ -1,4 +1,4 @@
-package ua.nure.wordle.exceptions;
+package ua.nure.wordle.exception;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException(String message) {
