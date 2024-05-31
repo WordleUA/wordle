@@ -11,11 +11,14 @@ import ua.nure.wordle.dto.UserGameDTO;
 import ua.nure.wordle.dto.response.CabinetResponse;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.UserGame;
+import ua.nure.wordle.entity.enums.PlayerStatus;
 import ua.nure.wordle.entity.enums.UserRole;
 import ua.nure.wordle.exceptions.NotFoundException;
+import ua.nure.wordle.service.interfaces.UserGameService;
 import ua.nure.wordle.service.interfaces.UserService;
 import ua.nure.wordle.utils.Patcher;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin
@@ -24,12 +27,14 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
+    private final UserGameService userGameService;
     private final ModelMapper modelMapper;
     private final Patcher<User> patcher;
 
     @Autowired
-    public UserController(UserService userService, ModelMapper modelMapper, Patcher<User> patcher) {
+    public UserController(UserService userService, UserGameService userGameService, ModelMapper modelMapper, Patcher<User> patcher) {
         this.userService = userService;
+        this.userGameService = userGameService;
         this.modelMapper = modelMapper;
         this.patcher = patcher;
     }
@@ -60,15 +65,15 @@ public class UserController {
         return findAll();
     }
 
+    @DeleteMapping("/{id}")
+    public List<UserDTO> delete(@PathVariable Long id) {
+        userService.delete(id);
+        return findAll();
+    }
 
-    @GetMapping("/cabinet")
+    @GetMapping("/cabinet/{id}")
     public CabinetResponse getCabinet(@PathVariable Long id) {
-        User existingUser = userService.readById(id).
-                orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
-//        List<UserGame>
-        return CabinetResponse.builder().user(UserDTO.builder()
-                .username(existingUser.getUsername())
-                .email(existingUser.getEmail()).coinsTotal(existingUser.getCoinsTotal()).build()).userGames(null).wins(1).losses(1).build();
+        return userService.getCabinet(id);
     }
 
     @PatchMapping("/role/{id}")

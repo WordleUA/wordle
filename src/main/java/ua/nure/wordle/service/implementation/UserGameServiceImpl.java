@@ -18,10 +18,7 @@ import java.util.Optional;
 public class UserGameServiceImpl implements UserGameService {
 
     private UserGameRepository userGameRepository;
-    private UserService userService;
-    private GameService gameService;
-    private GameWebSocketHandler gameWebSocketHandler;
-    private Patcher<UserGame> userGamePatcher;
+
 
     public UserGameServiceImpl(UserGameRepository userGameRepository) {
         this.userGameRepository = userGameRepository;
@@ -61,6 +58,12 @@ public class UserGameServiceImpl implements UserGameService {
     public Optional<UserGame> readById(Long userId, Long gameId) {
         return userGameRepository.findByUserIdAndGameId(userId, gameId);
     }
+
+    @Override
+    public List<UserGame> readByUserId(Long userId) {
+        return userGameRepository.findByUserId(userId);
+    }
+
     @Override
     public UserGame update(UserGame userGame) {
         return userGameRepository.save(userGame);
