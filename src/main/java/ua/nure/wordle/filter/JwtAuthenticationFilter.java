@@ -20,7 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ua.nure.wordle.dto.response.ErrorResponse;
+import ua.nure.wordle.dto.response.MessageResponse;
 import ua.nure.wordle.security.JwtService;
 import ua.nure.wordle.service.interfaces.UserService;
 
@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (!StringUtils.startsWith(authHeader, BEARER_PREFIX)) {
-            ErrorResponse error = new ErrorResponse("Missing 'Bearer' type in 'Authorization' header. Expected 'Authorization: Bearer <JWT>'");
+            MessageResponse error = new MessageResponse("Missing 'Bearer' type in 'Authorization' header. Expected 'Authorization: Bearer <JWT>'");
             sendErrorResponse(response, error);
             log.warn(error.getMessage());
             return;
@@ -82,15 +82,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
-            sendErrorResponse(response, new ErrorResponse("Token has expired"));
+            sendErrorResponse(response, new MessageResponse("Token has expired"));
             log.warn(e.toString());
         } catch (JwtException e) {
-            sendErrorResponse(response, new ErrorResponse("Invalid token"));
+            sendErrorResponse(response, new MessageResponse("Invalid token"));
             log.warn(e.toString());
         }
     }
 
-    private void sendErrorResponse(HttpServletResponse response, ErrorResponse message) throws IOException {
+    private void sendErrorResponse(HttpServletResponse response, MessageResponse message) throws IOException {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpStatus.BAD_REQUEST.value());
