@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,17 +29,17 @@ public class User implements UserDetails {
 
     @Size(max = 45)
     @NotNull
-    @Column(name = "username", nullable = false, length = 45)
-    private String username;
+    @Column(name = "login", nullable = false, length = 45)
+    private String login;
 
-    @Size(max = 45)
+    @Size(max = 255)
     @NotNull
-    @Column(name = "email", nullable = false, length = 45)
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Size(max = 45)
+    @Size(max = 255)
     @NotNull
-    @Column(name = "password_hash", nullable = false, length = 45)
+    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
     @Size(max = 6)
@@ -75,6 +76,11 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(role));
+    }
+
+    @Override
+    public String getUsername() {
+        return getEmail();
     }
 
     @Override

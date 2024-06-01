@@ -45,7 +45,7 @@ public class UserController {
         return findAll();
     }
 
-    @GetMapping()
+    @GetMapping("/notSleep")
     public int notSleep() {
         return 1;
     }
@@ -95,7 +95,7 @@ public class UserController {
 
     private User convertToEntity(UserDTO userDTO) {
         return User.builder()
-                .username(userDTO.getUsername())
+                .login(userDTO.getUsername())
                 .email(userDTO.getEmail())
                 .passwordHash(userDTO.getPasswordHash())
                 .role(String.valueOf(UserRole.PLAYER))

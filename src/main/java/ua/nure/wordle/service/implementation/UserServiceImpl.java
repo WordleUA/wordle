@@ -6,13 +6,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import ua.nure.wordle.dto.UserDTO;
 import ua.nure.wordle.dto.UserGameDTO;
 import ua.nure.wordle.dto.response.CabinetResponse;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.UserGame;
 import ua.nure.wordle.entity.enums.PlayerStatus;
+import ua.nure.wordle.exception.EmailAlreadyExistsException;
 import ua.nure.wordle.repository.UserRepository;
 import ua.nure.wordle.service.interfaces.UserGameService;
 import ua.nure.wordle.service.interfaces.UserService;
@@ -43,6 +43,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User user) {
+        if (Boolean.TRUE.equals(userRepository.existsByEmail(user.getEmail()))) {
+            throw new EmailAlreadyExistsException("User with email " + user.getEmail() + " already exists");
+        }
         return userRepository.save(user);
     }
 
@@ -126,7 +129,7 @@ public class UserServiceImpl implements UserService {
             }
         }
         return CabinetResponse.builder().user(UserDTO.builder()
-                        .username(existingUser.getUsername())
+                        .username(existingUser.getLogin())
                         .email(existingUser.getEmail())
                         .coinsTotal(existingUser.getCoinsTotal()).build())
                 .userGames(userGameDTOS)
