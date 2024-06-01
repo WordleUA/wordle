@@ -121,13 +121,7 @@ public class GameServiceImpl implements GameService {
             updateIsGameOver(userGameDTO.getGameId(), GameStatus.COMPLETE);
             secondPlayer.get().determinePlayerStatus(userGameDTO.getPlayerStatus());
             userGameService.update(userGame.getGame().getId(), secondPlayer.orElseThrow(() -> new EntityNotFoundException("Game not found with id: " + userGame.getGame().getId())));
-            List<GameEndedSocketRequest> results = new ArrayList<>();
-            results.add(new GameEndedSocketRequest().builder()
-                    .userId(userGameDTO.getUserId()).playerStatus(userGameDTO.getPlayerStatus()).build());
-            results.add(new GameEndedSocketRequest().builder()
-                    .userId(secondPlayer.get().getUser().getId())
-                    .playerStatus(PlayerStatus.valueOf(secondPlayer.get().getPlayerStatus())).build());
-            gameWebSocketHandler.notifyGameEnded(results, userGameDTO.getGameId());
+            gameWebSocketHandler.notifyGameEnded(PlayerStatus.valueOf(secondPlayer.get().getPlayerStatus()), userGameDTO.getGameId());
         }
     }
 

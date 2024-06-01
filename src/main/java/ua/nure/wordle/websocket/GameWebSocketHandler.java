@@ -5,6 +5,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 import ua.nure.wordle.dto.request.GameEndedSocketRequest;
 import ua.nure.wordle.dto.response.ConnectGameResponse;
+import ua.nure.wordle.entity.enums.PlayerStatus;
 
 import java.util.List;
 
@@ -19,9 +20,9 @@ public class GameWebSocketHandler {
         messagingTemplate.convertAndSend(destination, connectGameResponse);
     }
 
-    public void notifyGameEnded(List<GameEndedSocketRequest> results, Long gameId) {
+    public void notifyGameEnded(PlayerStatus playerStatus, Long gameId) {
         String destination = "/topic/game/" + gameId;
-        messagingTemplate.convertAndSend(destination, results);
+        messagingTemplate.convertAndSend(destination, playerStatus);
     }
 }
 
