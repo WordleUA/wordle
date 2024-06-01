@@ -10,8 +10,6 @@ import ua.nure.wordle.entity.enums.PlayerStatus;
 @AllArgsConstructor
 @Builder
 public class GameEndedSocketRequest {
-    @JsonProperty("user_id")
-    private Long userId;
     @JsonProperty("player_status")
     private PlayerStatus playerStatus;
 }
