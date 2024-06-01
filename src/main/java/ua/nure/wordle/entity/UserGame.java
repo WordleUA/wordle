@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicUpdate;
 import ua.nure.wordle.entity.enums.PlayerStatus;
 
 @Getter
@@ -12,6 +13,7 @@ import ua.nure.wordle.entity.enums.PlayerStatus;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicUpdate
 @Table(name = "user_game")
 public class UserGame {
     @EmbeddedId
