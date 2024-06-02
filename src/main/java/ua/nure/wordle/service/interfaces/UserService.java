@@ -1,6 +1,7 @@
 package ua.nure.wordle.service.interfaces;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
+import ua.nure.wordle.dto.response.AdministrationResponse;
 import ua.nure.wordle.dto.response.CabinetResponse;
 import ua.nure.wordle.dto.response.GeneralStatisticResponse;
 import ua.nure.wordle.entity.User;
@@ -16,4 +17,5 @@ public interface UserService extends Service<User> {
     User getByEmail(String email);
     UserDetailsService userDetailsService();
     List<GeneralStatisticResponse> getGeneralStatistic();
+    List<AdministrationResponse> getUsersByAdmin();
 }

@@ -1,6 +1,7 @@
 package ua.nure.wordle.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -9,9 +10,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GeneralStatisticResponse {
-    @JsonProperty(required = true)
+    @NotNull
     private String login;
 
-    @JsonProperty(value = "coins_total", required = true)
+    @NotNull
+    @JsonProperty(value = "coins_total")
     private Long coinsTotal;
 }

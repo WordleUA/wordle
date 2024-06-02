@@ -1,6 +1,7 @@
 package ua.nure.wordle.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -8,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ua.nure.wordle.dto.UserDTO;
 import ua.nure.wordle.dto.UserGameDTO;
+import ua.nure.wordle.dto.response.AdministrationResponse;
 import ua.nure.wordle.dto.response.CabinetResponse;
 import ua.nure.wordle.dto.response.GeneralStatisticResponse;
 import ua.nure.wordle.entity.User;
@@ -21,16 +23,20 @@ import ua.nure.wordle.service.interfaces.UserService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserGameService userGameService;
+    private final ModelMapper modelMapper;
 
-    public UserServiceImpl(UserRepository userRepository, UserGameService userGameService) {
+    public UserServiceImpl(UserRepository userRepository, UserGameService userGameService,
+                           ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.userGameService = userGameService;
+        this.modelMapper = modelMapper;
     }
 
     public User getByEmail(String email) {
@@ -44,13 +50,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<GeneralStatisticResponse> getGeneralStatistic() {
-        List<User> users = userRepository.findAllByOrderByCoinsTotalDesc();
-        List<GeneralStatisticResponse> generalStatisticResponses = new ArrayList<>();
-        for (User user : users) {
-            generalStatisticResponses.add(GeneralStatisticResponse.builder()
-                    .login(user.getLogin()).coinsTotal(user.getCoinsTotal()).build());
-        }
-        return generalStatisticResponses;
+        return userRepository.findAllByOrderByCoinsTotalDesc().stream()
+                .map((element) -> modelMapper.map(element, GeneralStatisticResponse.class))
+                .toList();
+    }
+
+    @Override
+    public List<AdministrationResponse> getUsersByAdmin() {
+        return userRepository.findAll().stream()
+                .map((element) -> modelMapper.map(element, AdministrationResponse.class))
+                .toList();
     }
 
 

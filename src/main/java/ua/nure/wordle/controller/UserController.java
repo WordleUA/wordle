@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.UserDTO;
+import ua.nure.wordle.dto.response.AdministrationResponse;
 import ua.nure.wordle.dto.response.CabinetResponse;
 import ua.nure.wordle.dto.response.GeneralStatisticResponse;
 import ua.nure.wordle.entity.User;
@@ -38,6 +39,11 @@ public class UserController {
     @GetMapping()
     public List<UserDTO> findAll() {
         return userService.getAll().stream().map(this::convertToDTO).toList();
+    }
+
+    @GetMapping("/usersByAdmin")
+    public List<AdministrationResponse> getUsersByAdmin() {
+        return userService.getUsersByAdmin();
     }
 
     @GetMapping("/generalStatistic")
