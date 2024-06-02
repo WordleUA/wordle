@@ -36,9 +36,11 @@ public class SecurityConfig {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/user/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/example/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/example/player/**").hasAuthority("PLAYER")
+                        .requestMatchers("/example/**").authenticated()
                         .requestMatchers("/swagger-ui/**", "/swagger-resources/*").permitAll()
-                        .requestMatchers("/example/admin/**").hasAuthority("admin")
                         .anyRequest().permitAll()) // Поки доступно всім
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

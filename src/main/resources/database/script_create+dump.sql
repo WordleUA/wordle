@@ -48,7 +48,7 @@ CREATE INDEX IF NOT EXISTS idx_user_game_user_id ON user_game (user_id);
 
 
 -- Insert data into user table
-INSERT INTO "user" (username, email, password_hash, role, is_banned, game_win_count, game_lose_count, game_count,
+INSERT INTO "user" (login, email, password_hash, role, is_banned, game_win_count, game_lose_count, game_count,
                     coins_total)
 VALUES ('user1', 'user1@gmail.com', 'password1', 'PLAYER', FALSE, 0, 0, 0, 0),
        ('user2', 'user2@gmail.com', 'password2', 'PLAYER', FALSE, 0, 0, 0, 0),

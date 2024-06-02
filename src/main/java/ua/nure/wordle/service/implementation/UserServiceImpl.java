@@ -95,16 +95,12 @@ public class UserServiceImpl implements UserService {
     }
 
     public Long getGameWinCount(int attempts, PlayerStatus playerStatus) {
-        switch (playerStatus) {
-            case WIN:
-                return (long) (7 - attempts);
-            case LOSE:
-                return (long) -1;
-            case DRAW:
-                return 0L;
-            default:
-                throw new IllegalArgumentException("Invalid player status: " + playerStatus);
-        }
+        return switch (playerStatus) {
+            case WIN -> (long) (7 - attempts);
+            case LOSE -> (long) -1;
+            case DRAW -> 0L;
+            default -> throw new IllegalArgumentException("Invalid player status: " + playerStatus);
+        };
     }
 
     public CabinetResponse getCabinet(Long id) {
@@ -112,8 +108,8 @@ public class UserServiceImpl implements UserService {
                 orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
         List<UserGame> userGames = userGameService.readByUserId(existingUser.getId());
         List<UserGameDTO> userGameDTOS = new ArrayList<>();
-        Integer wins = 0;
-        Integer loses = 0;
+        int wins = 0;
+        int loses = 0;
         for (UserGame userGame : userGames) {
             userGameDTOS.add(UserGameDTO.builder()
                     .date(userGame.getGame().getCreatedAt())
@@ -129,7 +125,7 @@ public class UserServiceImpl implements UserService {
             }
         }
         return CabinetResponse.builder().user(UserDTO.builder()
-                        .username(existingUser.getLogin())
+                        .login(existingUser.getLogin())
                         .email(existingUser.getEmail())
                         .coinsTotal(existingUser.getCoinsTotal()).build())
                 .userGames(userGameDTOS)

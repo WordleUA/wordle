@@ -29,7 +29,7 @@ public class AuthProvider implements AuthenticationProvider {
         String password = authentication.getCredentials().toString();
         User user = (User) userService.userDetailsService().loadUserByUsername(email);
 
-        if (user == null || (!user.getEmail().equals(email) && !user.getLogin().equals(email)))
+        if (user == null || (!user.getEmail().equals(email) && !user.getUsername().equals(email)))
             throw new UsernameNotFoundException("User with email " + email + " does not exist");
 
         if (!passwordEncoder.matches(password, user.getPassword()))
