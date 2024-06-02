@@ -19,11 +19,11 @@ import ua.nure.wordle.exception.EmailAlreadyExistsException;
 import ua.nure.wordle.repository.UserRepository;
 import ua.nure.wordle.service.interfaces.UserGameService;
 import ua.nure.wordle.service.interfaces.UserService;
+import ua.nure.wordle.utils.Patcher;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -31,12 +31,14 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserGameService userGameService;
     private final ModelMapper modelMapper;
+    private final Patcher<User> patcher;
 
     public UserServiceImpl(UserRepository userRepository, UserGameService userGameService,
-                           ModelMapper modelMapper) {
+                           ModelMapper modelMapper, Patcher<User> patcher) {
         this.userRepository = userRepository;
         this.userGameService = userGameService;
         this.modelMapper = modelMapper;
+        this.patcher = patcher;
     }
 
     public User getByEmail(String email) {
@@ -104,11 +106,16 @@ public class UserServiceImpl implements UserService {
         switch (playerStatus) {
             case WIN:
                 user.setCoinsTotal(user.getCoinsTotal() + (7 - attempts));
+                user.setGameWinCount(user.getGameWinCount() + 1);
+                user.setGameCount(user.getGameCount() + 1);
                 break;
             case LOSE:
                 user.setCoinsTotal(user.getCoinsTotal() - 1);
+                user.setGameWinCount(user.getGameLoseCount() + 1);
+                user.setGameCount(user.getGameCount() + 1);
                 break;
             case DRAW:
+                user.setGameCount(user.getGameCount() + 1);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid player status: " + playerStatus);
@@ -130,8 +137,6 @@ public class UserServiceImpl implements UserService {
                 orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
         List<UserGame> userGames = userGameService.readByUserId(existingUser.getId());
         List<UserGameDTO> userGameDTOS = new ArrayList<>();
-        int wins = 0;
-        int loses = 0;
         for (UserGame userGame : userGames) {
             userGameDTOS.add(UserGameDTO.builder()
                     .date(userGame.getGame().getCreatedAt())
@@ -140,19 +145,14 @@ public class UserServiceImpl implements UserService {
                     .coins(getGameWinCount(userGame.getAttempts(),
                             PlayerStatus.valueOf(userGame.getPlayerStatus())))
                     .build());
-            if (userGame.getPlayerStatus().equals("WIN")) {
-                wins += 1;
-            } else {
-                loses += 1;
-            }
         }
         return CabinetResponse.builder().user(UserDTO.builder()
                         .login(existingUser.getLogin())
                         .email(existingUser.getEmail())
                         .coinsTotal(existingUser.getCoinsTotal()).build())
                 .userGames(userGameDTOS)
-                .wins(wins)
-                .losses(loses)
+                .wins(existingUser.getGameWinCount())
+                .losses(existingUser.getGameLoseCount())
                 .build();
     }
 

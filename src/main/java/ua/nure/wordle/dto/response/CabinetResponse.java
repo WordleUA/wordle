@@ -19,7 +19,7 @@ public class CabinetResponse {
     @JsonProperty("user_games")
     List<UserGameDTO> userGames;
     @NotNull
-    Integer wins;
+    Long wins;
     @NotNull
-    Integer losses;
+    Long losses;
 }
