@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import ua.nure.wordle.dto.UserDTO;
 import ua.nure.wordle.dto.UserGameDTO;
-import ua.nure.wordle.entity.User;
-import ua.nure.wordle.entity.UserGame;
 
 import java.util.List;
 @Getter
