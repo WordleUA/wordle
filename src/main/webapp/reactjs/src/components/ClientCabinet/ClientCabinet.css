@@ -15,6 +15,7 @@
 .cabinet-form {
     padding: 20px;
     border-radius: 8px;
+    align-items: center; /* Вирівнює елементи по горизонталі в центрі */
 }
 
 .user-info {
@@ -54,7 +55,8 @@
 
 .games-header {
     font-size: 32px;
-    margin: 30px 0px;
+    margin-top: 30px;
+    margin-left: 150px;
     text-align: center;
 }
 
@@ -83,4 +85,28 @@
 
 .games-table tbody tr:last-child td {
     border-bottom: none;
+}
+
+.user-stats {
+    float: right;
+    text-align: center;
+    font-weight: bolder;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.user-stats p {
+    margin-bottom: 5px;
+}
+
+.user-stats p span {
+    margin-left: 10px;
+}
+
+.user-stats-wins {
+    color: #519341;
+}
+
+.user-stats-losses {
+    color: #DF0000;
 }

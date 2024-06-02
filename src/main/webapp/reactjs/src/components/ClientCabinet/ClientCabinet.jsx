@@ -4,6 +4,8 @@ import "./ClientCabinet.css";
 function ClientCabinet() {
     const [userInfo, setUserInfo] = useState({});
     const [userGames, setUserGames] = useState([]);
+    const [wins, setWins] = useState(0);
+    const [losses, setLosses] = useState(0);
 
     const id = 34;
 
@@ -20,6 +22,8 @@ function ClientCabinet() {
             .then(data => {
                 setUserInfo(data.user);
                 setUserGames(data.user_games);
+                setWins(data.wins);
+                setLosses(data.losses);
 
             })
             .catch(error => {
@@ -50,8 +54,13 @@ function ClientCabinet() {
                     <span>Кількість монет: {userInfo.coins_total}</span>
                     <button className="edit-button">Редагувати</button>
                 </div>
+                <div className="user-stats">
+                    <p>Виграші/Програші</p>
+                    <span className='user-stats-wins'>{wins}</span>
+                    <span>/</span>
+                    <span className='user-stats-losses'>{losses}</span>
+                </div>
                 <h1 className="games-header">МОЇ ІГРИ</h1>
-
                 <table className="games-table">
                     <thead>
                     <tr>
