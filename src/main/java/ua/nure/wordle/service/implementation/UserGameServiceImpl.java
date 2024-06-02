@@ -68,6 +68,7 @@ public class UserGameServiceImpl implements UserGameService {
     public UserGame update(UserGame userGame) {
         return userGameRepository.save(userGame);
     }
+
     public Optional<UserGame> findSecondPlayer(Long gameId, Long userId) {
         return userGameRepository.findByGameIdAndUserIdNot(gameId, userId);
     }
