@@ -1,66 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import './WaitingPage.css';
-import SockJS from 'sockjs-client';
-import { Client } from '@stomp/stompjs';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useSocket } from '../WebSocket/SocketContext';
 
 function WaitingPage() {
     const location = useLocation();
     const navigate = useNavigate();
-    const [gameData, setGameData] = useState(location.state?.gameData || null);
-    const [message, setMessage] = useState('');
-    const [gameStarted, setGameStarted] = useState(false);
+    const { subscribeToSocket, gameData, setGameData, message, gameStarted } = useSocket();
 
     useEffect(() => {
-        if (gameData) {
-            setMessage(`Game Status: ${gameData.game_status}`);
-            if (gameData.game_status === 'IN_PROGRESS') {
-                setGameStarted(true);
-                navigateToGame(gameData);
+        if (location.state?.gameData) {
+            const initialGameData = location.state.gameData;
+            setGameData(initialGameData); // Встановлюємо початкові дані гри
+            if (initialGameData.game_status === 'IN_PROGRESS') {
+                subscribeToSocket(initialGameData.game_id);
+                navigateToGame(initialGameData);
             } else {
-                subscribeToSocket(gameData.game_id);
+                subscribeToSocket(initialGameData.game_id);
             }
         }
-    }, [gameData]);
+    }, [location.state]);
+
+    useEffect(() => {
+        if (gameStarted && gameData) {
+            navigateToGame(gameData);
+        }
+    }, [gameStarted, gameData]);
 
     const navigateToGame = (gameData) => {
         navigate('/gameField', { state: { gameData } });
     };
 
-    const subscribeToSocket = (gameId) => {
-        const socket = new SockJS('https://wordle-4fel.onrender.com/ws');
-        const stompClient = new Client({
-            webSocketFactory: () => socket,
-            onConnect: () => {
-                console.log('Connected to WebSocket');
-                stompClient.subscribe(`/topic/game/${gameId}`, (message) => {
-                    const messageBody = JSON.parse(message.body);
-                    console.log('Message from socket:', messageBody);
-                    setGameData(messageBody);
-                    setMessage(`Game Status: ${messageBody.game_status}`);
-                    if (messageBody.game_status === 'IN_PROGRESS') {
-                        setGameStarted(true);
-                        navigateToGame(messageBody);
-                    }
-                });
-            },
-            onDisconnect: () => {
-                console.log('Disconnected from WebSocket');
-            },
-        });
-
-        stompClient.activate();
-    };
-
     return (
         <div className="waiting-page">
-            {gameStarted ? (
-                <></>
-            ) : (
+            {!gameStarted ? (
                 <>
                     <h1 className="waiting-page-header">ОЧІКУЄМО СУПЕРНИКА...</h1>
-
                 </>
+            ) : (
+                <></>
             )}
         </div>
     );

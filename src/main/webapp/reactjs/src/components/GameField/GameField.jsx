@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useLocation } from 'react-router-dom';
 import "./GameField.css";
 import Keyboard from "../KeyBoard/Keyboard";
 import Modal from "../Modal/Modal";
 import { useNavigate } from "react-router";
+import { useLocation } from "react-router-dom";
+import { useSocket } from "../WebSocket/SocketContext";
 
 function GameField() {
     const navigate = useNavigate();
     const location = useLocation();
-    const gameData = location.state?.gameData;
-    const TARGET_WORD = gameData.opponent_word;
 
     const [inputValues, setInputValues] = useState(Array(30).fill(""));
     const [currentRow, setCurrentRow] = useState(0);
@@ -19,9 +18,15 @@ function GameField() {
     const [timeLeft, setTimeLeft] = useState(600);
     const [timeTaken, setTimeTaken] = useState(0);
     const [canSubmit, setCanSubmit] = useState(false);
+    const [coins, setCoins] = useState(0);
+    const [playerStatus, setPlayerStatus] = useState(null);
 
-    // Create refs for input fields
     const inputRefs = useRef([]);
+
+    const { subscribeToSocket, gameData, setGameData, message, gameStarted } = useSocket();
+    const TARGET_WORD = gameData.opponent_word;
+    const gameId = gameData.game_id;
+    const [messageLose, setMessageLose] = useState('Слово було: ' + TARGET_WORD);
 
     useEffect(() => {
         if (inputValues.slice(currentRow * 5, (currentRow + 1) * 5).join("").length === 5) {
@@ -37,7 +42,6 @@ function GameField() {
 
         if (word.length === 5) {
             validateWord(word);
-        } else {
         }
     };
 
@@ -48,16 +52,32 @@ function GameField() {
             }, 1000);
             return () => clearInterval(timer);
         } else if (timeLeft === 0) {
-            setGameStatus("Час вийшов! Ви програли!");
+            setGameStatus("Час вийшов!");
             setShowModal(true);
+            endGame("DRAW");
         }
     }, [timeLeft, showModal]);
 
     useEffect(() => {
-        if (gameStatus === "Ви виграли!") {
+        if (gameStatus && playerStatus === null) {
             setTimeTaken(600 - timeLeft);
+            const coinsEarned = gameStatus === "Ви виграли!" ? 6 - currentRow : 0;
+            const coinsLost = gameStatus === "Ви програли!" ? -1 : 0;
+            const coinsDraw = gameStatus === "Час вийшов!" ? 0 : 0;
+            setCoins(gameStatus === "Ви виграли!" ? coinsEarned : gameStatus === "Ви програли!" ? coinsLost : gameStatus === "Час вийшов!" ? coinsDraw : 0);
+            endGame(gameStatus === "Ви виграли!" ? "WIN" : gameStatus === "Час вийшов!" ? "DRAW" : gameStatus === "Ви програли!" ? "LOSE" : null);
         }
-    }, [gameStatus]);
+    }, [gameStatus, currentRow, timeLeft]);
+
+    useEffect(TARGET_WORD => {
+        if ((message === 'LOSE' || message === 'WIN') && playerStatus === null) {
+            setPlayerStatus(message);
+
+            setGameStatus(playerStatus === 'WIN' ? "Ви виграли!" : "Ви програли!");
+            setShowModal(true);
+        }
+    }, [message, playerStatus, TARGET_WORD]);
+
 
     const handleKeyboardClick = (key) => {
         const newInputValues = [...inputValues];
@@ -101,7 +121,6 @@ function GameField() {
         newInputValues[index] = event.target.value.toUpperCase();
         setInputValues(newInputValues);
 
-        // Move focus to next input if a letter is entered and not the last input in the row
         if (event.target.value && index < (currentRow + 1) * 5 - 1) {
             inputRefs.current[index + 1].focus();
         }
@@ -113,10 +132,8 @@ function GameField() {
         const targetWordArray = TARGET_WORD.split("");
         const wordArray = word.split("");
 
-        // Reset correctLetterCounts
         const correctLetterCounts = {};
 
-        // First pass: Green letters
         wordArray.forEach((char, index) => {
             if (char === targetWordArray[index]) {
                 newRowColors[startIndex + index] = "green";
@@ -124,7 +141,6 @@ function GameField() {
             }
         });
 
-        // Second pass: Yellow letters
         wordArray.forEach((char, index) => {
             if (newRowColors[startIndex + index] !== "green") {
                 if (targetWordArray.includes(char) && (correctLetterCounts[char] || 0) < targetWordArray.filter(c => c === char).length) {
@@ -142,12 +158,15 @@ function GameField() {
             setGameStatus("Ви виграли!");
             setShowModal(true);
         } else if (currentRow === 5) {
-            setGameStatus("Ви програли! Слово було: " + TARGET_WORD);
+            setGameStatus("Ви програли!");
+
             setShowModal(true);
+            endGame("LOSE");
         } else {
             setCurrentRow(currentRow + 1);
         }
     };
+
     const renderInputRows = () => {
         const rows = [];
         for (let i = 0; i < 6; i++) {
@@ -187,11 +206,50 @@ function GameField() {
         return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
     };
 
+    const endGame = async (playerStatus) => {
+        if (playerStatus === null) return;
+
+        console.log("End Game Status:", playerStatus); // Виведення статусу в консоль
+
+        setPlayerStatus(playerStatus);
+        const attempts = currentRow + 1;
+        const user_id = gameData.user_id;
+        const game_id = gameData.game_id;
+        const requestBody = {
+            user_id,
+            game_id,
+            player_status: playerStatus,
+            attempts
+        };
+
+        try {
+            const response = await fetch('https://wordle-4fel.onrender.com/game/end', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody),
+            });
+
+            if (response.ok) {
+                console.log("Game result recorded successfully.");
+                console.log("Request Body:", requestBody);
+            } else {
+                const errorText = await response.text();
+                console.error("Failed to record game result. Server response:", errorText);
+            }
+        } catch (error) {
+            console.error("Error recording game result:", error);
+        }
+    };
+
+
+
     return (
         <div className="gamefield">
             <div className="gamefield-timer">Час: {formatTime(timeLeft)}</div>
             <div className="gamefield-tries">{renderInputRows()}</div>
-            {showModal && <Modal message={gameStatus} timeTaken={gameStatus === "Ви виграли!" ? formatTime(timeTaken) : null} onClose={handleCloseModal} />}
+            {showModal && <Modal messageLose= {messageLose} message={gameStatus} timeTaken={gameStatus === "Ви виграли!" ? formatTime(timeTaken) : null} coins={coins} onClose={handleCloseModal} />}
             <div className="gamefield-keyboard">
                 <Keyboard onClick={handleKeyboardClick} />
                 <div className="gamefield-keyboard-btns">
