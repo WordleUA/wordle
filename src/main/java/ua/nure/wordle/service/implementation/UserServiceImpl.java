@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import ua.nure.wordle.dto.UserDTO;
 import ua.nure.wordle.dto.UserGameDTO;
 import ua.nure.wordle.dto.response.CabinetResponse;
+import ua.nure.wordle.dto.response.GeneralStatisticResponse;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.UserGame;
 import ua.nure.wordle.entity.enums.PlayerStatus;
@@ -40,6 +41,18 @@ public class UserServiceImpl implements UserService {
     public UserDetailsService userDetailsService() {
         return this::getByEmail;
     }
+
+    @Override
+    public List<GeneralStatisticResponse> getGeneralStatistic() {
+        List<User> users = userRepository.findAllByOrderByCoinsTotalDesc();
+        List<GeneralStatisticResponse> generalStatisticResponses = new ArrayList<>();
+        for (User user : users) {
+            generalStatisticResponses.add(GeneralStatisticResponse.builder()
+                    .login(user.getLogin()).coinsTotal(user.getCoinsTotal()).build());
+        }
+        return generalStatisticResponses;
+    }
+
 
     @Override
     public User create(User user) {

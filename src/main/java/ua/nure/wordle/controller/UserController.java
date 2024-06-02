@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.UserDTO;
 import ua.nure.wordle.dto.response.CabinetResponse;
+import ua.nure.wordle.dto.response.GeneralStatisticResponse;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.enums.UserRole;
 import ua.nure.wordle.exception.NotFoundException;
@@ -37,6 +38,11 @@ public class UserController {
     @GetMapping()
     public List<UserDTO> findAll() {
         return userService.getAll().stream().map(this::convertToDTO).toList();
+    }
+
+    @GetMapping("/generalStatistic")
+    public List<GeneralStatisticResponse> getGeneralStatistic() {
+        return userService.getGeneralStatistic();
     }
 
     @GetMapping("/notSleep")
