@@ -1,39 +1,73 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./ClientCabinet.css";
 
 function ClientCabinet() {
-    const games = [
-        { date: "03.10", word: "ШКОЛА", result: "Виграв", coins: 4 },
-        { date: "03.10", word: "КОЗЕЛ", result: "Програв", coins: -1 },
-        { date: "03.10", word: "БАРАН", result: "Програв", coins: -1 },
-    ];
+    const [userInfo, setUserInfo] = useState({});
+    const [userGames, setUserGames] = useState([]);
+
+    const id = 34;
+
+    useEffect(() => {
+        fetch(`https://wordle-4fel.onrender.com/user/cabinet/${id}`)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+
+                } else {
+                    throw new Error("Network response was not ok.");
+                }
+            })
+            .then(data => {
+                setUserInfo(data.user);
+                setUserGames(data.user_games);
+
+            })
+            .catch(error => {
+                console.error("There was a problem with the fetch operation:", error);
+            });
+    }, []);
+
+    const formatDateString = dateString => {
+        const dateObject = new Date(dateString);
+
+        const year = dateObject.getFullYear();
+        const month = ("0" + (dateObject.getMonth() + 1)).slice(-2);
+        const day = ("0" + dateObject.getDate()).slice(-2);
+        const hours = ("0" + dateObject.getHours()).slice(-2);
+        const minutes = ("0" + dateObject.getMinutes()).slice(-2);
+        const seconds = ("0" + dateObject.getSeconds()).slice(-2);
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    };
 
     return (
         <div className="cabinet">
             <h1 className="cabinet-header">ОСОБИСТИЙ КАБІНЕТ</h1>
             <div className="cabinet-form">
                 <div className="user-info">
-                    <span>Логін: Sofiko</span>
-                    <span>Email: sofiakolokolcheva@gmail.com</span>
-                    <span>Кількість монет: 256</span>
+                    <span>Логін: {userInfo.login}</span>
+                    <span>Email: {userInfo.email}</span>
+                    <span>Кількість монет: {userInfo.coins_total}</span>
                     <button className="edit-button">Редагувати</button>
                 </div>
                 <h1 className="games-header">МОЇ ІГРИ</h1>
+
                 <table className="games-table">
                     <thead>
                     <tr>
                         <th>Дата</th>
-                        <th>Слово</th>
+                        <th>Слово від опонента</th>
                         <th>Результат гри</th>
                         <th>Кількість монет</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {games.map((game, index) => (
+                    {userGames.map((game, index) => (
                         <tr key={index}>
-                            <td>{game.date}</td>
+
+                            <td>{formatDateString(game.date)}</td>
                             <td>{game.word}</td>
-                            <td>{game.result}</td>
+                            <td>{game.player_status}</td>
                             <td>{game.coins}</td>
                         </tr>
                     ))}

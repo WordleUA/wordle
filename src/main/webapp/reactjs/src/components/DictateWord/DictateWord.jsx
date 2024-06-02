@@ -9,7 +9,7 @@ function DictateWord() {
     const [message, setMessage] = useState("");
     const inputRefs = useRef([]);
 
-    const user_id = Math.floor(Math.random() * 8) + 1;
+    const user_id = 34;
 
 
     useEffect(() => {
