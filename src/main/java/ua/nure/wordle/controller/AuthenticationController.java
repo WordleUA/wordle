@@ -8,6 +8,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.request.LoginRequest;
+import ua.nure.wordle.dto.request.RegisterRequest;
 import ua.nure.wordle.dto.response.LoginResponse;
 import ua.nure.wordle.dto.response.MessageResponse;
 import ua.nure.wordle.exception.EmailAlreadyExistsException;
@@ -15,7 +16,7 @@ import ua.nure.wordle.service.AuthenticationService;
 
 @CrossOrigin
 @RestController
-@RequestMapping("")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
 
@@ -23,8 +24,13 @@ public class AuthenticationController {
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<LoginResponse> loginUser(@ModelAttribute LoginRequest loginRequest) {
-        LoginResponse response = authenticationService.signIn(loginRequest);
+        LoginResponse response = authenticationService.login(loginRequest.getEmail(), loginRequest.getPassword());
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<LoginResponse> registerUser(@ModelAttribute RegisterRequest request) {
+        return ResponseEntity.ok(authenticationService.register(request));
     }
 
     @PostMapping(value = "/refresh")

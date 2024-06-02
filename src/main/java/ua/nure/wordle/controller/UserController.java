@@ -39,12 +39,6 @@ public class UserController {
         return userService.getAll().stream().map(this::convertToDTO).toList();
     }
 
-    @PostMapping
-    public List<UserDTO> save(@Validated @RequestBody UserDTO userDTO) {
-        userService.create(convertToEntity(userDTO));
-        return findAll();
-    }
-
     @GetMapping("/notSleep")
     public int notSleep() {
         return 1;
@@ -95,7 +89,7 @@ public class UserController {
 
     private User convertToEntity(UserDTO userDTO) {
         return User.builder()
-                .login(userDTO.getUsername())
+                .login(userDTO.getLogin())
                 .email(userDTO.getEmail())
                 .passwordHash(userDTO.getPasswordHash())
                 .role(String.valueOf(UserRole.PLAYER))
