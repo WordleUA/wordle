@@ -8,6 +8,7 @@ function DictateWord() {
     const [letters, setLetters] = useState(["", "", "", "", ""]);
     const [message, setMessage] = useState("");
     const inputRefs = useRef([]);
+
     const user_id = Math.floor(Math.random() * 8) + 1;
 
 
@@ -63,7 +64,7 @@ function DictateWord() {
                 const gameData = await response.json();
                 setMessage("Game connected successfully!");
                 console.log("Game connected:", gameData);
-                navigate('/waitingPage', { state: { gameData } }); 
+                navigate('/waitingPage', { state: { gameData } });
             } else {
                 const gameDTO = await response.json();
                 setMessage("Failed to connect game");
@@ -97,6 +98,7 @@ function DictateWord() {
                 <button className="dictate-word-form-btn" onClick={handleSubmit}>ЗАГАДАТИ СЛОВО</button>
             </div>
             {message && <p className="message">{message}</p>}
+
         </div>
     );
 }
