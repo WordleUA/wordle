@@ -10,6 +10,11 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class AdministrationResponse {
+
+    @NotNull
+    @JsonProperty("user_id")
+    private Long userId;
+
     @NotNull
     private String login;
 

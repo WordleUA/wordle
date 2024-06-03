@@ -10,6 +10,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GeneralStatisticResponse {
+
+    @NotNull
+    @JsonProperty("user_id")
+    private Long userId;
+
     @NotNull
     private String login;
 
