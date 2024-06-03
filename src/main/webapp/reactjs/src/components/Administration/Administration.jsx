@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { FormControl, MenuItem, Select } from '@mui/material';
+import { Select, MenuItem, FormControl } from '@mui/material';
 import { ukUA } from '@mui/x-data-grid/locales';
 import './Administration.css';
 
-const columns = [
+const columns = (handleUpdateRow) => [
     {
         field: 'login',
         headerName: 'Логін',
@@ -23,7 +23,7 @@ const columns = [
         field: 'role',
         headerName: 'Роль',
         width: 150,
-        renderCell: (params) => <RoleDropdown {...params} />, // Render RoleDropdown component
+        renderCell: (params) => <RoleDropdown {...params} handleUpdateRow={handleUpdateRow} />,
         headerClassName: 'super-app-theme--header',
         headerAlign: 'center'
     },
@@ -54,8 +54,8 @@ const columns = [
     {
         field: 'block',
         headerName: 'Блокування',
-        width: 190,
-
+        width: 200,
+        renderCell: (params) => <BlockButton {...params} handleUpdateRow={handleUpdateRow} />,
         headerClassName: 'super-app-theme--header',
         headerAlign: 'center',
         sortable: false,
@@ -68,17 +68,22 @@ function Administration() {
     const [rows, setRows] = useState([]);
 
     useEffect(() => {
-        // Fetch your user data here
-        const userData = [
-            { id: 1, login: 'user1', email: 'user1@example.com', role: 'PLAYER', coins_total: 100, game_lose_count: 5, game_win_count: 10 },
-            { id: 2, login: 'user2', email: 'user2@example.com', role: 'PLAYER', coins_total: 50, game_lose_count: 3, game_win_count: 8 },
-            { id: 3, login: 'user3', email: 'user3@example.com', role: 'ADMIN', coins_total: 500, game_lose_count: 2, game_win_count: 15 },
-            { id: 4, login: 'user4', email: 'user4@example.com', role: 'PLAYER', coins_total: 200, game_lose_count: 7, game_win_count: 12 },
-            { id: 5, login: 'user5', email: 'user5@example.com', role: 'PLAYER', coins_total: 150, game_lose_count: 4, game_win_count: 9 },
-            { id: 6, login: 'user6', email: 'user6@example.com', role: 'PLAYER', coins_total: 300, game_lose_count: 6, game_win_count: 11 }
-        ];
-        setRows(userData);
+        fetchUsers();
     }, []);
+
+    const fetchUsers = () => {
+        fetch('https://wordle-4fel.onrender.com/user/usersByAdmin')
+            .then((response) => response.json())
+            .then((data) => {
+                const rowsWithIds = data.map((row, index) => ({ ...row, id: index }));
+                setRows(rowsWithIds);
+            })
+            .catch((error) => console.error('Error fetching user data:', error));
+    };
+
+    const handleUpdateRow = (id, updates) => {
+        setRows((prevRows) => prevRows.map((row) => (row.id === id ? { ...row, ...updates } : row)));
+    };
 
     return (
         <div style={{ height: 400, width: '90%', paddingLeft: '5%' }}>
@@ -86,8 +91,9 @@ function Administration() {
             <DataGrid
                 localeText={ukUA.components.MuiDataGrid.defaultProps.localeText}
                 rows={rows}
-                columns={columns}
+                columns={columns(handleUpdateRow)}
                 getRowId={(row) => row.id}
+                initialState={{ pagination: { paginationModel: { page: 0, pageSize: 5 } } }}
                 pageSizeOptions={[5, 10]}
                 disableSelectionOnClick
             />
@@ -97,7 +103,7 @@ function Administration() {
 
 export default Administration;
 
-function RoleDropdown({ id, value, row }) {
+function RoleDropdown({ id, value, row, handleUpdateRow }) {
     const [role, setRole] = useState(value);
 
     const handleChange = (event) => {
@@ -112,5 +118,13 @@ function RoleDropdown({ id, value, row }) {
                 <MenuItem value="ADMIN">ADMIN</MenuItem>
             </Select>
         </FormControl>
+    );
+}
+
+function BlockButton({ id, row, handleUpdateRow }) {
+    return (
+        <div style={{ textAlign: 'center' }}>
+            <button className='block-button'>Заблокувати</button>
+        </div>
     );
 }
