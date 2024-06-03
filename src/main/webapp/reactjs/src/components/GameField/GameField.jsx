@@ -13,19 +13,22 @@ function GameField() {
     const [inputValues, setInputValues] = useState(Array(30).fill(""));
     const [currentRow, setCurrentRow] = useState(0);
     const [rowColors, setRowColors] = useState(Array(30).fill(""));
-    const [gameStatus, setGameStatus] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [timeLeft, setTimeLeft] = useState(600);
     const [timeTaken, setTimeTaken] = useState(0);
     const [canSubmit, setCanSubmit] = useState(false);
     const [coins, setCoins] = useState(0);
     const [playerStatus, setPlayerStatus] = useState(null);
+    const [initialGameData, setInitialGameData] = useState(null);
+
+    useEffect(() => {
+        setInitialGameData(gameData);
+    }, []);
 
     const inputRefs = useRef([]);
 
     const { subscribeToSocket, gameData, setGameData, message, gameStarted } = useSocket();
     const TARGET_WORD = gameData.opponent_word;
-    const gameId = gameData.game_id;
     const [messageLose, setMessageLose] = useState('Слово було: ' + TARGET_WORD);
 
     useEffect(() => {
@@ -52,32 +55,24 @@ function GameField() {
             }, 1000);
             return () => clearInterval(timer);
         } else if (timeLeft === 0) {
-            setGameStatus("Час вийшов!");
+            setPlayerStatus("DRAW");
             setShowModal(true);
-            endGame("DRAW");
+            endGame(playerStatus);
         }
     }, [timeLeft, showModal]);
 
     useEffect(() => {
-        if (gameStatus && playerStatus === null) {
-            setTimeTaken(600 - timeLeft);
-            const coinsEarned = gameStatus === "Ви виграли!" ? 6 - currentRow : 0;
-            const coinsLost = gameStatus === "Ви програли!" ? -1 : 0;
-            const coinsDraw = gameStatus === "Час вийшов!" ? 0 : 0;
-            setCoins(gameStatus === "Ви виграли!" ? coinsEarned : gameStatus === "Ви програли!" ? coinsLost : gameStatus === "Час вийшов!" ? coinsDraw : 0);
-            endGame(gameStatus === "Ви виграли!" ? "WIN" : gameStatus === "Час вийшов!" ? "DRAW" : gameStatus === "Ви програли!" ? "LOSE" : null);
-        }
-    }, [gameStatus, currentRow, timeLeft]);
-
-    useEffect(TARGET_WORD => {
         if ((message === 'LOSE' || message === 'WIN') && playerStatus === null) {
             setPlayerStatus(message);
-
-            setGameStatus(playerStatus === 'WIN' ? "Ви виграли!" : "Ви програли!");
             setShowModal(true);
         }
-    }, [message, playerStatus, TARGET_WORD]);
+    }, [message, playerStatus, TARGET_WORD, currentRow, timeLeft]);
 
+    useEffect(() => {
+        if (playerStatus !== null) {
+            endGame(playerStatus);
+        }
+    }, [playerStatus, currentRow, timeLeft]);
 
     const handleKeyboardClick = (key) => {
         const newInputValues = [...inputValues];
@@ -155,13 +150,11 @@ function GameField() {
         setRowColors(newRowColors);
 
         if (word === TARGET_WORD) {
-            setGameStatus("Ви виграли!");
+            setPlayerStatus("WIN");
             setShowModal(true);
         } else if (currentRow === 5) {
-            setGameStatus("Ви програли!");
-
+            setPlayerStatus("LOSE");
             setShowModal(true);
-            endGame("LOSE");
         } else {
             setCurrentRow(currentRow + 1);
         }
@@ -197,7 +190,10 @@ function GameField() {
 
     const handleCloseModal = () => {
         setShowModal(false);
+
+
         navigate('/howToPlay');
+        window.location.reload();
     };
 
     const formatTime = (seconds) => {
@@ -206,22 +202,25 @@ function GameField() {
         return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
     };
 
-    const endGame = async (playerStatus) => {
-        if (playerStatus === null) return;
-
-        console.log("End Game Status:", playerStatus); // Виведення статусу в консоль
-
-        setPlayerStatus(playerStatus);
+    const endGame = async (status) => {
+        if (status === null || initialGameData === null) return;
+        setTimeTaken(600 - timeLeft);
+        const coinsEarned = status === "WIN" ? 6 - currentRow : 0;
+        const coinsLost = 1;
+        const coinsDraw = status === "LOSE" ? 0 : 0;
+        setCoins(status === "WIN" ? coinsEarned : status === "LOSE" ? coinsLost : status === "DRAW" ? coinsDraw : 0);
+        console.log("End Game Status:", status);
+        console.log('info from socket: ', initialGameData);
         const attempts = currentRow + 1;
-        const user_id = gameData.user_id;
-        const game_id = gameData.game_id;
+        const user_id = initialGameData.user_id;
+        const game_id = initialGameData.game_id;
         const requestBody = {
             user_id,
             game_id,
-            player_status: playerStatus,
+            player_status: status,
             attempts
         };
-
+        console.log("request body", requestBody);
         try {
             const response = await fetch('https://wordle-4fel.onrender.com/game/end', {
                 method: 'PATCH',
@@ -242,14 +241,11 @@ function GameField() {
             console.error("Error recording game result:", error);
         }
     };
-
-
-
     return (
         <div className="gamefield">
             <div className="gamefield-timer">Час: {formatTime(timeLeft)}</div>
             <div className="gamefield-tries">{renderInputRows()}</div>
-            {showModal && <Modal messageLose= {messageLose} message={gameStatus} timeTaken={gameStatus === "Ви виграли!" ? formatTime(timeTaken) : null} coins={coins} onClose={handleCloseModal} />}
+            {showModal && <Modal messageLose={messageLose} playerStatus={playerStatus} timeTaken={playerStatus === "WIN" ? formatTime(timeTaken) : null} coins={coins} onClose={handleCloseModal} />}
             <div className="gamefield-keyboard">
                 <Keyboard onClick={handleKeyboardClick} />
                 <div className="gamefield-keyboard-btns">
