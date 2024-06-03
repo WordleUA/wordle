@@ -4,30 +4,34 @@ import { useNavigate } from "react-router";
 
 function DictateWord() {
     const navigate = useNavigate();
-
     const [letters, setLetters] = useState(["", "", "", "", ""]);
     const [message, setMessage] = useState("");
     const inputRefs = useRef([]);
+    const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
 
     const getRandomId = (min, max) => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     };
     const user_id = getRandomId(33, 44);
 
-
     useEffect(() => {
         inputRefs.current = inputRefs.current.slice(0, letters.length);
-    }, [letters.length]);
+        validateWord();
+    }, [letters]);
 
     const handleChange = (index, event) => {
         const newLetters = [...letters];
-        newLetters[index] = event.target.value.toUpperCase();
-        setLetters(newLetters);
-        if (index < inputRefs.current.length - 1 && event.target.value) {
-            inputRefs.current[index + 1].focus();
+        const inputChar = event.target.value.toUpperCase();
+        const ukrainianAlphabet = /^[А-ЩЬЮЯЄІЇҐ]$/; // Regex for Ukrainian alphabet
+
+        if (ukrainianAlphabet.test(inputChar) || inputChar === "") {
+            newLetters[index] = inputChar;
+            setLetters(newLetters);
+            if (index < inputRefs.current.length - 1 && inputChar) {
+                inputRefs.current[index + 1].focus();
+            }
         }
     };
-
 
     const handleBackspace = (index, event) => {
         if (event.key === "Backspace" && letters[index] === "") {
@@ -46,13 +50,19 @@ function DictateWord() {
         }
     };
 
-    const word = letters.join("");
+    const validateWord = () => {
+        const isValidWord = letters.join("").length === 5 && letters.every(letter => /^[А-ЩЬЮЯЄІЇҐ]$/.test(letter));
+        setIsSubmitDisabled(!isValidWord);
+    };
 
     const handleSubmit = async () => {
+        const word = letters.join("");
         const gameStartDTO = {
             user_id: user_id,
             word: word
         };
+
+        console.log("Payload being sent:", gameStartDTO);
 
         try {
             const response = await fetch('https://wordle-4fel.onrender.com/game/connect', {
@@ -63,16 +73,15 @@ function DictateWord() {
                 body: JSON.stringify(gameStartDTO)
             });
 
+            const responseData = await response.json();
+
             if (response.ok) {
-                const gameData = await response.json();
                 setMessage("Game connected successfully!");
-                console.log("Game connected:", gameData);
-                navigate('/waitingPage', { state: { gameData } });
+                console.log("Game connected:", responseData);
+                navigate('/waitingPage', { state: { gameData: responseData } });
             } else {
-                const gameDTO = await response.json();
-                setMessage("Failed to connect game");
-                console.error("Failed to connect game");
-                console.log("Game connected:", gameDTO);
+                setMessage(`Failed to connect game: ${responseData.error}`);
+                console.error("Failed to connect game:", responseData);
             }
         } catch (error) {
             setMessage("Error: " + error.message);
@@ -98,10 +107,15 @@ function DictateWord() {
                         />
                     ))}
                 </div>
-                <button className="dictate-word-form-btn" onClick={handleSubmit}>ЗАГАДАТИ СЛОВО</button>
+                <button
+                    className="dictate-word-form-btn"
+                    onClick={handleSubmit}
+                    disabled={isSubmitDisabled}
+                >
+                    ЗАГАДАТИ СЛОВО
+                </button>
             </div>
             {message && <p className="message">{message}</p>}
-
         </div>
     );
 }
