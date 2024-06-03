@@ -138,17 +138,19 @@ public class UserServiceImpl implements UserService {
         List<UserGame> userGames = userGameService.readByUserId(existingUser.getId());
         List<UserGameDTO> userGameDTOS = new ArrayList<>();
         for (UserGame userGame : userGames) {
-            userGameService.findSecondPlayer(userGame.getGame().getId(), existingUser.getId())
-                    .ifPresent(secondPlayer -> {
-                        String word = secondPlayer.getWord();
-                        userGameDTOS.add(UserGameDTO.builder()
-                                .date(userGame.getGame().getCreatedAt())
-                                .word(word)
-                                .playerStatus(PlayerStatus.valueOf(userGame.getPlayerStatus()))
-                                .coins(getGameWinCount(userGame.getAttempts(),
-                                        PlayerStatus.valueOf(userGame.getPlayerStatus())))
-                                .build());
-                    });
+            if (userGame.getPlayerStatus() != null && userGame.getAttempts() != null) {
+                userGameService.findSecondPlayer(userGame.getGame().getId(), existingUser.getId())
+                        .ifPresent(secondPlayer -> {
+                            String word = secondPlayer.getWord();
+                            userGameDTOS.add(UserGameDTO.builder()
+                                    .date(userGame.getGame().getCreatedAt())
+                                    .word(word)
+                                    .playerStatus(PlayerStatus.valueOf(userGame.getPlayerStatus()))
+                                    .coins(getGameWinCount(userGame.getAttempts(),
+                                            PlayerStatus.valueOf(userGame.getPlayerStatus())))
+                                    .build());
+                        });
+            }
         }
         return CabinetResponse.builder().user(UserDTO.builder()
                         .login(existingUser.getLogin())
