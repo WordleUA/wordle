@@ -9,6 +9,7 @@ import HowToPlay from "./components/HowToPlay/HowToPlay";
 import ClientCabinet from "./components/ClientCabinet/ClientCabinet";
 import Registration from "./components/Registration/Registration";
 import Login from "./components/Login/Login";
+import Administration from "./components/Administration/Administration";
 
 function App() {
     return (
@@ -26,6 +27,8 @@ function App() {
                         <Route path="/clientCabinet" element={<ClientCabinet />} />
                         <Route path="/registration" element={<Registration />} />
                         <Route path="/" element={<Login />} />
+                        <Route path="/administration" element={<Administration />} />
+
                     </Routes>
                 </div>
             </Router>

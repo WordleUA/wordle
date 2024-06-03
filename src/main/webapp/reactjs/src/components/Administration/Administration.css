@@ -1,0 +1,38 @@
+.super-app-theme--header {
+    background-color: #86C14C;
+    color: white;
+    font-weight: bold;
+}
+
+.block-button {
+    padding: 8px 12px;
+    font-size: 16px;
+    background-color: #DF0000; /* Red for block */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 130px;
+}
+
+.block-button:hover {
+    background-color: #be0000; /* Darker red for hover effect */
+}
+
+.unblock-button {
+    padding: 8px 12px;
+    font-size: 16px;
+    background-color: #86C14C; /* Green for unblock */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 130px;
+}
+
+.unblock-button:hover {
+    background-color: #45a049; /* Darker green for hover effect */
+}
+
+
+
