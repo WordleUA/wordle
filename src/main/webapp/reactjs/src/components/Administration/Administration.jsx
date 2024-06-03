@@ -4,7 +4,7 @@ import { Select, MenuItem, FormControl } from '@mui/material';
 import { ukUA } from '@mui/x-data-grid/locales';
 import './Administration.css';
 
-const columns = (handleUpdateRow) => [
+const columns = (handleUpdateRow, handleBlockToggle) => [
     {
         field: 'login',
         headerName: 'Логін',
@@ -55,7 +55,7 @@ const columns = (handleUpdateRow) => [
         field: 'block',
         headerName: 'Блокування',
         width: 200,
-        renderCell: (params) => <BlockButton {...params} handleUpdateRow={handleUpdateRow} />,
+        renderCell: (params) => <BlockButton {...params} handleBlockToggle={handleBlockToggle} />,
         headerClassName: 'super-app-theme--header',
         headerAlign: 'center',
         sortable: false,
@@ -85,13 +85,19 @@ function Administration() {
         setRows((prevRows) => prevRows.map((row) => (row.id === id ? { ...row, ...updates } : row)));
     };
 
+    const handleBlockToggle = (id, isBanned) => {
+        setRows((prevRows) =>
+            prevRows.map((row) => (row.id === id ? { ...row, is_banned: !isBanned } : row))
+        );
+    };
+
     return (
         <div style={{ height: 400, width: '90%', paddingLeft: '5%' }}>
             <h1 className='administration-header' style={{ textAlign: 'center' }}>СПИСОК КОРИСТУВАЧІВ</h1>
             <DataGrid
                 localeText={ukUA.components.MuiDataGrid.defaultProps.localeText}
                 rows={rows}
-                columns={columns(handleUpdateRow)}
+                columns={columns(handleUpdateRow, handleBlockToggle)}
                 getRowId={(row) => row.id}
                 initialState={{ pagination: { paginationModel: { page: 0, pageSize: 5 } } }}
                 pageSizeOptions={[5, 10]}
@@ -121,10 +127,20 @@ function RoleDropdown({ id, value, row, handleUpdateRow }) {
     );
 }
 
-function BlockButton({ id, row, handleUpdateRow }) {
+function BlockButton({ id, row, handleBlockToggle }) {
+    const { is_banned, role } = row;
+
+    const handleToggle = () => {
+        handleBlockToggle(id, is_banned);
+    };
+
+    if (role === 'ADMIN') return null;
+
     return (
         <div style={{ textAlign: 'center' }}>
-            <button className='block-button'>Заблокувати</button>
+            <button className={is_banned ? 'unblock-button' : 'block-button'} onClick={handleToggle}>
+                {is_banned ? 'Розблокувати' : 'Заблокувати'}
+            </button>
         </div>
     );
 }
