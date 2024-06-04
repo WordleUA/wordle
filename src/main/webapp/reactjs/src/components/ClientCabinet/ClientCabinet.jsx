@@ -7,7 +7,7 @@ function ClientCabinet() {
     const [wins, setWins] = useState(0);
     const [losses, setLosses] = useState(0);
 
-    const id = 34;
+    const id = 33;
 
     useEffect(() => {
         fetch(`https://wordle-4fel.onrender.com/user/cabinet/${id}`)

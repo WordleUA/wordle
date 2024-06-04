@@ -8,21 +8,21 @@ const columns = (handleUpdateRow) => [
     {
         field: 'login',
         headerName: 'Логін',
-        width: 150,
+        flex: 1,
         headerClassName: 'super-app-theme--header',
         headerAlign: 'center'
     },
     {
         field: 'email',
         headerName: 'Пошта',
-        width: 200,
+        flex: 2,
         headerClassName: 'super-app-theme--header',
         headerAlign: 'center'
     },
     {
         field: 'role',
         headerName: 'Роль',
-        width: 150,
+        flex: 0.5,
         renderCell: (params) => <RoleDropdown {...params} handleUpdateRow={handleUpdateRow}/>,
         headerClassName: 'super-app-theme--header',
         headerAlign: 'center'
@@ -31,7 +31,7 @@ const columns = (handleUpdateRow) => [
         field: 'coins_total',
         headerName: 'Кількість монет',
         type: 'number',
-        width: 200,
+        flex: 1,
         headerClassName: 'super-app-theme--header',
         headerAlign: 'center'
     },
@@ -39,7 +39,7 @@ const columns = (handleUpdateRow) => [
         field: 'game_lose_count',
         headerName: 'Кількість програних ігор',
         type: 'number',
-        width: 250,
+        flex: 1,
         headerClassName: 'super-app-theme--header',
         headerAlign: 'center'
     },
@@ -47,14 +47,14 @@ const columns = (handleUpdateRow) => [
         field: 'game_win_count',
         headerName: 'Кількість виграних ігор',
         type: 'number',
-        width: 231,
+        flex: 1,
         headerClassName: 'super-app-theme--header',
         headerAlign: 'center'
     },
     {
         field: 'block',
         headerName: 'Блокування',
-        width: 200,
+        flex: 1,
         renderCell: (params) => <BlockButton {...params} handleUpdateRow={handleUpdateRow}/>,
         headerClassName: 'super-app-theme--header',
         headerAlign: 'center',
@@ -68,28 +68,39 @@ function Administration() {
     const [rows, setRows] = useState([]);
 
     useEffect(() => {
-        fetch('https://wordle-4fel.onrender.com/user')
-            .then((response) => response.json())
-            .then((data) => setRows(data))
-            .catch((error) => console.error('Error fetching user data:', error));
+        fetchUsers();
     }, []);
+
+    const fetchUsers = () => {
+        fetch('https://wordle-4fel.onrender.com/user/usersByAdmin')
+            .then((response) => response.json())
+            .then((data) => {
+                const rowsWithIds = data.map((row, index) => ({ ...row, id: index }));
+                setRows(rowsWithIds);
+            })
+            .catch((error) => console.error('Error fetching user data:', error));
+    };
 
     const handleUpdateRow = (id, updates) => {
         setRows((prevRows) => prevRows.map((row) => (row.id === id ? {...row, ...updates} : row)));
     };
 
     return (
-        <div style={{height: 400, width: '90%', paddingLeft: '5%'}}>
-            <DataGrid
-                localeText={ukUA.components.MuiDataGrid.defaultProps.localeText}
-                rows={rows}
-                columns={columns(handleUpdateRow)}
-                getRowId={(row) => row.id}
-                initialState={{pagination: {paginationModel: {page: 0, pageSize: 5}}}}
-                pageSizeOptions={[5, 10]}
-                disableSelectionOnClick
-            />
+        <div>
+            <h1 className='administration-header'>СПИСОК КОРИСТУВАЧІВ</h1>
+            <div style={{height: 400, width: '90%', paddingLeft: '5%'}}>
+                <DataGrid
+                    localeText={ukUA.components.MuiDataGrid.defaultProps.localeText}
+                    rows={rows}
+                    columns={columns(handleUpdateRow)}
+                    getRowId={(row) => row.id}
+                    initialState={{pagination: {paginationModel: {page: 0, pageSize: 5}}}}
+                    pageSizeOptions={[5, 10]}
+                    disableSelectionOnClick
+                />
+            </div>
         </div>
+
     );
 }
 
@@ -125,6 +136,7 @@ function RoleDropdown({id, value, row, handleUpdateRow}) {
     );
 }
 
+
 function BlockButton({id, row, handleUpdateRow}) {
     const {is_banned, role} = row;
     const [isBanned, setIsBanned] = useState(is_banned);
@@ -149,6 +161,7 @@ function BlockButton({id, row, handleUpdateRow}) {
             >
                 {isBanned ? 'Розблокувати' : 'Заблокувати'}
             </button>
+
         </div>
     );
 }
