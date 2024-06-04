@@ -11,6 +11,7 @@ import Registration from "./components/Registration/Registration";
 import Login from "./components/Login/Login";
 import Administration from "./components/Administration/Administration";
 import GeneralStatistic from "./components/GeneralStatistic/GeneralStatistic";
+import NavbarDefault from "./components/Navbar/NavbarDefault";
 
 function App() {
     return (
@@ -18,7 +19,7 @@ function App() {
             <SocketProvider>
             <Router>
                 <div>
-                    <NavbarClient />
+                    <NavbarDefault />
                     <Routes>
                         <Route path="/dictateWord" element={<DictateWord />} />
 
