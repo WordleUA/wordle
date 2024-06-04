@@ -30,13 +30,13 @@ public class AuthProvider implements AuthenticationProvider {
         User user = (User) userService.userDetailsService().loadUserByUsername(email);
 
         if (user == null || (!user.getEmail().equals(email) && !user.getUsername().equals(email)))
-            throw new UsernameNotFoundException("User with email " + email + " does not exist");
+            throw new UsernameNotFoundException("Користувача з email " + email + " не знайдено");
 
         if (!passwordEncoder.matches(password, user.getPassword()))
-            throw new BadCredentialsException("Incorrect password");
+            throw new BadCredentialsException("Неправильний пароль");
 
         if (Boolean.TRUE.equals(user.getIsBanned()))
-            throw new LockedException("User with email " + email + " is banned");
+            throw new LockedException("Неможливо авторизуватися. Ваш акаунт заблоковано");
 
         Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
         return new UsernamePasswordAuthenticationToken(user, password, authorities);
