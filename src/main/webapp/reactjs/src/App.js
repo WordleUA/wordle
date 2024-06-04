@@ -12,6 +12,7 @@ import Login from "./components/Login/Login";
 import Administration from "./components/Administration/Administration";
 import GeneralStatistic from "./components/GeneralStatistic/GeneralStatistic";
 import NavbarDefault from "./components/Navbar/NavbarDefault";
+import NavbarAdmin from "./components/Navbar/NavbarAdmin";
 
 function App() {
     return (
