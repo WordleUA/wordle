@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class RegisterRequest {
 
     @NotBlank(message = "Логін не може бути порожнім")
-    @Size(max = 45, message = "Логін повинен бути не більше 45 символів")
+    @Size(min = 3, max = 45, message = "Логін повинен бути від 3 до 45 символів")
     private String login;
 
     @NotBlank(message = "Email адреса не може бути порожньою")
@@ -22,6 +22,6 @@ public class RegisterRequest {
     private String email;
 
     @NotBlank(message = "Пароль не може бути порожнім")
-    @Size(max = 30, message = "Довжина пароля повинна бути не більше 30 символів")
+    @Size(min = 8, max = 30, message = "Довжина пароля повинна бути від 8 до 30 символів")
     private String password;
 }
