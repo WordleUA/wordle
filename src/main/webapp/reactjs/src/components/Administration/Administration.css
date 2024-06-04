@@ -4,6 +4,9 @@
     font-weight: bold;
 }
 
+.administration-header {
+    text-align: center;
+}
 .block-button {
     padding: 8px 12px;
     font-size: 16px;
