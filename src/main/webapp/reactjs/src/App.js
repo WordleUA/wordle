@@ -10,6 +10,7 @@ import ClientCabinet from "./components/ClientCabinet/ClientCabinet";
 import Registration from "./components/Registration/Registration";
 import Login from "./components/Login/Login";
 import Administration from "./components/Administration/Administration";
+import GeneralStatistic from "./components/GeneralStatistic/GeneralStatistic";
 
 function App() {
     return (
@@ -28,6 +29,7 @@ function App() {
                         <Route path="/registration" element={<Registration />} />
                         <Route path="/" element={<Login />} />
                         <Route path="/administration" element={<Administration />} />
+                        <Route path="/generalStatistic" element={<GeneralStatistic />} />
 
                     </Routes>
                 </div>
