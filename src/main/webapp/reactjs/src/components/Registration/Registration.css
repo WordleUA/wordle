@@ -1,6 +1,5 @@
 .registration-page {
     margin: 50px 100px;
-
 }
 
 .registration-form--form {
@@ -12,13 +11,6 @@
     background-color: #CCCCCC;
     border-radius: 20px;
     gap: 20px;
-
-
-}
-
-
-.registration-form-label {
-
 }
 
 .registration {
@@ -28,15 +20,8 @@
 }
 
 .registration-header {
-
-font-size: 36px;
+    font-size: 36px;
 }
-
-.registration-form {
-
-}
-
-
 
 .registration-form-btn {
     background: #519341;
@@ -57,14 +42,17 @@ font-size: 36px;
     border-color: transparent;
     background: none;
 }
+
 .registration-form-btn-tologin:hover {
     text-decoration: underline;
     cursor: pointer;
 }
+
 .registration-form-btn:hover {
     background: #478139;
     cursor: pointer;
 }
+
 .registration-form-p {
     color: #868686;
     font-size: 20px;
@@ -83,4 +71,11 @@ font-size: 36px;
 
 .registration-form-input:focus {
     background: #ececec;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: -10px;
 }

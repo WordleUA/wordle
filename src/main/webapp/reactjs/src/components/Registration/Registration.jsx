@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import "./Registration.css";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router";
+import {Link, useNavigate} from "react-router-dom";
 
 function Registration() {
     const [login, setLogin] = useState('');
@@ -9,7 +8,6 @@ function Registration() {
     const [password, setPassword] = useState('');
     const [passwordRepeat, setPasswordRepeat] = useState('');
     const [errors, setErrors] = useState({});
-
     const navigate = useNavigate();
 
     const validateEmail = email => {
@@ -17,62 +15,63 @@ function Registration() {
         return re.test(String(email).toLowerCase());
     };
 
+    const validateForm = () => {
+        let newErrors = {};
+
+        if (!login) newErrors.login = "Введіть логін";
+        else if (login.length < 3) newErrors.login = "Логін повинен бути не менше 3 символів";
+        else if (login.length > 45) newErrors.login = "Логін повинен бути не більше 45 символів";
+
+        if (!email) newErrors.email = "Введіть email адресу";
+        else if (!validateEmail(email)) newErrors.email = "Email має відповідати формату example@example.com";
+        else if (email.length > 255) newErrors.email = "Email повинен бути не більше 255 символів";
+
+        if (!password) newErrors.password = "Введіть пароль";
+        else if (password.length < 8) newErrors.password = "Довжина пароля повинна бути не менше 8 символів";
+        else if (password.length > 30) newErrors.password = "Пароль повинен бути не більше 30 символів";
+
+        if (!passwordRepeat) newErrors.passwordRepeat = "Повторіть пароль";
+
+        if (password !== passwordRepeat) newErrors.passwordRepeat = "Паролі не співпадають";
+
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+
     const handleSubmit = event => {
         event.preventDefault();
 
-        let errors = {};
-
-        if (!validateEmail(email)) {
-            errors.email = "Email введено неправильно";
+        if (!validateForm()) {
+            return;
         }
 
-        if (password !== passwordRepeat) {
-            errors.passwordRepeat = "Паролі не співпадають";
-        }
+        const userDTO = new URLSearchParams();
+        userDTO.append("login", login);
+        userDTO.append("email", email);
+        userDTO.append("password", password);
 
-        if (Object.keys(errors).length > 0) {
-            setErrors(errors);
-        } else {
-            const userDTO = new URLSearchParams();
-            userDTO.append("login", login);
-            userDTO.append("email", email);
-            userDTO.append("password", password);
-
-            fetch("https://wordle-4fel.onrender.com/auth/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: userDTO.toString()
-            }).then(response => {
-                console.log('Response:', response);
-                if (response.ok) {
-                    return response.json().then(data => {
-                        console.log('Response Data:', data);
-                        if (data) {
-                            // Збереження токенів та ролі в local storage
-                            localStorage.setItem('accessToken', data.access_token);
-                            localStorage.setItem('refreshToken', data.refresh_token);
-                            localStorage.setItem('role', data.role);
-
-
-                            console.log('Access Token:', localStorage.getItem('accessToken'));
-                            console.log('Refresh Token:', localStorage.getItem('refreshToken'));
-                            console.log('Role:', localStorage.getItem('role'));
-
-                            navigate('/clientCabinet');
-                        } else {
-                            console.error("Received undefined data.");
-                        }
-                    });
-                } else {
-                    return response.text().then(text => {
-                        console.error("Network response was not ok.", text);
-                        throw new Error("Network response was not ok.");
-                    });
-                }
-            }).catch(error => {
-                console.error("There was a problem with the fetch operation:", error);
-            });
-        }
+        fetch("https://wordle-4fel.onrender.com/auth/register", {
+            method: "POST",
+            headers: {"Content-Type": "application/x-www-form-urlencoded"},
+            body: userDTO.toString()
+        }).then(response => {
+            if (response.ok) {
+                return response.json().then(data => {
+                    localStorage.setItem('accessToken', data.access_token);
+                    localStorage.setItem('refreshToken', data.refresh_token);
+                    localStorage.setItem('role', data.role);
+                    navigate('/clientCabinet');
+                });
+            } else {
+                return response.json().then(errorData => {
+                    setErrors({general: errorData.message});
+                });
+            }
+        }).catch(error => {
+            console.error("There was a problem with the fetch operation:", error);
+        });
     };
 
     return (
@@ -88,8 +87,9 @@ function Registration() {
                                value={login}
                                onChange={event => setLogin(event.target.value)}
                         />
+                        {errors.login && <p className="error">{errors.login}</p>}
                         <input className="registration-form-input"
-                               type="email"
+                               type="text"
                                name="email"
                                placeholder="Email"
                                value={email}
@@ -103,6 +103,7 @@ function Registration() {
                                value={password}
                                onChange={event => setPassword(event.target.value)}
                         />
+                        {errors.password && <p className="error">{errors.password}</p>}
                         <input className="registration-form-input"
                                type="password"
                                name="passwordRepeat"
@@ -111,15 +112,16 @@ function Registration() {
                                onChange={event => setPasswordRepeat(event.target.value)}
                         />
                         {errors.passwordRepeat && <p className="error">{errors.passwordRepeat}</p>}
+                        {errors.general && <p className="error">{errors.general}</p>}
                         <button className="registration-form-btn" type="submit">ЗАРЕЄСТРУВАТИСЬ</button>
-                        <p className="registration-form-p">Вже маєте акаунт? <Link to="/" className="registration-form-btn-tologin">Увійти</Link></p>
+                        <p className="registration-form-p">Вже маєте акаунт? <Link to="/"
+                                                                                   className="registration-form-btn-tologin">Увійти</Link>
+                        </p>
                     </form>
                 </div>
             </div>
         </div>
     );
-
-
 }
 
 export default Registration;
