@@ -18,6 +18,6 @@ public class LoginRequest {
     private String email;
 
     @NotBlank(message = "Пароль не може бути порожнім")
-    @Size(max = 255, message = "Довжина пароля повинна бути не більше 255 символів")
+    @Size(max = 30, message = "Довжина пароля повинна бути не більше 30 символів")
     private String password;
 }

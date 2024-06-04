@@ -19,7 +19,6 @@ import ua.nure.wordle.exception.EmailAlreadyExistsException;
 import ua.nure.wordle.repository.UserRepository;
 import ua.nure.wordle.service.interfaces.UserGameService;
 import ua.nure.wordle.service.interfaces.UserService;
-import ua.nure.wordle.utils.Patcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,19 +30,17 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserGameService userGameService;
     private final ModelMapper modelMapper;
-    private final Patcher<User> patcher;
 
     public UserServiceImpl(UserRepository userRepository, UserGameService userGameService,
-                           ModelMapper modelMapper, Patcher<User> patcher) {
+                           ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.userGameService = userGameService;
         this.modelMapper = modelMapper;
-        this.patcher = patcher;
     }
 
     public User getByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User with email " + email + " does not exist"));
+                .orElseThrow(() -> new UsernameNotFoundException("Користувача з email " + email + " не існує"));
     }
 
     public UserDetailsService userDetailsService() {
@@ -53,14 +50,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<GeneralStatisticResponse> getGeneralStatistic() {
         return userRepository.findAllByOrderByCoinsTotalDesc().stream()
-                .map((element) -> modelMapper.map(element, GeneralStatisticResponse.class))
+                .map(element -> modelMapper.map(element, GeneralStatisticResponse.class))
                 .toList();
     }
 
     @Override
     public List<AdministrationResponse> getUsersByAdmin() {
         return userRepository.findAll().stream()
-                .map((element) -> modelMapper.map(element, AdministrationResponse.class))
+                .map(element -> modelMapper.map(element, AdministrationResponse.class))
                 .toList();
     }
 
@@ -68,7 +65,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User create(User user) {
         if (Boolean.TRUE.equals(userRepository.existsByEmail(user.getEmail()))) {
-            throw new EmailAlreadyExistsException("User with email " + user.getEmail() + " already exists");
+            throw new EmailAlreadyExistsException("Користувач з email " + user.getEmail() + " вже існує");
         }
         return userRepository.save(user);
     }

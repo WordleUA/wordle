@@ -18,10 +18,10 @@ public class RegisterRequest {
 
     @NotBlank(message = "Email адреса не може бути порожньою")
     @Email(message = "Email адреса повинна бути дійсною")
-    @Size(max = 100, message = "Довжина email адреси повинна бути не більше 100 символів")
+    @Size(max = 255, message = "Довжина email адреси повинна бути не більше 255 символів")
     private String email;
 
     @NotBlank(message = "Пароль не може бути порожнім")
-    @Size(max = 255, message = "Довжина пароля повинна бути не більше 255 символів")
+    @Size(max = 30, message = "Довжина пароля повинна бути не більше 30 символів")
     private String password;
 }
