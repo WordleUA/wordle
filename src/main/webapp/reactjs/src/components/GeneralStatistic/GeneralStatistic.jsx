@@ -68,19 +68,15 @@ function GeneralStatistic() {
     const [search, setSearch] = useState('');
 
     useEffect(() => {
-        // Статичний масив користувачів
-        const data = [
-            { user_id: 1, login: 'User1', coins_total: 150 },
-            { user_id: 2, login: 'User2', coins_total: 200 },
-            { user_id: 3, login: 'User3', coins_total: 300 },
-            { user_id: 4, login: 'User4', coins_total: 250 },
-            { user_id: 5, login: 'User5', coins_total: 100 },
-        ];
-
-        // Генеруємо рейтинг для кожного рядка
-        const rankedData = data.map((item, index) => ({ ...item, ranking: index + 1 }));
-        setRows(rankedData);
-        setFilteredRows(rankedData); // Встановлюємо початковий стан для фільтрованих рядків
+        fetch('https://wordle-4fel.onrender.com/user/generalStatistic')
+            .then((response) => response.json())
+            .then((data) => {
+                // Генеруємо рейтинг для кожного рядка
+                const rankedData = data.map((item, index) => ({ ...item, ranking: index + 1 }));
+                setRows(rankedData);
+                setFilteredRows(rankedData); // Встановлюємо початковий стан для фільтрованих рядків
+            })
+            .catch((error) => console.error('Error fetching user data:', error));
     }, []);
 
     useEffect(() => {
