@@ -136,6 +136,7 @@ function RoleDropdown({id, value, row, handleUpdateRow}) {
     );
 }
 
+
 function BlockButton({id, row, handleUpdateRow}) {
     const {is_banned, role} = row;
     const [isBanned, setIsBanned] = useState(is_banned);
@@ -160,6 +161,7 @@ function BlockButton({id, row, handleUpdateRow}) {
             >
                 {isBanned ? 'Розблокувати' : 'Заблокувати'}
             </button>
+
         </div>
     );
 }
