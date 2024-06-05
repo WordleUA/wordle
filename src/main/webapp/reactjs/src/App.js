@@ -14,6 +14,7 @@ import GeneralStatistic from "./components/GeneralStatistic/GeneralStatistic";
 import NavbarDefault from "./components/Navbar/NavbarDefault";
 import NavbarAdmin from "./components/Navbar/NavbarAdmin";
 import NavbarParser from "./components/Navbar/NavbarParser";
+import PasswordRecovery from "./components/PasswordRecovery/PasswordRecovery";
 
 function App() {
     return (
@@ -33,6 +34,7 @@ function App() {
                         <Route path="/" element={<Login/>} />
                         <Route path="/administration" element={<Administration />} />
                         <Route path="/generalStatistic" element={<GeneralStatistic />} />
+                        <Route path="/passwordRecovery" element={<PasswordRecovery />} />
 
                     </Routes>
                 </div>
