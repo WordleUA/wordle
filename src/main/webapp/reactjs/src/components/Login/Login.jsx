@@ -99,6 +99,7 @@ function Login() {
                             Не маєте акаунта? <Link to="/registration"
                                                     className="login-form-btn-toregistration">Зареєcтруватись</Link>
                         </p>
+                        <Link to="/passwordRecovery" className="login-form-btn-toregistration">Я забув пароль</Link>
                     </form>
                 </div>
             </div>
