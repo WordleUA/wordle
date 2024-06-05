@@ -13,6 +13,7 @@ import Administration from "./components/Administration/Administration";
 import GeneralStatistic from "./components/GeneralStatistic/GeneralStatistic";
 import NavbarDefault from "./components/Navbar/NavbarDefault";
 import NavbarAdmin from "./components/Navbar/NavbarAdmin";
+import NavbarParser from "./components/Navbar/NavbarParser";
 
 function App() {
     return (
@@ -20,7 +21,7 @@ function App() {
             <SocketProvider>
             <Router>
                 <div>
-                    <NavbarDefault />
+                    <NavbarParser/>
                     <Routes>
                         <Route path="/dictateWord" element={<DictateWord />} />
 
@@ -29,7 +30,7 @@ function App() {
                         <Route path="/howToPlay" element={<HowToPlay />} />
                         <Route path="/clientCabinet" element={<ClientCabinet />} />
                         <Route path="/registration" element={<Registration />} />
-                        <Route path="/" element={<Login />} />
+                        <Route path="/" element={<Login/>} />
                         <Route path="/administration" element={<Administration />} />
                         <Route path="/generalStatistic" element={<GeneralStatistic />} />
 

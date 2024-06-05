@@ -62,7 +62,10 @@ function Registration() {
                     localStorage.setItem('accessToken', data.access_token);
                     localStorage.setItem('refreshToken', data.refresh_token);
                     localStorage.setItem('role', data.role);
+
+
                     navigate('/clientCabinet');
+                    window.location.reload();
                 });
             } else {
                 return response.json().then(errorData => {

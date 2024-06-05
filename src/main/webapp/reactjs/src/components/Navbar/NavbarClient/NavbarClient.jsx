@@ -6,7 +6,12 @@ import {useNavigate} from "react-router";
 
 function NavbarClient () {
     const navigate = useNavigate();
+    const logout = () => {
+        localStorage.clear();
 
+        navigate('/');
+        window.location.reload();
+    };
 
     return (
         <nav className="nav">
@@ -21,7 +26,7 @@ function NavbarClient () {
                         <NavLink to='/generalStatistic' className="nav-list__item">Статистика</NavLink>
                         <NavLink to="/dictateWord" className="nav-list__item" style={{ color: '#519341' }}>Почати гру</NavLink>
                         <NavLink to="/howToPlay" className="nav-list__item">Як грати?</NavLink>
-                        <a className="nav-list__item">Вихід</a>
+                        <a onClick={logout} className="nav-list__item">Вихід</a>
                     </ul>
                 </div>
             </div>
