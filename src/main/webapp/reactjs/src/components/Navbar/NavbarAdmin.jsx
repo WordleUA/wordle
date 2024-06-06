@@ -25,7 +25,8 @@ function NavbarClient () {
 
                     <ul className="nav-list">
                         <NavLink to="/clientCabinet" className="nav-list__item">Особистий кабінет</NavLink>
-                        <NavLink to='/administration' className="nav-list__item">Список користувачів</NavLink>
+                        <NavLink to='/generalStatistic' className="nav-list__item">Статистика</NavLink>
+                        <NavLink to='/administration' className="nav-list__item">Адміністрування</NavLink>
                         <NavLink to="/dictateWord" className="nav-list__item" style={{ color: '#519341' }}>Почати гру</NavLink>
                         <a onClick={logout} className="nav-list__item">Вихід</a>
                     </ul>
