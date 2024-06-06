@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {DataGrid} from '@mui/x-data-grid';
-import {Select, MenuItem, FormControl} from '@mui/material';
-import {ukUA} from '@mui/x-data-grid/locales';
+import React, { useEffect, useState } from 'react';
+import { DataGrid } from '@mui/x-data-grid';
+import { Select, MenuItem, FormControl } from '@mui/material';
+import { ukUA } from '@mui/x-data-grid/locales';
 import './Administration.css';
 
 const columns = (handleUpdateRow) => [
@@ -23,7 +23,7 @@ const columns = (handleUpdateRow) => [
         field: 'role',
         headerName: 'Роль',
         flex: 0.5,
-        renderCell: (params) => <RoleDropdown {...params} handleUpdateRow={handleUpdateRow}/>,
+        renderCell: (params) => <RoleDropdown {...params} handleUpdateRow={handleUpdateRow} />,
         headerClassName: 'super-app-theme--header',
         headerAlign: 'center'
     },
@@ -55,7 +55,7 @@ const columns = (handleUpdateRow) => [
         field: 'block',
         headerName: 'Блокування',
         flex: 1,
-        renderCell: (params) => <BlockButton {...params} handleUpdateRow={handleUpdateRow}/>,
+        renderCell: (params) => <BlockButton {...params} handleUpdateRow={handleUpdateRow} />,
         headerClassName: 'super-app-theme--header',
         headerAlign: 'center',
         sortable: false,
@@ -75,40 +75,39 @@ function Administration() {
         fetch('https://wordle-4fel.onrender.com/user/usersByAdmin')
             .then((response) => response.json())
             .then((data) => {
-                const rowsWithIds = data.map((row, index) => ({ ...row, id: index }));
+                const rowsWithIds = data.map((row) => ({ ...row, id: row.user_id }));
                 setRows(rowsWithIds);
             })
             .catch((error) => console.error('Error fetching user data:', error));
     };
 
     const handleUpdateRow = (id, updates) => {
-        setRows((prevRows) => prevRows.map((row) => (row.id === id ? {...row, ...updates} : row)));
+        setRows((prevRows) => prevRows.map((row) => (row.id === id ? { ...row, ...updates } : row)));
     };
 
     return (
         <div>
             <h1 className='administration-header'>СПИСОК КОРИСТУВАЧІВ</h1>
-            <div style={{height: 400, width: '90%', paddingLeft: '5%'}}>
+            <div style={{ height: 400, width: '90%', paddingLeft: '5%' }}>
                 <DataGrid
                     localeText={ukUA.components.MuiDataGrid.defaultProps.localeText}
                     rows={rows}
                     columns={columns(handleUpdateRow)}
                     getRowId={(row) => row.id}
-                    initialState={{pagination: {paginationModel: {page: 0, pageSize: 5}}}}
+                    initialState={{ pagination: { paginationModel: { page: 0, pageSize: 5 } } }}
                     pageSizeOptions={[5, 10]}
                     disableSelectionOnClick
                 />
             </div>
         </div>
-
     );
 }
 
 export default Administration;
 
-function RoleDropdown({id, value, row, handleUpdateRow}) {
+function RoleDropdown({ id, value, row, handleUpdateRow }) {
     const [role, setRole] = useState(value);
-    const {is_banned} = row;
+    const { is_banned } = row;
 
     const handleChange = (event) => {
         const newRole = event.target.value;
@@ -116,12 +115,12 @@ function RoleDropdown({id, value, row, handleUpdateRow}) {
 
         fetch(`https://wordle-4fel.onrender.com/user/role/${id}`, {
             method: 'PATCH',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({role: newRole}),
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ role: newRole }),
         })
             .then((response) => {
                 if (!response.ok) throw new Error('Failed to update role');
-                handleUpdateRow(id, {role: newRole});
+                handleUpdateRow(id, { role: newRole });
             })
             .catch((error) => console.error('Error updating role:', error));
     };
@@ -136,17 +135,16 @@ function RoleDropdown({id, value, row, handleUpdateRow}) {
     );
 }
 
-
-function BlockButton({id, row, handleUpdateRow}) {
-    const {is_banned, role} = row;
+function BlockButton({ id, row, handleUpdateRow }) {
+    const { is_banned, role } = row;
     const [isBanned, setIsBanned] = useState(is_banned);
 
     const handleBlockToggle = () => {
-        fetch(`https://wordle-4fel.onrender.com/user/block/${id}`, {method: 'PATCH'})
+        fetch(`https://wordle-4fel.onrender.com/user/block/${id}`, { method: 'PATCH' })
             .then((response) => {
                 if (!response.ok) throw new Error('Failed to toggle block status');
                 setIsBanned(!isBanned);
-                handleUpdateRow(id, {is_banned: !isBanned});
+                handleUpdateRow(id, { is_banned: !isBanned });
             })
             .catch((error) => console.error('Error toggling block status:', error));
     };
@@ -154,14 +152,13 @@ function BlockButton({id, row, handleUpdateRow}) {
     if (role === 'ADMIN') return null;
 
     return (
-        <div style={{textAlign: 'center'}}>
+        <div style={{ textAlign: 'center' }}>
             <button
                 className={isBanned ? 'unblock-button' : 'block-button'}
                 onClick={handleBlockToggle}
             >
                 {isBanned ? 'Розблокувати' : 'Заблокувати'}
             </button>
-
         </div>
     );
 }
