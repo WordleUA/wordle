@@ -74,6 +74,19 @@ public class GameServiceImpl implements GameService {
         return gameRepository.findAllByGameStatus(gameStatus);
     }
 
+    @Scheduled(cron = "0 0 3 * * *") //03:00 ночі
+    @Transactional
+    public void checkGameStatuses() {
+        Instant tenMinutesAgo = Instant.now().minus(Duration.ofMinutes(10));
+        List<Game> gamesInProgress = gameRepository.findAllByGameStatus(GameStatus.IN_PROGRESS);
+        for (Game game : gamesInProgress) {
+            if (game.getStartedAt().toInstant().isBefore(tenMinutesAgo)) {
+                game.setGameStatus(GameStatus.CANCELED);
+                gameRepository.save(game);
+            }
+        }
+    }
+
     @Override
     public ConnectGameResponse connectGame(User user, String word) {
         List<Game> searchGames = gameRepository.findAllByGameStatus(GameStatus.SEARCH);
