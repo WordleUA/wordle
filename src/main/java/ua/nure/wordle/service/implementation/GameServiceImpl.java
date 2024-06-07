@@ -17,6 +17,7 @@ import ua.nure.wordle.entity.UserGameId;
 import ua.nure.wordle.entity.enums.GameStatus;
 import ua.nure.wordle.entity.enums.PlayerStatus;
 import ua.nure.wordle.repository.GameRepository;
+import ua.nure.wordle.repository.UserGameRepository;
 import ua.nure.wordle.service.interfaces.GameService;
 import ua.nure.wordle.service.interfaces.UserGameService;
 import ua.nure.wordle.service.interfaces.UserService;
@@ -29,6 +30,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
 @AllArgsConstructor
 @Service
 public class GameServiceImpl implements GameService {
@@ -79,12 +82,18 @@ public class GameServiceImpl implements GameService {
     public void checkGameStatuses() {
         Instant tenMinutesAgo = Instant.now().minus(Duration.ofMinutes(10));
         List<Game> gamesInProgress = gameRepository.findAllByGameStatus(GameStatus.IN_PROGRESS);
-        for (Game game : gamesInProgress) {
-            if (game.getStartedAt().toInstant().isBefore(tenMinutesAgo)) {
-                game.setGameStatus(GameStatus.CANCELED);
-                gameRepository.save(game);
-            }
-        }
+        gamesInProgress.stream()
+                .filter(game -> game.getStartedAt().toInstant().isBefore(tenMinutesAgo))
+                .forEach(game -> {
+                    game.setGameStatus(GameStatus.CANCELED);
+                    game.setEndedAt(Timestamp.from(Instant.now()));
+                    game.getUserGames().forEach(userGame -> {
+                        userGame.setPlayerStatus(PlayerStatus.DRAW.toString());
+                        userGame.setAttempts(0);
+                        userGameService.update(userGame);
+                    });
+                    gameRepository.save(game);
+                });
     }
 
     @Override
