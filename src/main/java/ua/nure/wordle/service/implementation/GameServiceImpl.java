@@ -74,6 +74,7 @@ public class GameServiceImpl implements GameService {
         return gameRepository.findAllByGameStatus(gameStatus);
     }
 
+
     @Scheduled(cron = "0 0 3 * * *") //03:00 ночі
     @Transactional
     public void checkGameStatuses() {
