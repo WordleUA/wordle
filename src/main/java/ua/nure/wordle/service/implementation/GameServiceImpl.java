@@ -1,9 +1,11 @@
 package ua.nure.wordle.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ua.nure.wordle.dto.UserGameDTO;
 import ua.nure.wordle.dto.response.ConnectGameResponse;
@@ -22,6 +24,7 @@ import ua.nure.wordle.utils.Patcher;
 import ua.nure.wordle.websocket.GameWebSocketHandler;
 
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,15 +70,15 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public Optional<Game> findByStatus(GameStatus gameStatus) {
-        return gameRepository.findByGameStatus(gameStatus);
+    public List<Game> findByStatus(GameStatus gameStatus) {
+        return gameRepository.findAllByGameStatus(gameStatus);
     }
 
     @Override
     public ConnectGameResponse connectGame(User user, String word) {
-        Optional<Game> optionalGame = findByStatus(GameStatus.SEARCH);
-        if (optionalGame.isPresent()) {
-            Game game = optionalGame.get();
+        List<Game> searchGames = gameRepository.findAllByGameStatus(GameStatus.SEARCH);
+        if (!searchGames.isEmpty()) {
+            Game game = searchGames.get(0);
             UserGame userGame = UserGame.builder()
                     .id(new UserGameId(user.getId(), game.getId())).game(game)
                     .user(user).playerStatus(null).word(word).attempts(null).build();
