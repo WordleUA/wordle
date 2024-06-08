@@ -50,7 +50,7 @@ function Registration() {
         userDTO.append("email", email);
         userDTO.append("password", password);
 
-        fetch("http://localhost:8080/auth/register", {
+        fetch("https://wordle-4fel.onrender.com/auth/register", {
             method: "POST",
             headers: {"Content-Type": "application/x-www-form-urlencoded"},
             body: userDTO.toString()

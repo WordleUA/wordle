@@ -8,7 +8,7 @@ function ConfirmRegistration() {
     const { code } = useParams();
 
     useEffect(() => {
-        fetch('http://localhost:8080/auth/confirm-registration', {
+        fetch('https://wordle-4fel.onrender.com/auth/confirm-registration', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
