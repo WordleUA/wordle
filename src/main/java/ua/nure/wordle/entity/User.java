@@ -2,6 +2,7 @@ package ua.nure.wordle.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -74,6 +75,15 @@ public class User implements UserDetails {
     @Column(name = "coins_total", nullable = false)
     private Long coinsTotal;
 
+    @ColumnDefault("false")
+    @Column(name = "is_enabled", nullable = false)
+    @Getter(AccessLevel.NONE)
+    private Boolean isEnabled = false;
+
+    @Column(name = "verification_code", unique = true)
+    @Size(max = 64)
+    private String verificationCode;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(role));
@@ -106,6 +116,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.isEnabled;
     }
 }

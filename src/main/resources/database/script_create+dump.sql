@@ -26,8 +26,12 @@ CREATE TABLE IF NOT EXISTS "user"
     game_win_count  INT          NOT NULL DEFAULT 0,
     game_lose_count INT          NOT NULL DEFAULT 0,
     game_count      INT          NOT NULL DEFAULT 0,
-    coins_total     INT          NOT NULL DEFAULT 0
+    coins_total     INT          NOT NULL DEFAULT 0,
+    is_enabled      BOOLEAN      NOT NULL DEFAULT FALSE,
+    verification_code VARCHAR(64) NULL DEFAULT NULL
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS users_verification_code_uindex ON "user" (verification_code);
 
 -- Table wordle_uzmi.user_game
 CREATE TABLE IF NOT EXISTS user_game

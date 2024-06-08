@@ -1,5 +1,4 @@
 import './index.css';
-import NavbarClient from "./components/Navbar/NavbarClient/NavbarClient.jsx"
 import GameField from "./components/GameField/GameField";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import {SocketProvider} from "./components/WebSocket/SocketContext";
@@ -11,10 +10,9 @@ import Registration from "./components/Registration/Registration";
 import Login from "./components/Login/Login";
 import Administration from "./components/Administration/Administration";
 import GeneralStatistic from "./components/GeneralStatistic/GeneralStatistic";
-import NavbarDefault from "./components/Navbar/NavbarDefault";
-import NavbarAdmin from "./components/Navbar/NavbarAdmin";
 import NavbarParser from "./components/Navbar/NavbarParser";
 import PasswordRecovery from "./components/PasswordRecovery/PasswordRecovery";
+import ConfirmRegistration from "./components/Confirmation/ConfirmRegistration";
 
 function App() {
     return (
@@ -35,6 +33,7 @@ function App() {
                         <Route path="/administration" element={<Administration />} />
                         <Route path="/generalStatistic" element={<GeneralStatistic />} />
                         <Route path="/passwordRecovery" element={<PasswordRecovery />} />
+                        <Route path="/confirmRegistration/:code" element={<ConfirmRegistration />} />
 
                     </Routes>
                 </div>

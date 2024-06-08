@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import "./Registration.css";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 
 function Registration() {
     const [login, setLogin] = useState('');
@@ -8,7 +8,7 @@ function Registration() {
     const [password, setPassword] = useState('');
     const [passwordRepeat, setPasswordRepeat] = useState('');
     const [errors, setErrors] = useState({});
-    const navigate = useNavigate();
+    const [successMessage, setSuccessMessage] = useState('');
 
     const validateEmail = email => {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -34,11 +34,9 @@ function Registration() {
 
         if (password !== passwordRepeat) newErrors.passwordRepeat = "Паролі не співпадають";
 
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
-
 
     const handleSubmit = event => {
         event.preventDefault();
@@ -59,13 +57,13 @@ function Registration() {
         }).then(response => {
             if (response.ok) {
                 return response.json().then(data => {
-                    localStorage.setItem('accessToken', data.access_token);
-                    localStorage.setItem('refreshToken', data.refresh_token);
-                    localStorage.setItem('role', data.role);
-
-
-                    navigate('/clientCabinet');
-                    window.location.reload();
+                    setSuccessMessage("Реєстрація пройшла успішно. Будь ласка, перевірте свою електронну пошту для підтвердження аккаунту.");
+                    // Clear form fields and errors
+                    setLogin('');
+                    setEmail('');
+                    setPassword('');
+                    setPasswordRepeat('');
+                    setErrors({});
                 });
             } else {
                 return response.json().then(errorData => {
@@ -82,7 +80,8 @@ function Registration() {
             <div className="registration">
                 <div className="registration-form">
                     <form className="registration-form--form" onSubmit={handleSubmit}>
-                        <h1 className="registration-header">РEЄСТРАЦІЯ</h1>
+                        <h1 className="registration-header">РЕЄСТРАЦІЯ</h1>
+                        {successMessage && <p className="success-message">{successMessage}</p>}
                         <input className="registration-form-input"
                                type="text"
                                name="login"

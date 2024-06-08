@@ -1,23 +1,16 @@
 .nav {
-    display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px 80px;
-    font-size: 14px;
-
+    font-size: 18px;
 }
-
-
 
 .nav-list {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     column-gap: 70px;
-
-
 }
-
 
 .nav-row {
     display: flex;
@@ -25,8 +18,8 @@
     align-items: center;
     flex-direction: row;
     gap: 450px;
-
 }
+
 .nav-list__item {
     white-space: nowrap;
     font-weight: 500;
