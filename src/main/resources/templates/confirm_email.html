@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .content {
+            padding: 20px 20px 0 20px;
+            text-align: center;
+        }
+
+        .content h2 {
+            color: #519341;
+        }
+
+        .content p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            text-decoration: none;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #519341;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+        }
+
+        .button:hover {
+            background-color: #3e6f2d;
+        }
+
+        .button,
+        .button a {
+            color: #fff !important;
+        }
+
+        .button a:hover {
+            color: #fff !important;
+        }
+
+        a {
+            color: #fff !important;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #fff !important;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 0 20px;
+            font-size: 14px;
+            color: #777;
+        }
+
+
+    </style>
+    <title>Wordle UA</title>
+</head>
+<body>
+<div class="content">
+    <h2>Вітаємо в Wordle UA!</h2>
+    <p>Дякуємо за реєстрацію, <span th:text="${login}"></span>.
+        Будь ласка, натисніть кнопку нижче для підтвердження вашої електронної пошти:</p>
+    <a class="button" th:href="@{${confirmationUrl}}" target="_blank" style=".ii a[href] {
+            color: #ffffff;
+        }">Підтвердити електронну пошту</a>
+    <p>Якщо ви не реєструвалися на Wordle UA, просто проігноруйте цей лист.</p>
+</div>
+<div class="footer">
+    <p>&copy; 2024 Wordle UA. Всі права захищені.</p>
+</div>
+</body>
+</html>
