@@ -20,6 +20,7 @@ function GameField() {
     const [coins, setCoins] = useState(0);
     const [playerStatus, setPlayerStatus] = useState(null);
     const [initialGameData, setInitialGameData] = useState(null);
+    const [keyboardColors, setKeyboardColors] = useState({});
 
     useEffect(() => {
         setInitialGameData(gameData);
@@ -148,7 +149,17 @@ function GameField() {
         });
 
         setRowColors(newRowColors);
-
+        const newKeyboardColors = { ...keyboardColors };
+        wordArray.forEach((char, index) => {
+            const charColor =
+                newRowColors[startIndex + index] === "green"
+                    ? "green"
+                    : newRowColors[startIndex + index] === "yellow"
+                        ? "yellow"
+                        : keyboardColors[char] || "darkgrey";
+            newKeyboardColors[char] = charColor;
+        });
+        setKeyboardColors(newKeyboardColors);
         if (word === TARGET_WORD) {
             setPlayerStatus("WIN");
             setShowModal(true);
@@ -158,6 +169,7 @@ function GameField() {
         } else {
             setCurrentRow(currentRow + 1);
         }
+
     };
 
     const renderInputRows = () => {
@@ -247,7 +259,7 @@ function GameField() {
             <div className="gamefield-tries">{renderInputRows()}</div>
             {showModal && <Modal messageLose={messageLose} playerStatus={playerStatus} timeTaken={playerStatus === "WIN" ? formatTime(timeTaken) : null} coins={coins} onClose={handleCloseModal} />}
             <div className="gamefield-keyboard">
-                <Keyboard onClick={handleKeyboardClick} />
+                <Keyboard onClick={handleKeyboardClick} keyboardColors={keyboardColors} />
                 <div className="gamefield-keyboard-btns">
                     <button className="gamefield-keyboard-btn-backspace" onClick={() => handleBackspace(inputValues.lastIndexOf(""))}>←</button>
                     <button className="gamefield-keyboard-btn-submit" onClick={canSubmit ? validateCurrentRow : null}>OK</button>
