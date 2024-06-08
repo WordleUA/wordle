@@ -13,7 +13,7 @@ function ConfirmRegistration() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(code),
+            body: code.toString(),
         })
             .then(response => {
                 if (response.ok) {
