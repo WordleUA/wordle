@@ -85,20 +85,20 @@ public class UserController {
         return userService.getUsersByAdmin();
     }
 
-    @PatchMapping("/role/{id}")
+    @PatchMapping("/role")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public UserDTO changeRole(@PathVariable("id") Long id, @RequestBody UserDTO userDTO) {
-        User existingUser = userService.readById(id).
-                orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+    public UserDTO changeRole(@RequestBody UserDTO userDTO) {
+        User existingUser = userService.readById(userDTO.getId()).
+                orElseThrow(() -> new NotFoundException("User not found with id: " + userDTO.getId()));
         existingUser.setRole(userDTO.getRole().getRole());
-        return convertToDTO(userService.update(id, existingUser));
+        return convertToDTO(userService.update(userDTO.getId(), existingUser));
     }
 
-    @PatchMapping("/block/{id}")
+    @PatchMapping("/block")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public UserDTO blockUser(@PathVariable("id") Long id) {
-        User existingUser = userService.readById(id).
-                orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+    public UserDTO blockUser(@RequestBody UserDTO userDTO) {
+        User existingUser = userService.readById(userDTO.getId()).
+                orElseThrow(() -> new NotFoundException("User not found with id: " + userDTO.getId()));
         return convertToDTO(userService.blockUser(existingUser));
     }
 
