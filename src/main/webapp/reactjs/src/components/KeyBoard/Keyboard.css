@@ -21,3 +21,18 @@
     background: #cecdcd;
 
 }
+
+.green {
+    background-color: #59a248;
+    color: white;
+}
+
+.yellow {
+    background-color:#E2DE7F;
+    color: black;
+}
+
+.darkgrey {
+    background-color: #B3B3B3;
+    color: white;
+}
