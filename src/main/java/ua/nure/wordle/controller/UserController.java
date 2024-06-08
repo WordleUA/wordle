@@ -3,6 +3,7 @@ package ua.nure.wordle.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.UserDTO;
@@ -39,11 +40,6 @@ public class UserController {
     @GetMapping()
     public List<UserDTO> findAll() {
         return userService.getAll().stream().map(this::convertToDTO).toList();
-    }
-
-    @GetMapping("/usersByAdmin")
-    public List<AdministrationResponse> getUsersByAdmin() {
-        return userService.getUsersByAdmin();
     }
 
     @GetMapping("/generalStatistic")
@@ -83,7 +79,14 @@ public class UserController {
         return userService.getCabinet(id);
     }
 
+    @GetMapping("/usersByAdmin")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public List<AdministrationResponse> getUsersByAdmin() {
+        return userService.getUsersByAdmin();
+    }
+
     @PatchMapping("/role/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public UserDTO changeRole(@PathVariable("id") Long id, @RequestBody UserDTO userDTO) {
         User existingUser = userService.readById(id).
                 orElseThrow(() -> new NotFoundException("User not found with id: " + id));
@@ -92,6 +95,7 @@ public class UserController {
     }
 
     @PatchMapping("/block/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public UserDTO blockUser(@PathVariable("id") Long id) {
         User existingUser = userService.readById(id).
                 orElseThrow(() -> new NotFoundException("User not found with id: " + id));
