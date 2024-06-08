@@ -37,9 +37,8 @@ public class AuthenticationService {
         return new LoginResponse(accessToken, refreshToken, user.getRole());
     }
 
-    public LoginResponse register(RegisterRequest request) {
-        User user = saveUser(request);
-        return login(user.getEmail(), request.getPassword());
+    public User register(RegisterRequest request) {
+        return saveUser(request);
     }
 
     private User saveUser(RegisterRequest request) {
@@ -49,6 +48,7 @@ public class AuthenticationService {
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .role(String.valueOf(UserRole.PLAYER))
                 .isBanned(false)
+                .isEnabled(false)
                 .gameWinCount(0L)
                 .gameLoseCount(0L)
                 .gameCount(0L)
@@ -67,5 +67,16 @@ public class AuthenticationService {
         String newAccessToken = jwtService.generateAccessToken(user);
         String newRefreshToken = jwtService.generateRefreshToken(user);
         return new LoginResponse(newAccessToken, newRefreshToken, user.getRole());
+    }
+
+    public boolean confirmRegistration(String verificationCode) {
+        User user = userService.findByVerificationCode(verificationCode);
+        if (user.isEnabled()) {
+            return false;
+        }
+        user.setVerificationCode(null);
+        user.setIsEnabled(true);
+        userService.update(user.getId(), user);
+        return true;
     }
 }

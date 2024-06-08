@@ -61,6 +61,12 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
+    @Override
+    public User findByVerificationCode(String code) {
+        return userRepository.findByVerificationCode(code)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with verification code: " + code));
+    }
+
 
     @Override
     public User create(User user) {

@@ -1,6 +1,7 @@
 package ua.nure.wordle.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,8 @@ import ua.nure.wordle.dto.request.LoginRequest;
 import ua.nure.wordle.dto.request.RegisterRequest;
 import ua.nure.wordle.dto.response.LoginResponse;
 import ua.nure.wordle.dto.response.MessageResponse;
+import ua.nure.wordle.entity.User;
+import ua.nure.wordle.event.OnRegistrationCompleteEvent;
 import ua.nure.wordle.exception.EmailAlreadyExistsException;
 import ua.nure.wordle.service.AuthenticationService;
 
@@ -21,6 +24,7 @@ import ua.nure.wordle.service.AuthenticationService;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<LoginResponse> loginUser(@ModelAttribute LoginRequest loginRequest) {
@@ -29,8 +33,10 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<LoginResponse> registerUser(@ModelAttribute RegisterRequest request) {
-        return ResponseEntity.ok(authenticationService.register(request));
+    public ResponseEntity<MessageResponse> registerUser(@ModelAttribute RegisterRequest registerDTO) {
+        User registered = authenticationService.register(registerDTO);
+        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(registered));
+        return new ResponseEntity<>(new MessageResponse("User registered"), HttpStatus.CREATED);
     }
 
     @PostMapping(value = "/refresh")
@@ -39,6 +45,15 @@ public class AuthenticationController {
         LoginResponse response = authenticationService.refreshToken(refreshToken);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/confirm-registration")
+    public ResponseEntity<MessageResponse> confirmRegistration(@RequestBody String code) {
+        if (authenticationService.confirmRegistration(code)) {
+            return new ResponseEntity<>(new MessageResponse("Registration confirmed"), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new MessageResponse("Registration not confirmed"), HttpStatus.BAD_REQUEST);
+    }
+
 
     private static String getToken(String authorizationHeader) {
         return authorizationHeader.substring("Bearer ".length());
