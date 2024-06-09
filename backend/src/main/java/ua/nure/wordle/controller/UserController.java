@@ -1,9 +1,11 @@
 package ua.nure.wordle.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.UserDTO;
@@ -52,18 +54,15 @@ public class UserController {
         return 1;
     }
 
-    @PatchMapping("/{id}")
-    public List<UserDTO> update(@Validated @PathVariable("id") Long id,
-                                @RequestBody UserDTO userDTO) {
-        User existingUser = userService.readById(id).
-                orElseThrow(() -> new NotFoundException("User not found with id: " + id + ". Please, write valid user."));
+    @PatchMapping()
+    public List<UserDTO> update(@AuthenticationPrincipal User user,
+                                @RequestBody @Valid UserDTO userDTO) {
         User updatedUser = convertToEntity(userDTO);
-
         try {
-            patcher.patch(existingUser, updatedUser);
-            userService.update(id, existingUser);
+            patcher.patch(user, updatedUser);
+            userService.update(user.getId(), user);
         } catch (IllegalAccessException e) {
-            log.error("Error occurred while updating user with id: {}", id, e);
+            log.error("Error occurred while updating user with id: {}", user.getId(), e);
         }
         return findAll();
     }
