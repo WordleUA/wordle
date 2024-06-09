@@ -1,16 +1,19 @@
 package ua.nure.wordle.controller;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.UserDTO;
 import ua.nure.wordle.dto.response.AdministrationResponse;
 import ua.nure.wordle.dto.response.CabinetResponse;
 import ua.nure.wordle.dto.response.GeneralStatisticResponse;
+import ua.nure.wordle.dto.response.LoginResponse;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.enums.UserRole;
 import ua.nure.wordle.service.interfaces.UserService;
@@ -21,18 +24,12 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final Patcher<User> patcher;
-
-    @Autowired
-    public UserController(UserService userService, ModelMapper modelMapper, Patcher<User> patcher) {
-        this.userService = userService;
-        this.modelMapper = modelMapper;
-        this.patcher = patcher;
-    }
 
     @GetMapping()
     public List<UserDTO> findAll() {
@@ -44,36 +41,24 @@ public class UserController {
         return userService.getGeneralStatistic();
     }
 
-    @GetMapping("/notSleep")
-    public int notSleep() {
-        return 1;
-    }
 
-    @PatchMapping("/{id}")
-    public List<UserDTO> update(@Validated @PathVariable("id") Long id,
-                                @RequestBody UserDTO userDTO) {
-        User existingUser = userService.readById(id).
-                orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id + ". Please, write valid user."));
+    @PatchMapping("/update")
+    public ResponseEntity<UserDTO> update(@AuthenticationPrincipal User user,
+                                                @RequestBody UserDTO userDTO) {
         User updatedUser = convertToEntity(userDTO);
-
         try {
-            patcher.patch(existingUser, updatedUser);
-            userService.update(id, existingUser);
+            patcher.patch(user, updatedUser);
+            userService.update(user.getId(), user);
+            return ResponseEntity.ok(convertToDTO(user));
         } catch (IllegalAccessException e) {
-            log.error("Error occurred while updating user with id: {}", id, e);
+            log.error("Error occurred while updating user with id: {}", user.getId(), e);
         }
-        return findAll();
+        return ResponseEntity.ok(convertToDTO(user));
     }
 
-    @DeleteMapping("/{id}")
-    public List<UserDTO> delete(@PathVariable Long id) {
-        userService.delete(id);
-        return findAll();
-    }
-
-    @GetMapping("/cabinet/{id}")
-    public CabinetResponse getCabinet(@PathVariable Long id) {
-        return userService.getCabinet(id);
+    @GetMapping("/cabinet")
+    public CabinetResponse getCabinet(@AuthenticationPrincipal User user) {
+        return userService.getCabinet(user.getId());
     }
 
     @GetMapping("/usersByAdmin")
@@ -116,5 +101,10 @@ public class UserController {
 
     private UserDTO convertToDTO(User user) {
         return modelMapper.map(user, UserDTO.class);
+    }
+
+    @GetMapping("/notSleep")
+    public int notSleep() {
+        return 1;
     }
 }
