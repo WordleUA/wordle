@@ -17,9 +17,12 @@ function NavbarClient () {
         <nav className="nav">
             <div className="container">
                 <div className="nav-row">
-                    <NavLink to="/howToPlay">
-                        <h3 className="logo-navbar">WORLDE UA</h3>
-                    </NavLink>
+                    <div className="nav-row-name">
+                        <NavLink to="/howToPlay">
+                            <h3 className="logo-navbar">WORLDE UA</h3>
+                        </NavLink>
+                    </div>
+
 
                     <ul className="nav-list">
                         <NavLink to="/clientCabinet" className="nav-list__item">Особистий кабінет</NavLink>
