@@ -11,7 +11,7 @@ function WaitingPage() {
     useEffect(() => {
         if (location.state?.gameData) {
             const initialGameData = location.state.gameData;
-            setGameData(initialGameData); // Встановлюємо початкові дані гри
+            setGameData(initialGameData);
             if (initialGameData.game_status === 'IN_PROGRESS') {
                 subscribeToSocket(initialGameData.game_id);
                 navigateToGame(initialGameData);

@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import "./ClientCabinet.css";
+import {useAuth} from "../Auth/AuthContext";
 
 function ClientCabinet() {
     const [userInfo, setUserInfo] = useState({});
     const [userGames, setUserGames] = useState([]);
     const [wins, setWins] = useState(0);
     const [losses, setLosses] = useState(0);
+    const {authFetch} = useAuth();
 
-    const id = 33;
 
     useEffect(() => {
-        fetch(`https://wordle-4fel.onrender.com/user/cabinet/${id}`)
+        authFetch(`https://wordle-4fel.onrender.com/user/cabinet`)
             .then(response => {
                 if (response.ok) {
                     return response.json();
