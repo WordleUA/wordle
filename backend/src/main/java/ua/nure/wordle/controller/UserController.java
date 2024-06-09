@@ -58,7 +58,7 @@ public class UserController {
 
     @GetMapping("/cabinet")
     public CabinetResponse getCabinet(@AuthenticationPrincipal User user) {
-        return userService.getCabinet(user.getId());
+        return userService.getCabinet(user);
     }
 
     @GetMapping("/usersByAdmin")

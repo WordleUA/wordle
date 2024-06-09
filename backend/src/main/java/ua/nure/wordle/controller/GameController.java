@@ -4,10 +4,12 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.GameDTO;
 import ua.nure.wordle.dto.UserGameDTO;
 import ua.nure.wordle.dto.request.ConnectGameRequest;
+import ua.nure.wordle.dto.request.EndGameRequest;
 import ua.nure.wordle.dto.response.ConnectGameResponse;
 import ua.nure.wordle.entity.Game;
 import ua.nure.wordle.entity.User;
@@ -33,73 +35,17 @@ public class GameController {
     private final ModelMapper modelMapper;
     private final Patcher<Game> gamePatcher;
 
-    @GetMapping()
-    public List<GameDTO> findAll() {
-        return gameService.getAll().stream().map(this::convertToDTO).toList();
-    }
-
-    @GetMapping("/{id}")
-    public GameDTO findById(@PathVariable Long id) {
-        return convertToDTO(gameService.readById(id).
-                orElseThrow(() -> new EntityNotFoundException("Game not found with id: " + id)));
-    }
 
     @PostMapping("/connect")
-    public ConnectGameResponse connect(@RequestBody ConnectGameRequest connectGameRequest) {
-        User user = userService.readById(connectGameRequest.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + connectGameRequest.getUserId()));
+    public ConnectGameResponse connect(@AuthenticationPrincipal User user, @RequestBody ConnectGameRequest connectGameRequest) {
         return gameService.connectGame(user, connectGameRequest.getWord());
     }
 
     @PatchMapping("/end")
-    public void endGame(@RequestBody UserGameDTO userGameDTO) {
-        UserGame userGame = userGameService.readById(userGameDTO.getUserId(), userGameDTO.getGameId())
-                .orElseThrow(() -> new EntityNotFoundException("UserGame not found with userId: " + userGameDTO.getUserId() + ", gameId: "));
-        UserGame endedGame = convertToUserGame(userGameDTO);
-        try {
-            gameService.endGame(userGameDTO, userGame, endedGame);
-        } catch (IllegalAccessException e) {
-            log.error("Error occurred while updating userGame with id: {}, {}", userGameDTO.getGameId(), userGameDTO.getUserId(), e);
-        }
+    public void endGame(@AuthenticationPrincipal User user, @RequestBody EndGameRequest endGameRequest) {
+        gameService.endGame(user, endGameRequest);
     }
 
-    @PatchMapping("/{id}")
-    public List<GameDTO> update(@PathVariable("id") Long id,
-                                @RequestBody GameDTO gameDTO) {
-        Game existingGame = gameService.readById(id).
-                orElseThrow(() -> new EntityNotFoundException("Game not found with id: " + id));
-        Game updatedGame = convertToEntity(gameDTO);
-        try {
-            gamePatcher.patch(existingGame, updatedGame);
-            gameService.update(id, existingGame);
-        } catch (IllegalAccessException e) {
-            log.error("Error occurred while updating game with id: {}", id, e);
-        }
-        return findAll();
-    }
-
-    @DeleteMapping("/{id}")
-    public List<GameDTO> delete(@PathVariable Long id) {
-        gameService.delete(id);
-        return findAll();
-    }
-
-    private UserGame convertToUserGame(UserGameDTO userGameDTO) {
-        Game game = gameService.readById(userGameDTO.getGameId()).orElseThrow(() -> new EntityNotFoundException("Game not found with id: " + userGameDTO.getGameId()));
-        User user = userService.readById(userGameDTO.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userGameDTO.getUserId()));
-        return UserGame.builder()
-                .id(new UserGameId(userGameDTO.getUserId(), userGameDTO.getGameId()))
-                .game(game)
-                .user(user)
-                .playerStatus(String.valueOf(userGameDTO.getPlayerStatus()))
-                .word(userGameDTO.getWord())
-                .attempts(userGameDTO.getAttempts())
-                .build();
-    }
-
-    private Game convertToEntity(GameDTO gameDTO) {
-        return modelMapper.map(gameDTO, Game.class);
-    }
 
     private GameDTO convertToDTO(Game game) {
         return modelMapper.map(game, GameDTO.class);
