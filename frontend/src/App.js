@@ -13,6 +13,8 @@ import GeneralStatistic from "./components/GeneralStatistic/GeneralStatistic";
 import NavbarParser from "./components/Navbar/NavbarParser";
 import PasswordRecovery from "./components/PasswordRecovery/PasswordRecovery";
 import {AuthProvider} from "./components/Auth/AuthContext";
+import ConfirmRegistration from "./components/Confirmation/ConfirmRegistration";
+
 function App() {
     return (
         <div>
@@ -23,7 +25,6 @@ function App() {
                             <NavbarParser/>
                             <Routes>
                                 <Route path="/dictateWord" element={<DictateWord/>}/>
-
                                 <Route path="/gameField" element={<GameField/>}/>
                                 <Route path="/waitingPage" element={<WaitingPage/>}/>
                                 <Route path="/howToPlay" element={<HowToPlay/>}/>
@@ -33,7 +34,7 @@ function App() {
                                 <Route path="/administration" element={<Administration/>}/>
                                 <Route path="/generalStatistic" element={<GeneralStatistic/>}/>
                                 <Route path="/passwordRecovery" element={<PasswordRecovery/>}/>
-
+                                <Route path="/confirmRegistration/:code" element={<ConfirmRegistration/>}/>
                             </Routes>
                         </div>
                     </AuthProvider>

@@ -18,8 +18,8 @@ CREATE TABLE IF NOT EXISTS game
 CREATE TABLE IF NOT EXISTS "user"
 (
     id              SERIAL PRIMARY KEY,
-    login           VARCHAR(45)  NOT NULL,
-    email           VARCHAR(255) NOT NULL,
+    login           VARCHAR(45)  NOT NULL CONSTRAINT users_login_unique UNIQUE,
+    email           VARCHAR(255) NOT NULL CONSTRAINT users_email_unique UNIQUE,
     password_hash   VARCHAR(255) NOT NULL,
     role            VARCHAR(6)   NOT NULL DEFAULT 'PLAYER' CHECK (role IN ('ADMIN', 'PLAYER')),
     is_banned       BOOLEAN      NOT NULL DEFAULT FALSE,
@@ -28,10 +28,8 @@ CREATE TABLE IF NOT EXISTS "user"
     game_count      INT          NOT NULL DEFAULT 0,
     coins_total     INT          NOT NULL DEFAULT 0,
     is_enabled      BOOLEAN      NOT NULL DEFAULT FALSE,
-    confirmation_code VARCHAR(64) NULL DEFAULT NULL
+    confirmation_code VARCHAR(64) NULL DEFAULT NULL CONSTRAINT users_confirmation_code_unique UNIQUE
 );
-
-CREATE UNIQUE INDEX IF NOT EXISTS users_confirmation_code_uindex ON "user" (confirmation_code);
 
 -- Table wordle_uzmi.user_game
 CREATE TABLE IF NOT EXISTS user_game
