@@ -55,7 +55,7 @@ public class UserGameServiceImpl implements UserGameService {
     }
 
     @Override
-    public Optional<UserGame> readById(Long userId, Long gameId) {
+    public UserGame find(Long userId, Long gameId) {
         return userGameRepository.findByUserIdAndGameId(userId, gameId);
     }
 
@@ -69,7 +69,7 @@ public class UserGameServiceImpl implements UserGameService {
         return userGameRepository.save(userGame);
     }
 
-    public Optional<UserGame> findSecondPlayer(Long gameId, Long userId) {
+    public UserGame findOpponent(Long userId, Long gameId) {
         return userGameRepository.findByGameIdAndUserIdNot(gameId, userId);
     }
 }

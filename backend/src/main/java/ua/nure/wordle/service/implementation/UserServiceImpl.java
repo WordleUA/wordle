@@ -103,9 +103,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateGameWinCount(long id, int attempts, PlayerStatus playerStatus) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+    public User updateGameWinCount(User user, int attempts, PlayerStatus playerStatus) {
         switch (playerStatus) {
             case WIN:
                 user.setCoinsTotal(user.getCoinsTotal() + (7 - attempts));
@@ -135,33 +133,30 @@ public class UserServiceImpl implements UserService {
         };
     }
 
-    public CabinetResponse getCabinet(Long id) {
-        User existingUser = readById(id).
-                orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
-        List<UserGame> userGames = userGameService.readByUserId(existingUser.getId());
+    public CabinetResponse getCabinet(User user) {
+        List<UserGame> userGames = userGameService.readByUserId(user.getId());
         List<UserGameDTO> userGameDTOS = new ArrayList<>();
         for (UserGame userGame : userGames) {
             if (userGame.getPlayerStatus() != null && userGame.getAttempts() != null) {
-                userGameService.findSecondPlayer(userGame.getGame().getId(), existingUser.getId())
-                        .ifPresent(secondPlayer -> {
-                            String word = secondPlayer.getWord();
-                            userGameDTOS.add(UserGameDTO.builder()
-                                    .date(userGame.getGame().getCreatedAt())
-                                    .word(word)
-                                    .playerStatus(PlayerStatus.valueOf(userGame.getPlayerStatus()))
-                                    .coins(getGameWinCount(userGame.getAttempts(),
-                                            PlayerStatus.valueOf(userGame.getPlayerStatus())))
-                                    .build());
-                        });
+                UserGame opponentUserGame = userGameService.findOpponent(user.getId(), userGame.getGame().getId());
+                userGameDTOS.add(UserGameDTO.builder()
+                        .date(userGame.getGame().getCreatedAt())
+                        .word(opponentUserGame.getWord())
+                        .playerStatus(userGame.getPlayerStatus())
+                        .coins(getGameWinCount(userGame.getAttempts(),
+                                userGame.getPlayerStatus()))
+                        .build());
             }
         }
-        return CabinetResponse.builder().user(UserDTO.builder()
-                        .login(existingUser.getLogin())
-                        .email(existingUser.getEmail())
-                        .coinsTotal(existingUser.getCoinsTotal()).build())
+        return CabinetResponse.builder().
+                user(UserDTO.builder()
+                        .login(user.getLogin())
+                        .email(user.getEmail())
+                        .coinsTotal(user.getCoinsTotal())
+                        .build())
                 .userGames(userGameDTOS)
-                .wins(existingUser.getGameWinCount())
-                .losses(existingUser.getGameLoseCount())
+                .wins(user.getGameWinCount())
+                .losses(user.getGameLoseCount())
                 .build();
     }
 

@@ -14,10 +14,6 @@ import ua.nure.wordle.entity.enums.GameStatus;
 @Builder
 public class ConnectGameResponse {
     @NotNull
-    @JsonProperty("user_id")
-    private Long userId;
-
-    @NotNull
     @JsonProperty("game_id")
     private Long gameId;
 

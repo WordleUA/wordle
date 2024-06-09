@@ -6,7 +6,9 @@ import lombok.Getter;
 public enum PlayerStatus {
     WIN("WIN"),
     LOSE("PLAYER"),
-    DRAW("DRAW");
+    DRAW("DRAW"),
+    WAITING("WAITING"),
+    IN_GAME("IN_GAME");
 
     private final String name;
 

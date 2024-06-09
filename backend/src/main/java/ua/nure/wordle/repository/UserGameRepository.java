@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserGameRepository extends JpaRepository<UserGame, Long> {
-    Optional<UserGame> findByUserIdAndGameId(Long userId, Long gameId);
-    Optional<UserGame> findByGameIdAndUserIdNot(Long gameId, Long userId);
+    UserGame findByUserIdAndGameId(Long userId, Long gameId);
+    UserGame findByGameIdAndUserIdNot(Long gameId, Long userId);
     List<UserGame> findByUserId(Long userId);
 }
