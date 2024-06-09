@@ -1,23 +1,35 @@
-.nav {
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 80px;
-    font-size: 18px;
-}
 
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    padding: 20px 80px;
+    font-size: 17px;
+}
+.logo-navbar {
+    flex-wrap: nowrap;
+    display: flex;
+}
 .nav-list {
     display: flex;
-    justify-content: flex-end;
     align-items: center;
     column-gap: 70px;
+    flex-wrap: nowrap;
+
+
 }
 
+
 .nav-row {
+    width: 100%;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-direction: row;
-    gap: 450px;
+
+
 }
 
 .nav-list__item {
