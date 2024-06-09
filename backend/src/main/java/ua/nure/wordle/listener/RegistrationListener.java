@@ -6,6 +6,7 @@ import org.modelmapper.internal.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -43,18 +44,18 @@ public class RegistrationListener implements
         try {
             this.confirmRegistration(event);
         } catch (MessagingException | UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new MailSendException("Could not send email", e);
         }
     }
 
     private void confirmRegistration(OnRegistrationCompleteEvent event) throws MessagingException, UnsupportedEncodingException {
         User user = event.getUser();
-        user.setVerificationCode(RandomString.make(64));
+        user.setConfirmationCode(RandomString.make(64));
         userService.update(user.getId(), user);
 
         String recipientAddress = user.getEmail();
         String subject = "Підтвердіть вашу електронну адресу";
-        String confirmationUrl = event.getAppUrl() + "/confirmRegistration/" + user.getVerificationCode();
+        String confirmationUrl = event.getAppUrl() + "/confirmRegistration/" + user.getConfirmationCode();
 
         Map<String, Object> templateModel = Map.of(
                 "confirmationUrl", confirmationUrl,

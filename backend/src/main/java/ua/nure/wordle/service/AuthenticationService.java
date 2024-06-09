@@ -38,11 +38,7 @@ public class AuthenticationService {
     }
 
     public User register(RegisterRequest request) {
-        return saveUser(request);
-    }
-
-    private User saveUser(RegisterRequest request) {
-        User user = User.builder()
+        return userService.create(User.builder()
                 .login(request.getLogin())
                 .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
@@ -53,8 +49,7 @@ public class AuthenticationService {
                 .gameLoseCount(0L)
                 .gameCount(0L)
                 .coinsTotal(0L)
-                .build();
-        return userService.create(user);
+                .build());
     }
 
     public LoginResponse refreshToken(String refreshToken) {
@@ -69,12 +64,12 @@ public class AuthenticationService {
         return new LoginResponse(newAccessToken, newRefreshToken, user.getRole());
     }
 
-    public boolean confirmRegistration(String verificationCode) {
-        User user = userService.findByVerificationCode(verificationCode);
+    public boolean confirmRegistration(String confirmationCode) {
+        User user = userService.findByConfirmationCode(confirmationCode);
         if (user.isEnabled()) {
             return false;
         }
-        user.setVerificationCode(null);
+        user.setConfirmationCode(null);
         user.setIsEnabled(true);
         userService.update(user.getId(), user);
         return true;

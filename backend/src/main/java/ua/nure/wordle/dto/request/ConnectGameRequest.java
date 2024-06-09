@@ -14,10 +14,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ConnectGameRequest {
     @NotNull
-    @JsonProperty("user_id")
-    private Long userId;
-
-    @NotNull
     @Size(max = 5)
     private String word;
 }

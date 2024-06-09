@@ -4,8 +4,6 @@
 target/
 src/**/resources/database.properties
 **.log
-
-target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

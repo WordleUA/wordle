@@ -1,9 +1,11 @@
 package ua.nure.wordle.controller;
 
-import jakarta.validation.Valid;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -12,10 +14,9 @@ import ua.nure.wordle.dto.UserDTO;
 import ua.nure.wordle.dto.response.AdministrationResponse;
 import ua.nure.wordle.dto.response.CabinetResponse;
 import ua.nure.wordle.dto.response.GeneralStatisticResponse;
+import ua.nure.wordle.dto.response.LoginResponse;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.enums.UserRole;
-import ua.nure.wordle.exception.NotFoundException;
-import ua.nure.wordle.service.interfaces.UserGameService;
 import ua.nure.wordle.service.interfaces.UserService;
 import ua.nure.wordle.utils.Patcher;
 
@@ -24,20 +25,12 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
-    private final UserGameService userGameService;
     private final ModelMapper modelMapper;
     private final Patcher<User> patcher;
-
-    @Autowired
-    public UserController(UserService userService, UserGameService userGameService, ModelMapper modelMapper, Patcher<User> patcher) {
-        this.userService = userService;
-        this.userGameService = userGameService;
-        this.modelMapper = modelMapper;
-        this.patcher = patcher;
-    }
 
     @GetMapping()
     public List<UserDTO> findAll() {
@@ -49,33 +42,27 @@ public class UserController {
         return userService.getGeneralStatistic();
     }
 
-    @GetMapping("/notSleep")
-    public int notSleep() {
-        return 1;
-    }
+ 
+    @PatchMapping("/update")
+    public ResponseEntity<UserDTO> update(@AuthenticationPrincipal User user,
+                                                @RequestBody @Valid UserDTO userDTO) {
 
-    @PatchMapping()
-    public List<UserDTO> update(@AuthenticationPrincipal User user,
-                                @RequestBody @Valid UserDTO userDTO) {
         User updatedUser = convertToEntity(userDTO);
         try {
             patcher.patch(user, updatedUser);
             userService.update(user.getId(), user);
+
+            return ResponseEntity.ok(convertToDTO(user));
+
         } catch (IllegalAccessException e) {
             log.error("Error occurred while updating user with id: {}", user.getId(), e);
         }
-        return findAll();
+        return ResponseEntity.ok(convertToDTO(user));
     }
 
-    @DeleteMapping("/{id}")
-    public List<UserDTO> delete(@PathVariable Long id) {
-        userService.delete(id);
-        return findAll();
-    }
-
-    @GetMapping("/cabinet/{id}")
-    public CabinetResponse getCabinet(@PathVariable Long id) {
-        return userService.getCabinet(id);
+    @GetMapping("/cabinet")
+    public CabinetResponse getCabinet(@AuthenticationPrincipal User user) {
+        return userService.getCabinet(user);
     }
 
     @GetMapping("/usersByAdmin")
@@ -88,7 +75,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public UserDTO changeRole(@RequestBody UserDTO userDTO) {
         User existingUser = userService.readById(userDTO.getId()).
-                orElseThrow(() -> new NotFoundException("User not found with id: " + userDTO.getId()));
+                orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userDTO.getId()));
         existingUser.setRole(userDTO.getRole().getRole());
         return convertToDTO(userService.update(userDTO.getId(), existingUser));
     }
@@ -97,7 +84,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public UserDTO blockUser(@RequestBody UserDTO userDTO) {
         User existingUser = userService.readById(userDTO.getId()).
-                orElseThrow(() -> new NotFoundException("User not found with id: " + userDTO.getId()));
+                orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userDTO.getId()));
         return convertToDTO(userService.blockUser(existingUser));
     }
 
@@ -118,5 +105,10 @@ public class UserController {
 
     private UserDTO convertToDTO(User user) {
         return modelMapper.map(user, UserDTO.class);
+    }
+
+    @GetMapping("/notSleep")
+    public int notSleep() {
+        return 1;
     }
 }

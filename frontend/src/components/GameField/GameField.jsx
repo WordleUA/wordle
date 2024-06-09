@@ -5,6 +5,7 @@ import Modal from "../Modal/Modal";
 import { useNavigate } from "react-router";
 import { useLocation } from "react-router-dom";
 import { useSocket } from "../WebSocket/SocketContext";
+import {useAuth} from "../Auth/AuthContext";
 
 function GameField() {
     const navigate = useNavigate();
@@ -21,7 +22,7 @@ function GameField() {
     const [playerStatus, setPlayerStatus] = useState(null);
     const [initialGameData, setInitialGameData] = useState(null);
     const [keyboardColors, setKeyboardColors] = useState({});
-
+    const {authFetch} = useAuth();
     useEffect(() => {
         setInitialGameData(gameData);
     }, []);
@@ -234,7 +235,7 @@ function GameField() {
         };
         console.log("request body", requestBody);
         try {
-            const response = await fetch('https://wordle-4fel.onrender.com/game/end', {
+            const response = await authFetch('https://wordle-4fel.onrender.com/game/end', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

@@ -1,6 +1,7 @@
 package ua.nure.wordle.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -29,10 +30,9 @@ public class UserGame {
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
 
-    @Size(max = 4)
-    @ColumnDefault("NULL")
-    @Column(name = "player_status", length = 4)
-    private String playerStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "player_status")
+    private PlayerStatus playerStatus;
 
     @Size(max = 6)
     @ColumnDefault("NULL")
@@ -42,17 +42,4 @@ public class UserGame {
     @Column(name = "attempts")
     private Integer attempts;
 
-    public void determinePlayerStatus(PlayerStatus playerStatus){
-        switch (playerStatus) {
-            case WIN:
-                this.playerStatus = String.valueOf(PlayerStatus.LOSE);
-                break;
-            case LOSE:
-                this.playerStatus = String.valueOf(PlayerStatus.WIN);
-                break;
-            default:
-                this.playerStatus = String.valueOf(PlayerStatus.DRAW);
-                break;
-        }
-    }
 }
