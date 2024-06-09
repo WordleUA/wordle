@@ -17,6 +17,8 @@ import ua.nure.wordle.entity.UserGameId;
 import ua.nure.wordle.entity.enums.GameStatus;
 import ua.nure.wordle.entity.enums.PlayerStatus;
 import ua.nure.wordle.repository.GameRepository;
+import ua.nure.wordle.repository.UserGameRepository;
+import ua.nure.wordle.repository.UserRepository;
 import ua.nure.wordle.service.interfaces.GameService;
 import ua.nure.wordle.service.interfaces.UserGameService;
 import ua.nure.wordle.service.interfaces.UserService;
@@ -37,6 +39,8 @@ public class GameServiceImpl implements GameService {
     private final UserService userService;
     private final GameWebSocketHandler gameWebSocketHandler;
     private final Patcher<UserGame> userGamePatcher;
+    private final UserGameRepository userGameRepository;
+    private final UserRepository userRepository;
 
     @Override
     public Game create(Game game) {
@@ -104,7 +108,7 @@ public class GameServiceImpl implements GameService {
 
             game.setGameStatus(GameStatus.IN_PROGRESS);
             game.setStartedAt(Timestamp.from(Instant.now()));
-            game = gameRepository.save(game);
+            gameRepository.save(game);
             userGameService.create(userGame);
 
             ConnectGameResponse connectGameSocketResponse = ConnectGameResponse.builder().gameId(game.getId())
@@ -124,20 +128,24 @@ public class GameServiceImpl implements GameService {
         }
     }
 
-    public void endGame(User user, EndGameRequest endGameRequest){
+    public void endGame(User user, EndGameRequest endGameRequest) {
         Game game = gameRepository.findById(endGameRequest.getGameId())
                 .orElseThrow(() -> new EntityNotFoundException("Game not found with id: " + endGameRequest.getGameId()));
-        if (game.getGameStatus() == GameStatus.IN_PROGRESS){
+        if (game.getGameStatus() == GameStatus.IN_PROGRESS) {
             UserGame userGame = userGameService.find(user.getId(), endGameRequest.getGameId());
             UserGame opponentUserGame = userGameService.findOpponent(user.getId(), endGameRequest.getGameId());
-            if (endGameRequest.getPlayerStatus().equals(PlayerStatus.WIN)){
+            if (endGameRequest.getPlayerStatus().equals(PlayerStatus.WIN)) {
                 userGame.setPlayerStatus(PlayerStatus.WIN);
                 userGame.setAttempts(endGameRequest.getAttempts());
                 opponentUserGame.setPlayerStatus(PlayerStatus.LOSE);
-            } else if (endGameRequest.getPlayerStatus().equals(PlayerStatus.LOSE)){
+                user.setGameWinCount(user.getGameWinCount() + 1);
+                user.setCoinsTotal(user.getCoinsTotal() + 7 - endGameRequest.getAttempts());
+            } else if (endGameRequest.getPlayerStatus().equals(PlayerStatus.LOSE)) {
                 userGame.setPlayerStatus(PlayerStatus.LOSE);
                 userGame.setAttempts(endGameRequest.getAttempts());
                 opponentUserGame.setPlayerStatus(PlayerStatus.WIN);
+                user.setGameLoseCount(user.getGameLoseCount() + 1);
+                if (user.getCoinsTotal() > 0) user.setCoinsTotal(user.getCoinsTotal() - 1);
             } else {
                 userGame.setPlayerStatus(PlayerStatus.DRAW);
                 userGame.setAttempts(0);
@@ -146,18 +154,28 @@ public class GameServiceImpl implements GameService {
             }
             game.setGameStatus(GameStatus.COMPLETE);
             game.setEndedAt(Timestamp.from(Instant.now()));
-            userGameService.update(userGame);
-            userGameService.update(opponentUserGame);
+
+            user.setGameCount(user.getGameCount() + 1);
+
             gameRepository.save(game);
+            userGameRepository.save(userGame);
+            userGameRepository.save(opponentUserGame);
+            userRepository.save(user);
             gameWebSocketHandler.notifyGameEnded(new EndGameResponse(game.getId(), opponentUserGame.getPlayerStatus()));
-        } else if (game.getGameStatus() == GameStatus.COMPLETE){
+        } else if (game.getGameStatus() == GameStatus.COMPLETE) {
+            if (endGameRequest.getPlayerStatus().equals(PlayerStatus.WIN)) {
+                user.setCoinsTotal(user.getCoinsTotal() + 7 - endGameRequest.getAttempts());
+            } else if (endGameRequest.getPlayerStatus().equals(PlayerStatus.LOSE)) {
+                user.setCoinsTotal(user.getCoinsTotal() - 1);
+            }
             UserGame userGame = userGameService.find(user.getId(), endGameRequest.getGameId());
             userGame.setAttempts(endGameRequest.getAttempts());
-            userGameService.update(userGame);
+            user.setGameCount(user.getGameCount() + 1);
+            userGameRepository.save(userGame);
+            userRepository.save(user);
         }
-
-
     }
 
 
 }
+
