@@ -1,0 +1,12 @@
+FROM maven:3.8.1-openjdk-17 AS build
+WORKDIR /app
+COPY ../pom.xml .
+COPY ../src ./src
+RUN mvn clean package -DskipTests
+
+FROM eclipse-temurin:17-jre-focal
+COPY --from=build /app/target/wordle-0.0.1-SNAPSHOT.jar /app/wordle-0.0.1-SNAPSHOT.jar
+
+WORKDIR /app
+EXPOSE 8080
+CMD ["java", "-jar", "wordle-0.0.1-SNAPSHOT.jar"]
