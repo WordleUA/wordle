@@ -2,7 +2,6 @@ package ua.nure.wordle.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -80,9 +79,9 @@ public class User implements UserDetails {
     @Getter(AccessLevel.NONE)
     private Boolean isEnabled = false;
 
-    @Column(name = "verification_code", unique = true)
+    @Column(name = "confirmation_code", unique = true)
     @Size(max = 64)
-    private String verificationCode;
+    private String confirmationCode;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
