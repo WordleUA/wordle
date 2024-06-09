@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
     const [role, setRole] = useState(localStorage.getItem('role') || '');
     const navigate = useNavigate();
 
+
     useEffect(() => {
         localStorage.setItem('accessToken', accessToken);
     }, [accessToken]);
