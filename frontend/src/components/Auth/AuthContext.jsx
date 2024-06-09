@@ -23,7 +23,8 @@ export const AuthProvider = ({ children }) => {
     }, [role]);
 
     const clearAuthData = useCallback(() => {
-        localStorage.removeItem('accessToken');
+        console.log("clearing auth data");
+        localStorage.clear();
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('role');
         setAccessToken('');

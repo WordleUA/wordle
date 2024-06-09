@@ -1,6 +1,7 @@
 import "./DictateWord.css";
 import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import {useAuth} from "../Auth/AuthContext";
 
 function DictateWord() {
     const navigate = useNavigate();
@@ -8,7 +9,7 @@ function DictateWord() {
     const [message, setMessage] = useState("");
     const inputRefs = useRef([]);
     const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
-
+    const {authFetch} = useAuth();
     const getRandomId = (min, max) => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     };
@@ -65,7 +66,7 @@ function DictateWord() {
         console.log("Payload being sent:", gameStartDTO);
 
         try {
-            const response = await fetch('https://wordle-4fel.onrender.com/game/connect', {
+            const response = await authFetch('https://wordle-4fel.onrender.com/game/connect', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

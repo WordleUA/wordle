@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import './ConfirmRegistration.css';
+import {Link} from 'react-router-dom';
 
 function ConfirmRegistration() {
     const [confirmationStatus, setConfirmationStatus] = useState('');
@@ -42,7 +43,7 @@ function ConfirmRegistration() {
                     <div className="confirmation-success">
                         <h1>Підтвердження успішне</h1>
                         <p>Ваш акаунт успішно підтверджено. Тепер ви можете увійти.</p>
-                        <button className="login-button">Увійти</button>
+                        <Link to="/login" className="login-button">Увійти</Link>
                     </div>
                 ) : (
                     <div className="confirmation-fail">
