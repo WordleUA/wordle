@@ -9,8 +9,8 @@ RUN npm install && npm run build
 FROM maven:3.8.1-openjdk-17 AS build-backend
 WORKDIR /app
 
-COPY pom.xml .
-COPY src ./src
+COPY ../backend/pom.xml .
+COPY ../src ./src
 
 COPY --from=build-frontend /app/build ./src/main/resources/static
 RUN mvn clean package -DskipTests
