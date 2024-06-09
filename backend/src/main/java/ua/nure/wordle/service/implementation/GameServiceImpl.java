@@ -164,9 +164,11 @@ public class GameServiceImpl implements GameService {
             gameWebSocketHandler.notifyGameEnded(new EndGameResponse(game.getId(), opponentUserGame.getPlayerStatus()));
         } else if (game.getGameStatus() == GameStatus.COMPLETE) {
             if (endGameRequest.getPlayerStatus().equals(PlayerStatus.WIN)) {
+                user.setGameWinCount(user.getGameWinCount() + 1);
                 user.setCoinsTotal(user.getCoinsTotal() + 7 - endGameRequest.getAttempts());
             } else if (endGameRequest.getPlayerStatus().equals(PlayerStatus.LOSE)) {
-                user.setCoinsTotal(user.getCoinsTotal() - 1);
+                user.setGameLoseCount(user.getGameLoseCount() + 1);
+                if (user.getCoinsTotal() > 0) user.setCoinsTotal(user.getCoinsTotal() - 1);
             }
             UserGame userGame = userGameService.find(user.getId(), endGameRequest.getGameId());
             userGame.setAttempts(endGameRequest.getAttempts());
