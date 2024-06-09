@@ -62,9 +62,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByVerificationCode(String code) {
-        return userRepository.findByVerificationCode(code)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with verification code: " + code));
+    public User findByConfirmationCode(String code) {
+        return userRepository.findByConfirmationCode(code)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with confirmation code: " + code));
     }
 
 

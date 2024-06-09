@@ -13,15 +13,11 @@ import ua.nure.wordle.entity.Game;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.UserGame;
 import ua.nure.wordle.entity.UserGameId;
-import ua.nure.wordle.entity.enums.GameStatus;
-import ua.nure.wordle.exception.NotFoundException;
 import ua.nure.wordle.service.interfaces.GameService;
 import ua.nure.wordle.service.interfaces.UserGameService;
 import ua.nure.wordle.service.interfaces.UserService;
 import ua.nure.wordle.utils.Patcher;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.List;
 
 @CrossOrigin
@@ -45,20 +41,20 @@ public class GameController {
     @GetMapping("/{id}")
     public GameDTO findById(@PathVariable Long id) {
         return convertToDTO(gameService.readById(id).
-                orElseThrow(() -> new NotFoundException("Game not found with id: " + id)));
+                orElseThrow(() -> new EntityNotFoundException("Game not found with id: " + id)));
     }
 
     @PostMapping("/connect")
     public ConnectGameResponse connect(@RequestBody ConnectGameRequest connectGameRequest) {
         User user = userService.readById(connectGameRequest.getUserId())
-                .orElseThrow(() -> new NotFoundException("User not found with id: " + connectGameRequest.getUserId()));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + connectGameRequest.getUserId()));
         return gameService.connectGame(user, connectGameRequest.getWord());
     }
 
     @PatchMapping("/end")
     public void endGame(@RequestBody UserGameDTO userGameDTO) {
         UserGame userGame = userGameService.readById(userGameDTO.getUserId(), userGameDTO.getGameId())
-                .orElseThrow(() -> new NotFoundException("UserGame not found with userId: " + userGameDTO.getUserId() + ", gameId: "));
+                .orElseThrow(() -> new EntityNotFoundException("UserGame not found with userId: " + userGameDTO.getUserId() + ", gameId: "));
         UserGame endedGame = convertToUserGame(userGameDTO);
         try {
             gameService.endGame(userGameDTO, userGame, endedGame);
@@ -71,7 +67,7 @@ public class GameController {
     public List<GameDTO> update(@PathVariable("id") Long id,
                                 @RequestBody GameDTO gameDTO) {
         Game existingGame = gameService.readById(id).
-                orElseThrow(() -> new NotFoundException("Game not found with id: " + id));
+                orElseThrow(() -> new EntityNotFoundException("Game not found with id: " + id));
         Game updatedGame = convertToEntity(gameDTO);
         try {
             gamePatcher.patch(existingGame, updatedGame);
@@ -98,15 +94,6 @@ public class GameController {
                 .playerStatus(String.valueOf(userGameDTO.getPlayerStatus()))
                 .word(userGameDTO.getWord())
                 .attempts(userGameDTO.getAttempts())
-                .build();
-    }
-
-    private Game buildGame() {
-        return Game.builder()
-                .gameStatus(GameStatus.SEARCH)
-                .createdAt(Timestamp.from(Instant.now()))
-                .startedAt(null)
-                .endedAt(null)
                 .build();
     }
 

@@ -1,10 +1,7 @@
 package ua.nure.wordle.security;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.LockedException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,6 +31,9 @@ public class AuthProvider implements AuthenticationProvider {
 
         if (!passwordEncoder.matches(password, user.getPassword()))
             throw new BadCredentialsException("Неправильний пароль");
+
+        if (!user.isEnabled())
+            throw new DisabledException("Ваша електронна адреса не підтверджена. Перевірте пошту");
 
         if (Boolean.TRUE.equals(user.getIsBanned()))
             throw new LockedException("Неможливо авторизуватися. Ваш акаунт заблоковано");

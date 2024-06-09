@@ -1,5 +1,6 @@
 package ua.nure.wordle.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,6 @@ import ua.nure.wordle.dto.response.CabinetResponse;
 import ua.nure.wordle.dto.response.GeneralStatisticResponse;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.enums.UserRole;
-import ua.nure.wordle.exception.NotFoundException;
-import ua.nure.wordle.service.interfaces.UserGameService;
 import ua.nure.wordle.service.interfaces.UserService;
 import ua.nure.wordle.utils.Patcher;
 
@@ -25,14 +24,12 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
-    private final UserGameService userGameService;
     private final ModelMapper modelMapper;
     private final Patcher<User> patcher;
 
     @Autowired
-    public UserController(UserService userService, UserGameService userGameService, ModelMapper modelMapper, Patcher<User> patcher) {
+    public UserController(UserService userService, ModelMapper modelMapper, Patcher<User> patcher) {
         this.userService = userService;
-        this.userGameService = userGameService;
         this.modelMapper = modelMapper;
         this.patcher = patcher;
     }
@@ -56,7 +53,7 @@ public class UserController {
     public List<UserDTO> update(@Validated @PathVariable("id") Long id,
                                 @RequestBody UserDTO userDTO) {
         User existingUser = userService.readById(id).
-                orElseThrow(() -> new NotFoundException("User not found with id: " + id + ". Please, write valid user."));
+                orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id + ". Please, write valid user."));
         User updatedUser = convertToEntity(userDTO);
 
         try {
@@ -89,7 +86,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public UserDTO changeRole(@RequestBody UserDTO userDTO) {
         User existingUser = userService.readById(userDTO.getId()).
-                orElseThrow(() -> new NotFoundException("User not found with id: " + userDTO.getId()));
+                orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userDTO.getId()));
         existingUser.setRole(userDTO.getRole().getRole());
         return convertToDTO(userService.update(userDTO.getId(), existingUser));
     }
@@ -98,7 +95,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public UserDTO blockUser(@RequestBody UserDTO userDTO) {
         User existingUser = userService.readById(userDTO.getId()).
-                orElseThrow(() -> new NotFoundException("User not found with id: " + userDTO.getId()));
+                orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userDTO.getId()));
         return convertToDTO(userService.blockUser(existingUser));
     }
 

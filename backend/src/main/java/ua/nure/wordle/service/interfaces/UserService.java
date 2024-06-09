@@ -18,5 +18,5 @@ public interface UserService extends Service<User> {
     UserDetailsService userDetailsService();
     List<GeneralStatisticResponse> getGeneralStatistic();
     List<AdministrationResponse> getUsersByAdmin();
-    User findByVerificationCode(String code);
+    User findByConfirmationCode(String code);
 }
