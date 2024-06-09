@@ -22,7 +22,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Визначаємо URL, за яким клієнти будуть підключатися до WebSocket сервера
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("https://wordle-4fel.onrender.com", "http://localhost:3000")
+                .setAllowedOrigins("https://wordle-ua.onrender.com/", "http://localhost:3000")
                 .withSockJS();
     }
 
