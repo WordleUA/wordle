@@ -1,6 +1,7 @@
 package ua.nure.wordle.controller;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -8,13 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.UserDTO;
 import ua.nure.wordle.dto.response.AdministrationResponse;
 import ua.nure.wordle.dto.response.CabinetResponse;
 import ua.nure.wordle.dto.response.GeneralStatisticResponse;
-import ua.nure.wordle.dto.response.LoginResponse;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.enums.UserRole;
 import ua.nure.wordle.service.interfaces.UserService;
