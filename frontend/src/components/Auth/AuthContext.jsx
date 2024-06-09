@@ -10,7 +10,6 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-
         localStorage.setItem('accessToken', accessToken);
     }, [accessToken]);
 
