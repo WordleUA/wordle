@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.UserDTO;
 import ua.nure.wordle.dto.response.AdministrationResponse;
@@ -41,15 +42,18 @@ public class UserController {
         return userService.getGeneralStatistic();
     }
 
-
+ 
     @PatchMapping("/update")
     public ResponseEntity<UserDTO> update(@AuthenticationPrincipal User user,
-                                                @RequestBody UserDTO userDTO) {
+                                                @RequestBody @Valid UserDTO userDTO) {
+
         User updatedUser = convertToEntity(userDTO);
         try {
             patcher.patch(user, updatedUser);
             userService.update(user.getId(), user);
+
             return ResponseEntity.ok(convertToDTO(user));
+
         } catch (IllegalAccessException e) {
             log.error("Error occurred while updating user with id: {}", user.getId(), e);
         }
