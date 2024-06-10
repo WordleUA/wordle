@@ -218,7 +218,7 @@ function GameField() {
     const endGame = async (status) => {
         if (status === null || initialGameData === null) return;
         setTimeTaken(600 - timeLeft);
-        const coinsEarned = status === "WIN" ? 6 - currentRow : 0;
+        const coinsEarned = status === "WIN" ? 7 - currentRow : 0;
         const coinsLost = 1;
         const coinsDraw = status === "LOSE" ? 0 : 0;
         setCoins(status === "WIN" ? coinsEarned : status === "LOSE" ? coinsLost : status === "DRAW" ? coinsDraw : 0);
