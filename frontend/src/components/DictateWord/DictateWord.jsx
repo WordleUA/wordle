@@ -13,7 +13,7 @@ function DictateWord() {
     const getRandomId = (min, max) => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     };
-    const user_id = getRandomId(33, 44);
+
 
     useEffect(() => {
         inputRefs.current = inputRefs.current.slice(0, letters.length);
@@ -59,7 +59,7 @@ function DictateWord() {
     const handleSubmit = async () => {
         const word = letters.join("");
         const gameStartDTO = {
-            user_id: user_id,
+
             word: word
         };
 

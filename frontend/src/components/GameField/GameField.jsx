@@ -5,7 +5,7 @@ import Modal from "../Modal/Modal";
 import { useNavigate } from "react-router";
 import { useLocation } from "react-router-dom";
 import { useSocket } from "../WebSocket/SocketContext";
-import {useAuth} from "../Auth/AuthContext";
+import { useAuth } from "../Auth/AuthContext";
 
 function GameField() {
     const navigate = useNavigate();
@@ -22,7 +22,9 @@ function GameField() {
     const [playerStatus, setPlayerStatus] = useState(null);
     const [initialGameData, setInitialGameData] = useState(null);
     const [keyboardColors, setKeyboardColors] = useState({});
-    const {authFetch} = useAuth();
+    const { authFetch } = useAuth();
+    const [validatedAttempts, setValidatedAttempts] = useState(0); // New state to track validated attempts
+
     useEffect(() => {
         setInitialGameData(gameData);
     }, []);
@@ -47,6 +49,7 @@ function GameField() {
 
         if (word.length === 5) {
             validateWord(word);
+            setValidatedAttempts(validatedAttempts + 1); // Increment validated attempts
         }
     };
 
@@ -59,7 +62,7 @@ function GameField() {
         } else if (timeLeft === 0) {
             setPlayerStatus("DRAW");
             setShowModal(true);
-            endGame(playerStatus);
+            endGame("DRAW");
         }
     }, [timeLeft, showModal]);
 
@@ -161,6 +164,7 @@ function GameField() {
             newKeyboardColors[char] = charColor;
         });
         setKeyboardColors(newKeyboardColors);
+
         if (word === TARGET_WORD) {
             setPlayerStatus("WIN");
             setShowModal(true);
@@ -204,7 +208,6 @@ function GameField() {
     const handleCloseModal = () => {
         setShowModal(false);
 
-
         navigate('/howToPlay');
         window.location.reload();
     };
@@ -218,17 +221,16 @@ function GameField() {
     const endGame = async (status) => {
         if (status === null || initialGameData === null) return;
         setTimeTaken(600 - timeLeft);
-        const coinsEarned = status === "WIN" ? 7 - currentRow : 0;
+        const coinsEarned = status === "WIN" ? 7 - validatedAttempts : 0; // Use validatedAttempts
         const coinsLost = 1;
         const coinsDraw = status === "LOSE" ? 0 : 0;
         setCoins(status === "WIN" ? coinsEarned : status === "LOSE" ? coinsLost : status === "DRAW" ? coinsDraw : 0);
         console.log("End Game Status:", status);
         console.log('info from socket: ', initialGameData);
-        const attempts = currentRow + 1;
-        const user_id = initialGameData.user_id;
+        const attempts = validatedAttempts; // Use validatedAttempts
+
         const game_id = initialGameData.game_id;
         const requestBody = {
-            user_id,
             game_id,
             player_status: status,
             attempts
@@ -254,6 +256,7 @@ function GameField() {
             console.error("Error recording game result:", error);
         }
     };
+
     return (
         <div className="gamefield">
             <div className="gamefield-timer">Час: {formatTime(timeLeft)}</div>
