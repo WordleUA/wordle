@@ -2,6 +2,7 @@ package ua.nure.wordle.listener;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.NonNull;
 import org.modelmapper.internal.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +32,8 @@ public class RegistrationListener implements
     private String username;
     @Value("${spring.mail.from.name}")
     private String fromName;
+    @Value("${wordle.app.url}")
+    private String appUrl;
 
     @Autowired
     public RegistrationListener(UserService userService, JavaMailSender mailSender, SpringTemplateEngine thymeleafTemplateEngine) {
@@ -40,7 +43,7 @@ public class RegistrationListener implements
     }
 
     @Override
-    public void onApplicationEvent(OnRegistrationCompleteEvent event) {
+    public void onApplicationEvent(@NonNull OnRegistrationCompleteEvent event) {
         try {
             this.confirmRegistration(event);
         } catch (MessagingException | UnsupportedEncodingException e) {
@@ -55,7 +58,7 @@ public class RegistrationListener implements
 
         String recipientAddress = user.getEmail();
         String subject = "Підтвердіть вашу електронну адресу";
-        String confirmationUrl = event.getAppUrl() + "/confirmRegistration/" + user.getConfirmationCode();
+        String confirmationUrl = appUrl + "/confirmRegistration/" + user.getConfirmationCode();
 
         Map<String, Object> templateModel = Map.of(
                 "confirmationUrl", confirmationUrl,
