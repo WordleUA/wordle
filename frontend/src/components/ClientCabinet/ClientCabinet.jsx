@@ -45,6 +45,10 @@ function ClientCabinet() {
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     };
 
+    const handleLoginChange = () => {
+
+    };
+
     return (
         <div className="cabinet">
             <h1 className="cabinet-header">ОСОБИСТИЙ КАБІНЕТ</h1>
@@ -53,7 +57,7 @@ function ClientCabinet() {
                     <span>Логін: {userInfo.login}</span>
                     <span>Email: {userInfo.email}</span>
                     <span>Кількість монет: {userInfo.coins_total}</span>
-                    <button className="edit-button">Редагувати</button>
+                    <button className="edit-button" onClick={handleLoginChange}>Редагувати</button>
                 </div>
                 <div className="user-stats">
                     <p>Виграші/Програші</p>
