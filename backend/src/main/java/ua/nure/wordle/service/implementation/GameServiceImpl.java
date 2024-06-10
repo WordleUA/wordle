@@ -171,7 +171,7 @@ public class GameServiceImpl implements GameService {
                 if (user.getCoinsTotal() > 0) user.setCoinsTotal(user.getCoinsTotal() - 1);
             }
             UserGame userGame = userGameService.find(user.getId(), endGameRequest.getGameId());
-            userGame.setAttempts(endGameRequest.getAttempts());
+            userGame.setAttempts(endGameRequest.getAttempts() - 1);
             user.setGameCount(user.getGameCount() + 1);
             userGameRepository.save(userGame);
             userRepository.save(user);
