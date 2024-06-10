@@ -73,6 +73,9 @@ public class UserServiceImpl implements UserService {
         if (Boolean.TRUE.equals(userRepository.existsByEmail(user.getEmail()))) {
             throw new EmailAlreadyExistsException("Користувач з email " + user.getEmail() + " вже існує");
         }
+        if (Boolean.TRUE.equals(userRepository.existsByLogin(user.getLogin()))) {
+            throw new EmailAlreadyExistsException("Користувач з логіном " + user.getLogin() + " вже існує");
+        }
         return userRepository.save(user);
     }
 

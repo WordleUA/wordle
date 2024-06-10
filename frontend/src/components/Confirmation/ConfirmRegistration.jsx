@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {useParams, Link} from 'react-router-dom';
 import './ConfirmRegistration.css';
-import {Link} from 'react-router-dom';
 
 function ConfirmRegistration() {
     const [confirmationStatus, setConfirmationStatus] = useState('');
     const [loading, setLoading] = useState(true);
-    const { code } = useParams();
+    const {code} = useParams();
 
     useEffect(() => {
         fetch('https://wordle-4fel.onrender.com/auth/confirm-registration', {
@@ -43,7 +42,7 @@ function ConfirmRegistration() {
                     <div className="confirmation-success">
                         <h1>Підтвердження успішне</h1>
                         <p>Ваш акаунт успішно підтверджено. Тепер ви можете увійти.</p>
-                        <Link to="/login" className="login-button">Увійти</Link>
+                        <Link to="/" className="login-button">Увійти</Link>
                     </div>
                 ) : (
                     <div className="confirmation-fail">
