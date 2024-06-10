@@ -1,10 +1,12 @@
 import React, {useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
 import "./PasswordRecovery.css";
 
 function PasswordRecovery() {
     const [email, setEmail] = useState('');
     const [errors, setErrors] = useState({});
+    const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
+
     const validateForm = () => {
         let newErrors = {};
 
@@ -21,12 +23,48 @@ function PasswordRecovery() {
         return re.test(String(email).toLowerCase());
     };
 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        if (!validateForm()) {
+            return;
+        }
+
+        setLoading(true);
+
+        fetch('https://wordle-4fel.onrender.com/user/forgot-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: email.toString(),
+        })
+            .then(response => {
+                    setLoading(false);
+                    if (response.ok) {
+                        setMessage('На вашу пошту було відправлено лист з інструкціями для відновлення паролю');
+                    } else if (response.status === 400 || response.status === 401) {
+                        return response.json().then(errorData => {
+                            setErrors({general: errorData.message});
+                        });
+                    } else
+                        setErrors({general: 'Сталася помилка. Будь ласка, спробуйте пізніше'});
+
+                }
+            )
+            .catch(error => {
+                setLoading(false);
+                console.error('Error:', error);
+            });
+    };
+
     return (
         <div className="login-page">
             <div className="login">
                 <div className="login-form">
-                    <form className="passwordrecovery-form--form" >
+                    <form className="passwordrecovery-form--form" onSubmit={handleSubmit}>
                         <h1 className="login-header">ВІДНОВЛЕННЯ ПАРОЛЮ</h1>
+                        {message && <p className="success-message">{message}</p>}
                         <input
                             className="login-form-input"
                             type="text"
@@ -36,9 +74,11 @@ function PasswordRecovery() {
                             onChange={event => setEmail(event.target.value)}
                         />
                         {errors.email && <p className="error">{errors.email}</p>}
-
-                        <button className="login-form-btn" type="submit">ВІДНОВИТИ ПАРОЛЬ</button>
-
+                        {errors.general && <p className="error">{errors.general}</p>}
+                        <button className="login-form-btn" type="submit"
+                                disabled={loading}> {/* Disable button when loading */}
+                            {loading ? 'ЗАВАНТАЖЕННЯ...' : 'ВІДНОВИТИ ПАРОЛЬ'}
+                        </button>
                     </form>
                 </div>
             </div>
