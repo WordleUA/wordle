@@ -14,6 +14,7 @@ import NavbarParser from "./components/Navbar/NavbarParser";
 import PasswordRecovery from "./components/PasswordRecovery/PasswordRecovery";
 import {AuthProvider} from "./components/Auth/AuthContext";
 import ConfirmRegistration from "./components/Confirmation/ConfirmRegistration";
+import PasswordReset from "./components/PasswordReset/PasswordReset";
 
 function App() {
     return (
@@ -34,6 +35,7 @@ function App() {
                                 <Route path="/administration" element={<Administration/>}/>
                                 <Route path="/generalStatistic" element={<GeneralStatistic/>}/>
                                 <Route path="/passwordRecovery" element={<PasswordRecovery/>}/>
+                                <Route path="/passwordReset" element={<PasswordReset/>}/>
                                 <Route path="/confirmRegistration/:code" element={<ConfirmRegistration/>}/>
                             </Routes>
                         </div>
