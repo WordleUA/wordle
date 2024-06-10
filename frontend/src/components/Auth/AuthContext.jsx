@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {createContext, useCallback, useContext, useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 
 const AuthContext = createContext();
 
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
         setRole('');
     }, []);
 
-    const refreshAccessToken = useCallback(async () => {
+    const refresh = useCallback(async () => {
         try {
             const response = await fetch('https://wordle-4fel.onrender.com/auth/refresh', {
                 method: 'POST',
@@ -41,7 +41,6 @@ export const AuthProvider = ({ children }) => {
                     'Authorization': `${refreshToken}`
                 }
             });
-
             if (!response.ok) {
                 const errorData = await response.json();
                 if (errorData.message === 'Token has expired') {
@@ -51,7 +50,6 @@ export const AuthProvider = ({ children }) => {
                     throw new Error(errorData.message);
                 }
             }
-
             const data = await response.json();
             setAccessToken(data.accessToken);
             setRefreshToken(data.refreshToken);
@@ -72,11 +70,11 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await fetch(url, { headers, ...otherOptions });
 
-            if (response.status === 401) {
-                const newAccessToken = await refreshAccessToken();
+            if (response.message === 'Token has expired') {
+                console.log('Token has expired, refreshing...');
+                const newAccessToken = await refresh();
                 headers['Authorization'] = `${newAccessToken}`;
-                const retryResponse = await fetch(url, { headers, ...otherOptions });
-                return retryResponse;
+                return await fetch(url, {headers, ...otherOptions});
             }
 
             return response;
@@ -84,7 +82,7 @@ export const AuthProvider = ({ children }) => {
             console.error('Error making authenticated request:', error);
             throw error;
         }
-    }, [accessToken, refreshAccessToken]);
+    }, [accessToken, refresh]);
 
     return (
         <AuthContext.Provider value={{ accessToken, refreshToken, role, setAccessToken, setRefreshToken, setRole, authFetch }}>
