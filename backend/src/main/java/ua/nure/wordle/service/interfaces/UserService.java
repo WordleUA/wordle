@@ -18,5 +18,7 @@ public interface UserService extends Service<User> {
     UserDetailsService userDetailsService();
     List<GeneralStatisticResponse> getGeneralStatistic();
     List<AdministrationResponse> getUsersByAdmin();
-    User findByConfirmationCode(String code);
+    User getByConfirmationCode(String code);
+    User getByPasswordResetCode(String passwordResetCode);
+    boolean resetPassword(String passwordResetCode, String password);
 }
