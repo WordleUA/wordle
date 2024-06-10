@@ -165,7 +165,7 @@ public class GameServiceImpl implements GameService {
         } else if (game.getGameStatus() == GameStatus.COMPLETE) {
             if (endGameRequest.getPlayerStatus().equals(PlayerStatus.WIN)) {
                 user.setGameWinCount(user.getGameWinCount() + 1);
-                user.setCoinsTotal(user.getCoinsTotal() + 7 - endGameRequest.getAttempts());
+                user.setCoinsTotal(user.getCoinsTotal() + 8 - endGameRequest.getAttempts());
             } else if (endGameRequest.getPlayerStatus().equals(PlayerStatus.LOSE)) {
                 user.setGameLoseCount(user.getGameLoseCount() + 1);
                 if (user.getCoinsTotal() > 0) user.setCoinsTotal(user.getCoinsTotal() - 1);
