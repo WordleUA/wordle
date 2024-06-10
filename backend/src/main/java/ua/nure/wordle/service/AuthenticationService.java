@@ -65,8 +65,8 @@ public class AuthenticationService {
     }
 
     public boolean confirmRegistration(String confirmationCode) {
-        User user = userService.findByConfirmationCode(confirmationCode);
-        if (user.isEnabled()) {
+        User user = userService.getByConfirmationCode(confirmationCode);
+        if (user.isEnabled() || user.getConfirmationCode() == null) {
             return false;
         }
         user.setConfirmationCode(null);

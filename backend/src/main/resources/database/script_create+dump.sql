@@ -28,7 +28,8 @@ CREATE TABLE IF NOT EXISTS "user"
     game_count      INT          NOT NULL DEFAULT 0,
     coins_total     INT          NOT NULL DEFAULT 0,
     is_enabled      BOOLEAN      NOT NULL DEFAULT FALSE,
-    confirmation_code VARCHAR(64) NULL DEFAULT NULL CONSTRAINT users_confirmation_code_unique UNIQUE
+    confirmation_code VARCHAR(64) NULL DEFAULT NULL CONSTRAINT users_confirmation_code_unique UNIQUE,
+    password_reset_code VARCHAR(64) NULL DEFAULT NULL CONSTRAINT users_password_reset_code_unique UNIQUE
 );
 
 -- Table wordle_uzmi.user_game

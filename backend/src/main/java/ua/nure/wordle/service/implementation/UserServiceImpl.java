@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.nure.wordle.dto.UserDTO;
 import ua.nure.wordle.dto.UserGameDTO;
@@ -30,17 +31,19 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserGameService userGameService;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserRepository userRepository, UserGameService userGameService,
-                           ModelMapper modelMapper) {
+                           ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userGameService = userGameService;
         this.modelMapper = modelMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User getByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Користувача з email " + email + " не існує"));
+                .orElseThrow(() -> new UsernameNotFoundException("Користувача з email " + email + " не знайдено"));
     }
 
     public UserDetailsService userDetailsService() {
@@ -62,11 +65,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByConfirmationCode(String code) {
+    public User getByConfirmationCode(String code) {
         return userRepository.findByConfirmationCode(code)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with confirmation code: " + code));
     }
 
+    @Override
+    public User getByPasswordResetCode(String passwordResetCode) {
+        return userRepository.findByPasswordResetCode(passwordResetCode)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with password reset code: " + passwordResetCode));
+    }
+
+    @Override
+    public boolean resetPassword(String passwordResetCode, String password) {
+        User user = getByPasswordResetCode(passwordResetCode);
+        if (user.getPasswordResetCode() == null || user.getPasswordResetCode().isBlank()
+                || Boolean.TRUE.equals(user.getIsBanned())) {
+            return false;
+        }
+        user.setPasswordHash(passwordEncoder.encode(password));
+        user.setPasswordResetCode(null);
+        userRepository.save(user);
+        return true;
+    }
 
     @Override
     public User create(User user) {
@@ -170,5 +191,4 @@ public class UserServiceImpl implements UserService {
         } else user.setIsBanned(Boolean.FALSE);
         return update(user.getId(), user);
     }
-
 }

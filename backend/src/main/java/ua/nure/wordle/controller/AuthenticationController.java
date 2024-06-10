@@ -5,8 +5,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.request.LoginRequest;
 import ua.nure.wordle.dto.request.RegisterRequest;
@@ -54,19 +52,8 @@ public class AuthenticationController {
         return new ResponseEntity<>(new MessageResponse("Registration not confirmed"), HttpStatus.BAD_REQUEST);
     }
 
-
     private static String getToken(String authorizationHeader) {
         return authorizationHeader.substring("Bearer ".length());
-    }
-
-    @ExceptionHandler(MissingRequestHeaderException.class)
-    public ResponseEntity<MessageResponse> handleMissingRequestAuthorizationHeaderException(MissingRequestHeaderException ex) {
-        return new ResponseEntity<>(new MessageResponse("Missing Authorization Header"), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<MessageResponse> handleAuthenticationException(AuthenticationException ex) {
-        return new ResponseEntity<>(new MessageResponse(ex.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)

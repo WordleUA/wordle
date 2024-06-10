@@ -15,4 +15,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAllByOrderByCoinsTotalDesc();
     Optional<User> findByConfirmationCode(String code);
     Boolean existsByLogin(String login);
+    Optional<User> findByPasswordResetCode(String passwordResetCode);
 }

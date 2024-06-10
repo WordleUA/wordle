@@ -83,6 +83,10 @@ public class User implements UserDetails {
     @Size(max = 64)
     private String confirmationCode;
 
+    @Column(name = "password_reset_code", unique = true)
+    @Size(max = 64)
+    private String passwordResetCode;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(role));
