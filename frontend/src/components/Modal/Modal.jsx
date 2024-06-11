@@ -23,7 +23,7 @@ function Modal({ playerStatus, messageLose, timeTaken, coins, onClose }) {
                 {playerStatus === "LOSE" && <p>{messageLose}</p>}
                 {timeTaken && <p>Час виконання: {timeTaken}</p>}
                 <p>{playerStatus === "WIN" ? `Нараховано монет: ${coins}` : playerStatus === "LOSE" ? `Списано монет: 1` : 'Нараховано монет: 0'}</p>
-                <button onClick={onClose}>OK</button>
+                <button className="modal-content-btn" onClick={onClose}>OK</button>
             </div>
         </div>
     );
