@@ -1,15 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, {useState, useEffect, useRef} from "react";
 import "./GameField.css";
 import Keyboard from "../KeyBoard/Keyboard";
 import Modal from "../Modal/Modal";
-import { useNavigate } from "react-router";
-import { useLocation } from "react-router-dom";
-import { useSocket } from "../WebSocket/SocketContext";
-import { useAuth } from "../Auth/AuthContext";
+import {useNavigate} from "react-router";
+import {useLocation} from "react-router-dom";
+import {useSocket} from "../WebSocket/SocketContext";
+import {useAuth} from "../Auth/AuthContext";
 
 function GameField() {
     const navigate = useNavigate();
-    const location = useLocation();
     const [inputValues, setInputValues] = useState(Array(30).fill(""));
     const [currentRow, setCurrentRow] = useState(0);
     const [rowColors, setRowColors] = useState(Array(30).fill(""));
@@ -21,13 +20,13 @@ function GameField() {
     const [playerStatus, setPlayerStatus] = useState(null);
     const [initialGameData, setInitialGameData] = useState(null);
     const [keyboardColors, setKeyboardColors] = useState({});
-    const { authFetch } = useAuth();
+    const {authFetch} = useAuth();
     const [validatedAttempts, setValidatedAttempts] = useState(0);
 
     const inputRefs = useRef([]);
-    const { subscribeToSocket, gameData, setGameData, message, gameStarted } = useSocket();
+    const {gameData, message} = useSocket();
     const TARGET_WORD = gameData.opponent_word;
-    const [messageLose, setMessageLose] = useState('Слово було: ' + TARGET_WORD);
+    const [messageLose] = useState('Слово було: ' + TARGET_WORD);
 
     const isClosingTab = useRef(false); // Flag to control the `beforeunload` event
 
@@ -171,7 +170,7 @@ function GameField() {
         });
 
         setRowColors(newRowColors);
-        const newKeyboardColors = { ...keyboardColors };
+        const newKeyboardColors = {...keyboardColors};
         wordArray.forEach((char, index) => {
             const charColor =
                 newRowColors[startIndex + index] === "green"
@@ -259,21 +258,19 @@ function GameField() {
         };
         console.log("request body", requestBody);
         try {
-            const response = await authFetch('https://wordle-4fel.onrender.com/game/end', {
+            authFetch('https://wordle-4fel.onrender.com/game/end', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(requestBody),
-            });
-
-            if (response.ok) {
-                console.log("Game result recorded successfully.");
-                console.log("Request Body:", requestBody);
-            } else {
-                const errorText = await response.text();
-                console.error("Failed to record game result. Server response:", errorText);
-            }
+            }).then(data => {
+                if (!data.error) {
+                    console.log("Game result recorded successfully.");
+                    console.log("Request Body:", requestBody);
+                    console.error("Failed to record game result. Server response:", data.error);
+                }
+            })
         } catch (error) {
             console.error("Error recording game result:", error);
         }
@@ -295,12 +292,18 @@ function GameField() {
         <div className="gamefield">
             <div className="gamefield-timer">Час: {formatTime(timeLeft)}</div>
             <div className="gamefield-tries">{renderInputRows()}</div>
-            {showModal && <Modal messageLose={messageLose} playerStatus={playerStatus} timeTaken={playerStatus === "WIN" ? formatTime(timeTaken) : null} coins={coins} onClose={handleCloseModal} />}
+            {showModal && <Modal messageLose={messageLose} playerStatus={playerStatus}
+                                 timeTaken={playerStatus === "WIN" ? formatTime(timeTaken) : null} coins={coins}
+                                 onClose={handleCloseModal}/>}
             <div className="gamefield-keyboard">
-                <Keyboard onClick={handleKeyboardClick} keyboardColors={keyboardColors} />
+                <Keyboard onClick={handleKeyboardClick} keyboardColors={keyboardColors}/>
                 <div className="gamefield-keyboard-btns">
-                    <button className="gamefield-keyboard-btn-backspace" onClick={() => handleBackspace(inputValues.lastIndexOf(""))}>←</button>
-                    <button className="gamefield-keyboard-btn-submit" onClick={canSubmit ? validateCurrentRow : null}>OK</button>
+                    <button className="gamefield-keyboard-btn-backspace"
+                            onClick={() => handleBackspace(inputValues.lastIndexOf(""))}>←
+                    </button>
+                    <button className="gamefield-keyboard-btn-submit"
+                            onClick={canSubmit ? validateCurrentRow : null}>OK
+                    </button>
                 </div>
             </div>
         </div>

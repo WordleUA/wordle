@@ -1,6 +1,7 @@
 package ua.nure.wordle.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,8 +18,9 @@ import ua.nure.wordle.service.AuthenticationService;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/auth")
+@Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/auth")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;

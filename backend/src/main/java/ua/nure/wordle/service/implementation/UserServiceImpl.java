@@ -1,6 +1,7 @@
 package ua.nure.wordle.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,20 +27,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserGameService userGameService;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
-
-    public UserServiceImpl(UserRepository userRepository, UserGameService userGameService,
-                           ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.userGameService = userGameService;
-        this.modelMapper = modelMapper;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     public User getByEmail(String email) {
         return userRepository.findByEmail(email)

@@ -6,7 +6,7 @@ import { useSocket } from '../WebSocket/SocketContext';
 function WaitingPage() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { subscribeToSocket, gameData, setGameData, message, gameStarted } = useSocket();
+    const { subscribeToSocket, gameData, setGameData, gameStarted } = useSocket();
 
     useEffect(() => {
         if (location.state?.gameData) {
@@ -34,9 +34,7 @@ function WaitingPage() {
     return (
         <div className="waiting-page">
             {!gameStarted ? (
-                <>
-                    <h1 className="waiting-page-header">ОЧІКУЄМО СУПЕРНИКА...</h1>
-                </>
+                <h1 className="waiting-page-header">ОЧІКУЄМО СУПЕРНИКА...</h1>
             ) : (
                 <></>
             )}

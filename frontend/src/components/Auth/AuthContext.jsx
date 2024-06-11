@@ -1,14 +1,15 @@
-import React, {createContext, useCallback, useContext, useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
+// Створення AuthContext
 const AuthContext = createContext();
 
+// AuthProvider компонент
 export const AuthProvider = ({ children }) => {
     const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken') || '');
     const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken') || '');
     const [role, setRole] = useState(localStorage.getItem('role') || '');
     const navigate = useNavigate();
-
 
     useEffect(() => {
         localStorage.setItem('accessToken', accessToken);
@@ -23,14 +24,13 @@ export const AuthProvider = ({ children }) => {
     }, [role]);
 
     const clearAuthData = useCallback(() => {
-        console.log("clearing auth data");
-        localStorage.clear();
+        console.log("Clearing auth data");
+        localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('role');
-        setAccessToken('');
-        setRefreshToken('');
-        setRole('');
-    }, []);
+        navigate('/');
+        window.location.reload();
+    }, [navigate]);
 
     const refresh = useCallback(async () => {
         try {
@@ -41,24 +41,21 @@ export const AuthProvider = ({ children }) => {
                     'Authorization': `${refreshToken}`
                 }
             });
-            if (!response.ok) {
-                const errorData = await response.json();
-                if (errorData.message === 'Token has expired') {
-                    clearAuthData();
-                    navigate('/login');
-                } else {
-                    throw new Error(errorData.message);
-                }
-            }
             const data = await response.json();
-            setAccessToken(data.accessToken);
-            setRefreshToken(data.refreshToken);
-            setRole(data.role);
-            return data.accessToken;
+
+            if (!response.ok && data.message === "Token has expired") {
+                console.log("Refresh token has expired");
+                clearAuthData();
+            } else {
+                console.log("Tokens refreshed");
+                setAccessToken(data.access_token);
+                setRefreshToken(data.refresh_token);
+                setRole(data.role);
+                return data;
+            }
         } catch (error) {
             console.error('Error refreshing access token:', error);
             clearAuthData();
-            navigate('/login');
             throw error;
         }
     }, [refreshToken, clearAuthData, navigate]);
@@ -68,16 +65,20 @@ export const AuthProvider = ({ children }) => {
         headers['Authorization'] = `${accessToken}`;
 
         try {
-            const response = await fetch(url, { headers, ...otherOptions });
+            let response = await fetch(url, { headers, ...otherOptions });
+            let data = await response.json();
 
-            if (response.message === 'Token has expired') {
-                console.log('Token has expired, refreshing...');
-                const newAccessToken = await refresh();
-                headers['Authorization'] = `${newAccessToken}`;
-                return await fetch(url, {headers, ...otherOptions});
+            if (!response.ok && data.message === "Token has expired") {
+                console.log('Access token has expired, refreshing...');
+                const refreshedData = await refresh();
+
+                if (refreshedData) {
+                    headers['Authorization'] = `${refreshedData.access_token}`;
+                    response = await fetch(url, { headers, ...otherOptions });
+                    data = await response.json();
+                }
             }
-
-            return response;
+            return data;
         } catch (error) {
             console.error('Error making authenticated request:', error);
             throw error;
@@ -85,11 +86,11 @@ export const AuthProvider = ({ children }) => {
     }, [accessToken, refresh]);
 
     return (
-        <AuthContext.Provider value={{ accessToken, refreshToken, role, setAccessToken, setRefreshToken, setRole, authFetch }}>
+        <AuthContext.Provider value={{authFetch}}>
             {children}
         </AuthContext.Provider>
     );
 };
 
-
+// Custom hook to use AuthContext
 export const useAuth = () => useContext(AuthContext);

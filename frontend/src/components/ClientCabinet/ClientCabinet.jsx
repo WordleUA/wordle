@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import "./ClientCabinet.css";
 import {useAuth} from "../Auth/AuthContext";
 
@@ -12,25 +12,19 @@ function ClientCabinet() {
 
     useEffect(() => {
         authFetch(`https://wordle-4fel.onrender.com/user/cabinet`)
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-
-                } else {
-                    throw new Error("Network response was not ok.");
-                }
-            })
             .then(data => {
-                setUserInfo(data.user);
-                setUserGames(data.user_games);
-                setWins(data.wins);
-                setLosses(data.losses);
-
+                if (!data.error) {
+                    setUserInfo(data.user);
+                    setUserGames(data.user_games);
+                    setWins(data.wins);
+                    setLosses(data.losses);
+                } else {
+                    console.log('Error fetching user data');
+                }
+            }).catch(error => {
+                console.error('Error fetching user data:', error);
             })
-            .catch(error => {
-                console.error("There was a problem with the fetch operation:", error);
-            });
-    }, []);
+    }, [authFetch]);
 
     const formatDateString = dateString => {
         const dateObject = new Date(dateString);

@@ -75,17 +75,16 @@ function Administration() {
 
     const fetchUsers = () => {
         authFetch('https://wordle-4fel.onrender.com/user/usersByAdmin')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Error fetching user data');
-                }
-                return response.json();
-            })
             .then((data) => {
-                const rowsWithIds = data.map((row) => ({...row, id: row.user_id}));
-                setRows(rowsWithIds);
-            })
-            .catch((error) => console.error('Error fetching user data:', error));
+                if (!data.error) {
+                    const rowsWithIds = data.map((row) => ({...row, id: row.user_id}));
+                    setRows(rowsWithIds);
+                } else {
+                    console.error('Error fetching user data:', data.error);
+                }
+            }).catch(error => {
+            console.error('Error fetching user data:', error);
+        })
     };
 
     const handleUpdateRow = (id, updates) => {
@@ -123,14 +122,16 @@ function RoleDropdown({id, value, row, handleUpdateRow}) {
         authFetch('https://wordle-4fel.onrender.com/user/role', {
             method: 'PATCH',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({role: newRole, id: id}),
-        }).then((response) => {
-            if (!response.ok) {
-                throw new Error('Failed to update role');
+            body: JSON.stringify({role: newRole, id: id})
+        }).then((data) => {
+            if (!data.error) {
+                handleUpdateRow(id, {role: newRole});
+            } else {
+                console.error('Error updating user role:', data.error);
             }
-            handleUpdateRow(id, {role: newRole});
+        }).catch(error => {
+            console.error('Error updating user role:', error);
         })
-            .catch((error) => console.error('Error updating role:', error));
     };
 
     return (
@@ -152,15 +153,17 @@ function BlockButton({id, row, handleUpdateRow}) {
         authFetch('https://wordle-4fel.onrender.com/user/block', {
             method: 'PATCH',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({id: id}),
-        }).then((response) => {
-            if (!response.ok) {
-                throw new Error('Error toggling block status:');
+            body: JSON.stringify({id: id})
+        }).then((data) => {
+            if (!data.error) {
+                setIsBanned(!isBanned);
+                handleUpdateRow(id, {is_banned: !isBanned});
+            } else {
+                console.error('Error updating user block status:', data.error);
             }
-            setIsBanned(!isBanned);
-            handleUpdateRow(id, {is_banned: !isBanned});
+        }).catch(error => {
+            console.error('Error updating user block status:', error);
         })
-            .catch((error) => console.error('Error toggling block status:', error));
     };
 
     if (role === 'ADMIN') return null;
