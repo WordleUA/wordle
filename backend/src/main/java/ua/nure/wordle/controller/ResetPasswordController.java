@@ -33,9 +33,6 @@ public class ResetPasswordController {
         if (Boolean.TRUE.equals(user.getIsBanned())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Ваш акаунт заблоковано"));
         }
-        if (user.getPasswordResetCode() != null) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Запит на зміну пароля вже відправлено"));
-        }
         user.setPasswordResetCode(RandomString.make(64));
         userService.update(user.getId(), user);
         emailService.sendResetPasswordEmail(user.getEmail(), user.getPasswordResetCode(), user.getLogin());
@@ -50,5 +47,4 @@ public class ResetPasswordController {
             return ResponseEntity.badRequest().body(new MessageResponse("Password reset failed"));
         }
     }
-
 }
