@@ -20,17 +20,14 @@ public class UserDTO implements Serializable {
     private Long id;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotEmpty
-    @Size(max = 45, message = "Username have to contain up to 45 symbols!")
+    @Size(max = 45, message = "Login have to contain up to 45 symbols!")
     private String login;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotEmpty
     @Size(max = 45, message = "Email have to contain up to 45 symbols!")
     private String email;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotEmpty
     @Size(max = 45, message = "Password have to contain up to 45 symbols!")
     @JsonProperty("password_hash")
     private String passwordHash;
