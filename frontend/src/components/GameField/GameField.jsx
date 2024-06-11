@@ -10,7 +10,6 @@ import { useAuth } from "../Auth/AuthContext";
 function GameField() {
     const navigate = useNavigate();
     const location = useLocation();
-
     const [inputValues, setInputValues] = useState(Array(30).fill(""));
     const [currentRow, setCurrentRow] = useState(0);
     const [rowColors, setRowColors] = useState(Array(30).fill(""));
@@ -23,18 +22,21 @@ function GameField() {
     const [initialGameData, setInitialGameData] = useState(null);
     const [keyboardColors, setKeyboardColors] = useState({});
     const { authFetch } = useAuth();
-    const [validatedAttempts, setValidatedAttempts] = useState(0); // New state to track validated attempts
-
-    useEffect(() => {
-        setInitialGameData(gameData);
-    }, []);
+    const [validatedAttempts, setValidatedAttempts] = useState(0);
 
     const inputRefs = useRef([]);
-
     const { subscribeToSocket, gameData, setGameData, message, gameStarted } = useSocket();
     const TARGET_WORD = gameData.opponent_word;
     const [messageLose, setMessageLose] = useState('Слово було: ' + TARGET_WORD);
 
+    const isClosingTab = useRef(false); // Flag to control the `beforeunload` event
+
+    // Fetch initial game data from socket
+    useEffect(() => {
+        setInitialGameData(gameData);
+    }, []);
+
+    // Update canSubmit state based on input values length
     useEffect(() => {
         if (inputValues.slice(currentRow * 5, (currentRow + 1) * 5).join("").length === 5) {
             setCanSubmit(true);
@@ -43,16 +45,7 @@ function GameField() {
         }
     }, [inputValues, currentRow]);
 
-    const validateCurrentRow = () => {
-        const startIndex = currentRow * 5;
-        const word = inputValues.slice(startIndex, startIndex + 5).join("");
-
-        if (word.length === 5) {
-            validateWord(word);
-            setValidatedAttempts(validatedAttempts + 1); // Increment validated attempts
-        }
-    };
-
+    // Countdown timer for the game
     useEffect(() => {
         if (timeLeft > 0 && !showModal) {
             const timer = setInterval(() => {
@@ -66,6 +59,7 @@ function GameField() {
         }
     }, [timeLeft, showModal]);
 
+    // Listen for game status messages from the server
     useEffect(() => {
         if ((message === 'LOSE' || message === 'WIN') && playerStatus === null) {
             setPlayerStatus(message);
@@ -73,12 +67,32 @@ function GameField() {
         }
     }, [message, playerStatus, TARGET_WORD, currentRow, timeLeft]);
 
+    // Handle game end
     useEffect(() => {
         if (playerStatus !== null) {
             endGame(playerStatus);
         }
     }, [playerStatus, currentRow, timeLeft]);
 
+    // Handle tab close event
+    const handleTabClose = async (event) => {
+        if (!isClosingTab.current) {
+            event.preventDefault();
+            setPlayerStatus("LOSE");
+            await endGame("LOSE");
+            event.returnValue = ""; // Standard way to ask for confirmation
+        }
+    };
+
+    useEffect(() => {
+        window.addEventListener("beforeunload", handleTabClose);
+
+        return () => {
+            window.removeEventListener("beforeunload", handleTabClose);
+        };
+    }, [initialGameData, timeLeft, validatedAttempts]); // Dependencies for effect
+
+    // Keyboard click handler
     const handleKeyboardClick = (key) => {
         const newInputValues = [...inputValues];
         const emptyIndex = newInputValues.indexOf("");
@@ -89,6 +103,7 @@ function GameField() {
         }
     };
 
+    // Key press handler for input fields
     const handleKeyPress = (index, event) => {
         if (event.key === "Enter") {
             if (index % 5 === 4) {
@@ -101,6 +116,7 @@ function GameField() {
         }
     };
 
+    // Handle backspace key press
     const handleBackspace = (index) => {
         if (index >= 0) {
             const newInputValues = [...inputValues];
@@ -116,6 +132,7 @@ function GameField() {
         }
     };
 
+    // Handle input change
     const handleInputChange = (index, event) => {
         const newInputValues = [...inputValues];
         newInputValues[index] = event.target.value.toUpperCase();
@@ -126,6 +143,7 @@ function GameField() {
         }
     };
 
+    // Validate the current row input against the target word
     const validateWord = (word) => {
         const newRowColors = [...rowColors];
         const startIndex = currentRow * 5;
@@ -174,9 +192,9 @@ function GameField() {
         } else {
             setCurrentRow(currentRow + 1);
         }
-
     };
 
+    // Render input rows
     const renderInputRows = () => {
         const rows = [];
         for (let i = 0; i < 6; i++) {
@@ -205,29 +223,33 @@ function GameField() {
         return rows;
     };
 
-    const handleCloseModal = () => {
-        setShowModal(false);
-
-        navigate('/howToPlay');
-        window.location.reload();
+    // Validate the current row
+    const validateCurrentRow = () => {
+        const word = inputValues.slice(currentRow * 5, (currentRow + 1) * 5).join("");
+        if (word.length === 5) {
+            validateWord(word);
+            setValidatedAttempts(validatedAttempts + 1);
+        }
     };
 
+    // Format time left
     const formatTime = (seconds) => {
         const minutes = Math.floor(seconds / 60);
         const secs = seconds % 60;
         return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
     };
 
+    // End the game and send results to the server
     const endGame = async (status) => {
         if (status === null || initialGameData === null) return;
         setTimeTaken(600 - timeLeft);
-        const coinsEarned = status === "WIN" ? 7 - validatedAttempts : 0; // Use validatedAttempts
+        const coinsEarned = status === "WIN" ? 7 - validatedAttempts : 0;
         const coinsLost = 1;
         const coinsDraw = status === "LOSE" ? 0 : 0;
         setCoins(status === "WIN" ? coinsEarned : status === "LOSE" ? coinsLost : status === "DRAW" ? coinsDraw : 0);
         console.log("End Game Status:", status);
         console.log('info from socket: ', initialGameData);
-        const attempts = validatedAttempts; // Use validatedAttempts
+        const attempts = validatedAttempts;
 
         const game_id = initialGameData.game_id;
         const requestBody = {
@@ -255,6 +277,18 @@ function GameField() {
         } catch (error) {
             console.error("Error recording game result:", error);
         }
+    };
+
+    // Handle modal close
+    const handleCloseModal = () => {
+        setShowModal(false);
+
+        // Temporarily disable the `beforeunload` listener
+        isClosingTab.current = true;
+        window.removeEventListener("beforeunload", handleTabClose);
+
+        navigate('/howToPlay');
+        window.location.reload();
     };
 
     return (
