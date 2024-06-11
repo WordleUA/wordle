@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 import "./PasswordReset.css";
 
@@ -9,7 +9,14 @@ function PasswordReset() {
     const [errors, setErrors] = useState({});
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
+    const [notFound, setNotFound] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!code || code.length < 64) {
+            setNotFound(true);
+        }
+    }, [code]);
 
     const validateForm = () => {
         let newErrors = {};
@@ -59,6 +66,19 @@ function PasswordReset() {
             console.error('Error:', error);
         });
     };
+
+    if (notFound) {
+        return (
+            <div className="login-page">
+                <div className="login">
+                    <div className="login-form">
+                        <h1 className="login-header">Сторінка не знайдена</h1>
+
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="login-page">
