@@ -10,7 +10,7 @@ function PasswordRecovery() {
     const validateForm = () => {
         let newErrors = {};
 
-        if (!email) newErrors.email = "Email не може бути порожнім";
+        if (!email) newErrors.email = "Будь ласка, введіть ваш email";
         else if (email.length > 255) newErrors.email = "Email не може бути більше 255 символів";
         else if (!validateEmail(email)) newErrors.email = "Email має відповідати формату example@example.com";
 
