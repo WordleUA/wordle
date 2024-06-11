@@ -21,8 +21,6 @@ import ua.nure.wordle.repository.UserGameRepository;
 import ua.nure.wordle.repository.UserRepository;
 import ua.nure.wordle.service.interfaces.GameService;
 import ua.nure.wordle.service.interfaces.UserGameService;
-import ua.nure.wordle.service.interfaces.UserService;
-import ua.nure.wordle.utils.Patcher;
 import ua.nure.wordle.websocket.GameWebSocketHandler;
 
 import java.sql.Timestamp;
@@ -31,14 +29,12 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-@AllArgsConstructor
 @Service
+@AllArgsConstructor
 public class GameServiceImpl implements GameService {
     private final GameRepository gameRepository;
     private final UserGameService userGameService;
-    private final UserService userService;
     private final GameWebSocketHandler gameWebSocketHandler;
-    private final Patcher<UserGame> userGamePatcher;
     private final UserGameRepository userGameRepository;
     private final UserRepository userRepository;
 

@@ -1,6 +1,6 @@
 import "./DictateWord.css";
-import React, { useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import React, {useRef, useState, useEffect} from "react";
+import {useNavigate} from "react-router";
 import {useAuth} from "../Auth/AuthContext";
 
 function DictateWord() {
@@ -59,35 +59,30 @@ function DictateWord() {
     const handleSubmit = async () => {
         const word = letters.join("");
         const gameStartDTO = {
-
             word: word
         };
-
         console.log("Payload being sent:", gameStartDTO);
-
-        try {
-            const response = await authFetch('https://wordle-4fel.onrender.com/game/connect', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(gameStartDTO)
-            });
-
-            const responseData = await response.json();
-
-            if (response.ok) {
+        authFetch('https://wordle-4fel.onrender.com/game/connect', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(gameStartDTO)
+        }).then(data => {
+            if (!data.error) {
                 setMessage("Game connected successfully!");
-                console.log("Game connected:", responseData);
-                navigate('/waitingPage', { state: { gameData: responseData } });
+                console.log("Game connected:", data);
+                navigate('/waitingPage', {state: {gameData: data}});
             } else {
-                setMessage(`Failed to connect game: ${responseData.error}`);
-                console.error("Failed to connect game:", responseData);
+                setMessage(`Failed to connect game: ${data.error}`);
+                console.error("Failed to connect game:", data);
             }
-        } catch (error) {
-            setMessage("Error: " + error.message);
+        }).catch(error => {
+            setMessage(`Error: ${error.message}`);
             console.error("Error:", error);
-        }
+        });
+
+
     };
 
     return (

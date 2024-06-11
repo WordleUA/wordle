@@ -1,28 +1,22 @@
 package ua.nure.wordle.service.implementation;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ua.nure.wordle.entity.UserGame;
 import ua.nure.wordle.repository.UserGameRepository;
-import ua.nure.wordle.service.interfaces.GameService;
 import ua.nure.wordle.service.interfaces.UserGameService;
-import ua.nure.wordle.service.interfaces.UserService;
-import ua.nure.wordle.utils.Patcher;
-import ua.nure.wordle.websocket.GameWebSocketHandler;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserGameServiceImpl implements UserGameService {
 
-    private UserGameRepository userGameRepository;
+    private final UserGameRepository userGameRepository;
 
-
-    public UserGameServiceImpl(UserGameRepository userGameRepository) {
-        this.userGameRepository = userGameRepository;
-    }
 
     @Override
     public UserGame create(UserGame userGame) {

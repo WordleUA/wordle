@@ -2,6 +2,7 @@ package ua.nure.wordle.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -14,6 +15,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class EmailService {
 
     private final JavaMailSender mailSender;
@@ -25,11 +27,6 @@ public class EmailService {
     private String fromName;
     @Value("${wordle.app.url}")
     private String appUrl;
-
-    public EmailService(JavaMailSender mailSender, SpringTemplateEngine thymeleafTemplateEngine) {
-        this.mailSender = mailSender;
-        this.thymeleafTemplateEngine = thymeleafTemplateEngine;
-    }
 
     public void sendConfirmationEmail(String recipientAddress, String confirmationCode, String login) {
         String subject = "Підтвердіть вашу електронну адресу";

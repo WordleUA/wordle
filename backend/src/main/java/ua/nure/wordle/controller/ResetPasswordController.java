@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.internal.bytebuddy.utility.RandomString;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import ua.nure.wordle.service.interfaces.UserService;
 
 @CrossOrigin
 @RestController
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/user")
 public class ResetPasswordController {
