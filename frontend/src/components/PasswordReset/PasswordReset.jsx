@@ -8,15 +8,17 @@ function PasswordReset() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errors, setErrors] = useState({});
     const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const validateForm = () => {
         let newErrors = {};
 
-        if (!password) newErrors.password = "Пароль не може бути порожнім";
+        if (!password) newErrors.password = "Введіть новий пароль";
         else if (password.length < 8) newErrors.password = "Довжина пароля повинна бути не менше 8 символів";
         else if (password.length > 30) newErrors.password = "Довжина пароля повинна бути не більше 30 символів";
 
+        if (!confirmPassword) newErrors.confirmPassword = "Повторіть новий пароль";
         if (password !== confirmPassword) newErrors.confirmPassword = "Паролі не співпадають";
 
         setErrors(newErrors);
@@ -30,6 +32,8 @@ function PasswordReset() {
             return;
         }
 
+        setLoading(true);
+
         fetch("https://wordle-4fel.onrender.com/user/reset-password", {
             method: 'POST',
             headers: {
@@ -37,17 +41,21 @@ function PasswordReset() {
             },
             body: JSON.stringify({password_reset_code: code, password}),
         }).then(response => {
+            setLoading(false);
             if (response.ok) {
                 setMessage('Пароль успішно змінено');
                 setTimeout(() => {
-                    navigate('/login');
+                    navigate('/');
                 }, 3000);
             } else if (response.status === 400 || response.status === 401) {
-                return response.json().then(errorData => {
-                    setErrors({general: errorData.message});
-                });
-            } else setErrors({general: 'Сталася помилка. Будь ласка, спробуйте пізніше'});
+                setErrors({general: 'Ваш акаунт заблоковано або посилання для зміни пароля не дійсне'});
+            } else if (response.status === 404) {
+                setErrors({general: 'Посилання для зміни пароля не дійсне'});
+            } else {
+                setErrors({general: 'Сталася помилка. Будь ласка, спробуйте пізніше'});
+            }
         }).catch(error => {
+            setLoading(false);
             console.error('Error:', error);
         });
     };
@@ -78,8 +86,11 @@ function PasswordReset() {
                             onChange={event => setConfirmPassword(event.target.value)}
                         />
                         {errors.confirmPassword && <p className="error">{errors.confirmPassword}</p>}
+                        {errors.general && <p className="error">{errors.general}</p>}
 
-                        <button className="reset-form-btn" type="submit">Підтвердити</button>
+                        <button className="reset-form-btn" type="submit" disabled={loading}>
+                            {loading ? 'Завантаження...' : 'Підтвердити'}
+                        </button>
                     </form>
                 </div>
             </div>
