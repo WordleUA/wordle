@@ -15,7 +15,8 @@
 .cabinet-form {
     padding: 20px;
     border-radius: 8px;
-    align-items: center; /* Вирівнює елементи по горизонталі в центрі */
+    align-items: center;
+    /* Вирівнює елементи по горизонталі в центрі */
 }
 
 .user-info {
@@ -23,7 +24,10 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    background-color: #e0e0e0;
+    background-color: #f1f1f1;
+
+    gap: 20px;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.25);
     padding: 20px;
     border-radius: 8px;
     font-weight: bolder;
