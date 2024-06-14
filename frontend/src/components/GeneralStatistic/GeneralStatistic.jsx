@@ -25,10 +25,9 @@ const columns = [
         sortable: false,
         filterable: false,
         renderCell: (params) => {
-            // Визначаємо, чи це топ 3
+
             const isTop3 = params.row.ranking <= 3;
 
-            // Визначаємо тип медалі
             let medalType;
             switch (params.row.ranking) {
                 case 1:
@@ -88,7 +87,7 @@ function GeneralStatistic() {
 
     return (
         <div>
-            <h1 className='administration-header' style={{ textAlign: 'center' }}>СТАТИСТИКА</h1>
+            <h1 className='administration-header' style={{ textAlign: 'center' }}>РЕЙТИНГ ГРАВЦІВ</h1>
             <div style={{ height: 'auto', width: '20%', paddingLeft: '20%' }}>
                 <TextField
                     label="Пошук за логіном"
