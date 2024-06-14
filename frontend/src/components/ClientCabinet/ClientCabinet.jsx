@@ -61,6 +61,11 @@ function ClientCabinet() {
             return;
         }
 
+        if (newLogin === userInfo.login) {
+            setError("Новий логін не може бути таким же, як поточний.");
+            return;
+        }
+
         authFetch(`https://wordle-4fel.onrender.com/user/update`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
