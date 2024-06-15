@@ -65,6 +65,7 @@
     transform: translateY(8px) rotate(45deg);
 }
 
+
 .nav-burger.open .burger-line:nth-child(2) {
     opacity: 0;
 }
