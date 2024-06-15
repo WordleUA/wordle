@@ -21,15 +21,15 @@ function HowToPlay() {
                 <div className="howtoplay-form-explanation">
                     <div className="howtoplay-form-explanation-row">
                         <div className="howtoplay-form-explanation-row-square" style={{background: "#b3b3b3"}}></div>
-                        <p>Літера не знаходиться у слові</p>
+                        <p className="howtoplay-form-text">Літера не знаходиться у слові</p>
                     </div>
                     <div className="howtoplay-form-explanation-row">
                         <div className="howtoplay-form-explanation-row-square" style={{background: "#e8e482"}}></div>
-                        <p>Літера є у слові, але знаходиться не на своєму місці</p>
+                        <p className="howtoplay-form-text">Літера є у слові, але знаходиться не на своєму місці</p>
                     </div>
                     <div className="howtoplay-form-explanation-row">
                         <div className="howtoplay-form-explanation-row-square" style={{background: "#86c14c"}}></div>
-                        <p>Літера є у слові і знаходиться на своєму місці</p>
+                        <p className="howtoplay-form-text">Літера є у слові і знаходиться на своєму місці</p>
                     </div>
             </div>
 

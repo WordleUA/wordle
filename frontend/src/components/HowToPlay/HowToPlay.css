@@ -73,3 +73,56 @@
     width: 30px;
     background-color: #B3B3B3FF;
 }
+
+@media(max-width: 1000px) {
+    .howtoplay-form-text {
+
+        width: 80%;
+    }
+}
+
+
+@media(max-width: 650px) {
+
+    .howtoplay-form-example *{
+        font-size: 20px;
+        height: 45px;
+        width: 45px;
+    }
+
+    .howtoplay-form-explanation {
+        display: flex;
+        flex-direction: column;
+        padding: 10px 10px;
+        background-color: #EDF0F5;
+        border-radius: 5px;
+    }
+
+    .howtoplay-form-explanation-row {
+
+        flex-direction: column;
+
+    }
+
+
+    .howtoplay-header {
+        font-size: 24px;
+    }
+
+    .howtoplay-form-explanation-row-square {
+        border-radius: 2px;
+       height: 25px;
+        width: 25px ;
+        background-color: #B3B3B3FF;
+
+    }
+
+    .howtoplay-form-text {
+        font-size: 18px;
+        width: 80%;
+    }
+
+    .howtoplay {
+        margin: 20px 20px;
+    }
+}
