@@ -1,35 +1,31 @@
-
-
+/* Загальні стилі */
 .container {
     display: flex;
     justify-content: space-between;
-    flex-wrap: nowrap;
+    align-items: center;
     padding: 20px 80px;
     font-size: 17px;
+    position: relative;
 }
+
 .logo-navbar {
     flex-wrap: nowrap;
     display: flex;
 }
+
 .nav-list {
     display: flex;
     align-items: center;
     column-gap: 70px;
     flex-wrap: nowrap;
-
-
 }
-
 
 .nav-row {
     width: 100%;
-
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-direction: row;
-
-
 }
 
 .nav-list__item {
@@ -40,4 +36,125 @@
 .nav-list__item:hover {
     text-decoration: underline;
     cursor: pointer;
+}
+
+/* Бургерне меню */
+.nav-burger {
+    display: none;
+    cursor: pointer;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 24px;
+    width: 30px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 2000; /* Високий z-index щоб бути поверх інших елементів */
+}
+
+.burger-line {
+    width: 100%;
+    height: 3px;
+    background-color: black;
+    border-radius: 2px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Стан для відкритого бургерного меню */
+.nav-burger.open .burger-line:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.nav-burger.open .burger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.nav-burger.open .burger-line:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Адаптація для ширини менше 999px */
+@media (max-width: 999px) {
+    .container {
+        font-size: 12px;
+        padding: 20px 50px;
+    }
+
+    .logo-navbar {
+        font-size: 16px;
+    }
+
+    .nav-list {
+        column-gap: 20px;
+    }
+}
+
+/* Бургерне меню для малих екранів */
+@media (max-width: 650px) {
+    .nav-burger {
+        display: flex;
+    }
+
+    .nav-list {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 100%;
+        background-color: #F1F1F1; /* Однорідний колір фону */
+        padding-top: 60px;
+        padding-bottom: 20px;
+        transform: translateX(100%);
+        transition: transform 0.3s ease-in-out;
+        box-shadow: -4px 0 8px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+
+    .nav-list.open {
+        transform: translateX(0);
+    }
+
+    .nav-list__item {
+        width: 100%; /* Забезпечує, що всі елементи займають всю ширину контейнера */
+        padding: 15px 0;
+        font-size: 16px;
+        color: black;
+        text-align: center;
+        position: relative; /* Для псевдоелементів */
+        background-color: #F1F1F1; /* Однорідний колір фону */
+    }
+
+    .nav-list__item::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%; /* Забезпечує коротші лінії, ніж ширина елемента */
+        height: 1px;
+        background-color: #ccc; /* Колір роздільної лінії */
+    }
+
+    .nav-list__item:last-child::before {
+        display: none; /* Прибирає лінію у останнього елемента */
+    }
+
+    .nav-list__item:hover {
+        text-decoration: underline;
+        cursor: pointer;
+        background-color: #e1e1e1; /* Колір фону при наведенні */
+    }
+
+    .container {
+        padding: 20px;
+        justify-content: space-between;
+    }
+
+    .nav-row {
+        flex-direction: row;
+        justify-content: space-between;
+    }
 }

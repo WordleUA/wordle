@@ -1,12 +1,13 @@
+import "./NavbarClient/NavbarClient.css";
+import { useState } from "react";
+import { NavLink } from "react-router-dom";
 
-import "./NavbarClient/NavbarClient.css"
+function NavbarDefault() {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-import {NavLink} from "react-router-dom";
-import {useNavigate} from "react-router";
-
-function NavbarDefault () {
-    const navigate = useNavigate();
-
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
 
     return (
         <nav className="nav">
@@ -15,21 +16,20 @@ function NavbarDefault () {
                     <NavLink to="/howToPlay">
                         <h3 className="logo-navbar">WORLDE UA</h3>
                     </NavLink>
-
-                    <ul className="nav-list">
-                        <NavLink to="/" className="nav-list__item">Вхід</NavLink>
-                        <NavLink to='/registration' className="nav-list__item">Реєстрація</NavLink>
-                        <NavLink to="/howToPlay" className="nav-list__item">Як грати?</NavLink>
-
-                    </ul>
+                    <div className={`nav-burger ${isMenuOpen ? "open" : ""}`} onClick={toggleMenu}>
+                        <div className="burger-line"></div>
+                        <div className="burger-line"></div>
+                        <div className="burger-line"></div>
+                    </div>
                 </div>
+                <ul className={`nav-list ${isMenuOpen ? "open" : ""}`}>
+                    <NavLink to="/" className="nav-list__item" onClick={toggleMenu}>Вхід</NavLink>
+                    <NavLink to="/registration" className="nav-list__item" onClick={toggleMenu}>Реєстрація</NavLink>
+                    <NavLink to="/howToPlay" className="nav-list__item" onClick={toggleMenu}>Як грати?</NavLink>
+                </ul>
             </div>
         </nav>
-
     );
-
 }
+
 export default NavbarDefault;
-
-
-
