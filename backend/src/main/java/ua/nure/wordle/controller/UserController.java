@@ -101,17 +101,7 @@ public class UserController {
 
 
     private User convertToEntity(UserDTO userDTO) {
-        return User.builder()
-                .login(userDTO.getLogin())
-                .email(userDTO.getEmail())
-                .passwordHash(userDTO.getPasswordHash())
-                .role(String.valueOf(userDTO.getRole()))
-                .isBanned(userDTO.getIsBanned())
-                .gameWinCount(userDTO.getGameWinCount())
-                .gameLoseCount(userDTO.getGameLoseCount())
-                .gameCount(userDTO.getGameCount())
-                .coinsTotal(userDTO.getCoinsTotal())
-                .build();
+        return modelMapper.map(userDTO, User.class);
     }
 
     private UserDTO convertToDTO(User user) {
