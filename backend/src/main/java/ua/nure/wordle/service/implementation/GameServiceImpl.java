@@ -91,6 +91,8 @@ public class GameServiceImpl implements GameService {
     @Override
     public ConnectGameResponse connectGame(User user, String word) {
         List<Game> searchGames = gameRepository.findAllByGameStatus(GameStatus.SEARCH);
+        user.setGameCount(user.getGameCount() + 1);
+        userRepository.save(user);
         if (!searchGames.isEmpty()) {
             Game game = searchGames.get(0);
 
@@ -129,7 +131,6 @@ public class GameServiceImpl implements GameService {
                 return connectGameResponse;
             }
         }
-        user.setGameCount(user.getGameCount() + 1);
 
         Game newGame = gameRepository.save(Game.builder()
                 .gameStatus(GameStatus.SEARCH)
@@ -182,7 +183,6 @@ public class GameServiceImpl implements GameService {
             }
             game.setGameStatus(GameStatus.COMPLETE);
             game.setEndedAt(Timestamp.from(Instant.now()));
-
             gameRepository.save(game);
             userGameRepository.save(userGame);
             userGameRepository.save(opponentUserGame);
