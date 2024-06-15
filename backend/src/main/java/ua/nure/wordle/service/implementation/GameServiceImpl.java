@@ -93,36 +93,67 @@ public class GameServiceImpl implements GameService {
         List<Game> searchGames = gameRepository.findAllByGameStatus(GameStatus.SEARCH);
         if (!searchGames.isEmpty()) {
             Game game = searchGames.get(0);
+
             UserGame userGame = UserGame.builder()
-                    .id(new UserGameId(user.getId(), game.getId())).game(game)
-                    .user(user).playerStatus(PlayerStatus.IN_GAME).word(word).attempts(null).build();
+                    .id(new UserGameId(user.getId(), game.getId()))
+                    .game(game)
+                    .user(user)
+                    .playerStatus(PlayerStatus.IN_GAME)
+                    .word(word)
+                    .attempts(null)
+                    .build();
             userGameService.create(userGame);
 
             UserGame opponentUserGame = userGameService.findOpponent(user.getId(), game.getId());
-            opponentUserGame.setPlayerStatus(PlayerStatus.IN_GAME);
-            userGameService.update(opponentUserGame);
+            if (opponentUserGame != null) {
+                opponentUserGame.setPlayerStatus(PlayerStatus.IN_GAME);
+                userGameService.update(opponentUserGame);
 
-            game.setGameStatus(GameStatus.IN_PROGRESS);
-            game.setStartedAt(Timestamp.from(Instant.now()));
-            gameRepository.save(game);
-            userGameService.create(userGame);
+                game.setGameStatus(GameStatus.IN_PROGRESS);
+                game.setStartedAt(Timestamp.from(Instant.now()));
+                gameRepository.save(game);
 
-            ConnectGameResponse connectGameSocketResponse = ConnectGameResponse.builder().gameId(game.getId())
-                    .gameStatus(game.getGameStatus()).opponentWord(word).build();
+                ConnectGameResponse connectGameSocketResponse = ConnectGameResponse.builder()
+                        .gameId(game.getId())
+                        .gameStatus(game.getGameStatus())
+                        .opponentWord(word)
+                        .build();
 
-            ConnectGameResponse connectGameResponse = ConnectGameResponse.builder().gameId(game.getId())
-                    .gameStatus(game.getGameStatus()).opponentWord(opponentUserGame.getWord()).build();
-            gameWebSocketHandler.notifyGameStart(connectGameSocketResponse);
-            return connectGameResponse;
-        } else {
-            Game game = gameRepository.save(Game.builder().gameStatus(GameStatus.SEARCH)
-                    .createdAt(Timestamp.from(Instant.now())).startedAt(null).endedAt(null).build());
-            UserGame userGame = UserGame.builder().id(new UserGameId(user.getId(), game.getId()))
-                    .playerStatus(PlayerStatus.WAITING).game(game).user(user).word(word).attempts(null).build();
-            userGameService.create(userGame);
-            return ConnectGameResponse.builder().gameId(game.getId()).gameStatus(game.getGameStatus()).build();
+                ConnectGameResponse connectGameResponse = ConnectGameResponse.builder()
+                        .gameId(game.getId())
+                        .gameStatus(game.getGameStatus())
+                        .opponentWord(opponentUserGame.getWord())
+                        .build();
+
+                gameWebSocketHandler.notifyGameStart(connectGameSocketResponse);
+                return connectGameResponse;
+            }
         }
+
+        Game newGame = gameRepository.save(Game.builder()
+                .gameStatus(GameStatus.SEARCH)
+                .createdAt(Timestamp.from(Instant.now()))
+                .startedAt(null)
+                .endedAt(null)
+                .build());
+
+        UserGame newUserGame = UserGame.builder()
+                .id(new UserGameId(user.getId(), newGame.getId()))
+                .playerStatus(PlayerStatus.WAITING)
+                .game(newGame)
+                .user(user)
+                .word(word)
+                .attempts(null)
+                .build();
+
+        userGameService.create(newUserGame);
+
+        return ConnectGameResponse.builder()
+                .gameId(newGame.getId())
+                .gameStatus(newGame.getGameStatus())
+                .build();
     }
+
 
     public void endGame(User user, EndGameRequest endGameRequest) {
         Game game = gameRepository.findById(endGameRequest.getGameId())
