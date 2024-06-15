@@ -13,7 +13,7 @@ import ua.nure.wordle.dto.UserDTO;
 import ua.nure.wordle.dto.UserGameDTO;
 import ua.nure.wordle.dto.response.AdministrationResponse;
 import ua.nure.wordle.dto.response.CabinetResponse;
-import ua.nure.wordle.dto.response.GeneralStatisticResponse;
+import ua.nure.wordle.dto.response.GeneralRatingResponse;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.UserGame;
 import ua.nure.wordle.entity.enums.PlayerStatus;
@@ -45,9 +45,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<GeneralStatisticResponse> getGeneralStatistic() {
+    public List<GeneralRatingResponse> getGeneralRating() {
         return userRepository.findAllByOrderByCoinsTotalDesc().stream()
-                .map(element -> modelMapper.map(element, GeneralStatisticResponse.class))
+                .map(element -> modelMapper.map(element, GeneralRatingResponse.class))
                 .toList();
     }
 
@@ -118,28 +118,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<User> getAll(Pageable pageable) {
         return userRepository.findAll(pageable);
-    }
-
-    @Override
-    public User updateGameWinCount(User user, int attempts, PlayerStatus playerStatus) {
-        switch (playerStatus) {
-            case WIN:
-                user.setCoinsTotal(user.getCoinsTotal() + (7 - attempts));
-                user.setGameWinCount(user.getGameWinCount() + 1);
-                user.setGameCount(user.getGameCount() + 1);
-                break;
-            case LOSE:
-                user.setCoinsTotal(user.getCoinsTotal() - 1);
-                user.setGameWinCount(user.getGameLoseCount() + 1);
-                user.setGameCount(user.getGameCount() + 1);
-                break;
-            case DRAW:
-                user.setGameCount(user.getGameCount() + 1);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid player status: " + playerStatus);
-        }
-        return userRepository.save(user);
     }
 
     public Long getGameWinCount(int attempts, PlayerStatus playerStatus) {

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.nure.wordle.dto.UserDTO;
 import ua.nure.wordle.dto.response.AdministrationResponse;
 import ua.nure.wordle.dto.response.CabinetResponse;
-import ua.nure.wordle.dto.response.GeneralStatisticResponse;
+import ua.nure.wordle.dto.response.GeneralRatingResponse;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.enums.UserRole;
 import ua.nure.wordle.service.interfaces.UserService;
@@ -35,9 +35,9 @@ public class UserController {
         return userService.getAll().stream().map(this::convertToDTO).toList();
     }
 
-    @GetMapping("/generalStatistic")
-    public List<GeneralStatisticResponse> getGeneralStatistic() {
-        return userService.getGeneralStatistic();
+    @GetMapping("/getGeneralRating")
+    public List<GeneralRatingResponse> getRating() {
+        return userService.getGeneralRating();
     }
 
  
