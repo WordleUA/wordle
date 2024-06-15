@@ -100,8 +100,29 @@ public class UserController {
     }
 
 
-    private User convertToEntity(UserDTO userDTO) {
-        return modelMapper.map(userDTO, User.class);
+    public User convertToEntity(UserDTO userDTO) {
+        User user = modelMapper.map(userDTO, User.class);
+
+        if (userDTO.getRole() != null) {
+            user.setRole(userDTO.getRole().toString());
+        }
+        if (userDTO.getIsBanned() != null) {
+            user.setIsBanned(userDTO.getIsBanned());
+        }
+        if (userDTO.getGameWinCount() != null) {
+            user.setGameWinCount(userDTO.getGameWinCount());
+        }
+        if (userDTO.getGameLoseCount() != null) {
+            user.setGameLoseCount(userDTO.getGameLoseCount());
+        }
+        if (userDTO.getGameCount() != null) {
+            user.setGameCount(userDTO.getGameCount());
+        }
+        if (userDTO.getCoinsTotal() != null) {
+            user.setCoinsTotal(userDTO.getCoinsTotal());
+        }
+
+        return user;
     }
 
     private UserDTO convertToDTO(User user) {
