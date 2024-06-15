@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GeneralStatisticResponse {
+public class GeneralRatingResponse {
 
     @NotNull
     @JsonProperty("user_id")
