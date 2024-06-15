@@ -67,7 +67,7 @@ function GeneralStatistic() {
     const [search, setSearch] = useState('');
 
     useEffect(() => {
-        fetch('https://wordle-4fel.onrender.com/user/generalStatistic')
+        fetch('https://wordle-4fel.onrender.com/user/getGeneralRating')
             .then((response) => response.json())
             .then((data) => {
                 // Генеруємо рейтинг для кожного рядка
