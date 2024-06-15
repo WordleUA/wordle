@@ -47,7 +47,7 @@ public class UserController {
 
         User updatedUser = convertToEntity(userDTO);
         try {
-            User existingUser = userService.readById(userDTO.getId())
+            User existingUser = userService.readById(currentUser.getId())
                     .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userDTO.getId()));
 
             if (!existingUser.getLogin().equals(updatedUser.getLogin())) {
@@ -100,29 +100,18 @@ public class UserController {
     }
 
 
-    public User convertToEntity(UserDTO userDTO) {
-        User user = modelMapper.map(userDTO, User.class);
-
-        if (userDTO.getRole() != null) {
-            user.setRole(userDTO.getRole().toString());
-        }
-        if (userDTO.getIsBanned() != null) {
-            user.setIsBanned(userDTO.getIsBanned());
-        }
-        if (userDTO.getGameWinCount() != null) {
-            user.setGameWinCount(userDTO.getGameWinCount());
-        }
-        if (userDTO.getGameLoseCount() != null) {
-            user.setGameLoseCount(userDTO.getGameLoseCount());
-        }
-        if (userDTO.getGameCount() != null) {
-            user.setGameCount(userDTO.getGameCount());
-        }
-        if (userDTO.getCoinsTotal() != null) {
-            user.setCoinsTotal(userDTO.getCoinsTotal());
-        }
-
-        return user;
+    private User convertToEntity(UserDTO userDTO) {
+        return User.builder()
+                .login(userDTO.getLogin())
+                .email(userDTO.getEmail())
+                .passwordHash(userDTO.getPasswordHash())
+                .role(String.valueOf(userDTO.getRole()))
+                .isBanned(userDTO.getIsBanned())
+                .gameWinCount(userDTO.getGameWinCount())
+                .gameLoseCount(userDTO.getGameLoseCount())
+                .gameCount(userDTO.getGameCount())
+                .coinsTotal(userDTO.getCoinsTotal())
+                .build();
     }
 
     private UserDTO convertToDTO(User user) {
