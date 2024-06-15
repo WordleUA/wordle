@@ -47,7 +47,7 @@
     height: 24px;
     width: 30px;
     position: absolute;
-    top: 20px;
+    top: 35px;
     right: 20px;
     z-index: 2000; /* Високий z-index щоб бути поверх інших елементів */
 }
@@ -94,6 +94,7 @@
     .nav-burger {
         display: flex;
     }
+
 
     .nav-list {
         display: flex;
@@ -156,5 +157,6 @@
     .nav-row {
         flex-direction: row;
         justify-content: space-between;
+
     }
 }
