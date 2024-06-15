@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,7 +15,6 @@ import ua.nure.wordle.dto.response.AdministrationResponse;
 import ua.nure.wordle.dto.response.CabinetResponse;
 import ua.nure.wordle.dto.response.GeneralRatingResponse;
 import ua.nure.wordle.entity.User;
-import ua.nure.wordle.entity.enums.UserRole;
 import ua.nure.wordle.service.interfaces.UserService;
 import ua.nure.wordle.utils.Patcher;
 
@@ -40,23 +40,36 @@ public class UserController {
         return userService.getGeneralRating();
     }
 
- 
+
     @PatchMapping("/update")
-    public ResponseEntity<UserDTO> update(@AuthenticationPrincipal User user,
-                                                @RequestBody @Valid UserDTO userDTO) {
+    public ResponseEntity<?> update(@AuthenticationPrincipal User currentUser,
+                                    @RequestBody @Valid UserDTO userDTO) {
 
         User updatedUser = convertToEntity(userDTO);
         try {
-            patcher.patch(user, updatedUser);
-            userService.update(user.getId(), user);
+            User existingUser = userService.readById(userDTO.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userDTO.getId()));
 
-            return ResponseEntity.ok(convertToDTO(user));
+            if (!existingUser.getLogin().equals(updatedUser.getLogin())) {
+                if (userService.getByEmail(updatedUser.getLogin()) != null) {
+                    return ResponseEntity.badRequest().body("Login '" + updatedUser.getLogin() + "' is already in use.");
+                }
+            }
+
+            patcher.patch(currentUser, updatedUser);
+            userService.update(currentUser.getId(), updatedUser);
+            return ResponseEntity.ok(convertToDTO(updatedUser));
 
         } catch (IllegalAccessException e) {
-            log.error("Error occurred while updating user with id: {}", user.getId(), e);
+            log.error("Error occurred while updating user with id: {}", currentUser.getId(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (EntityNotFoundException e) {
+            log.error("User not found with id: {}", currentUser.getId(), e);
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(convertToDTO(user));
     }
+
+
 
     @GetMapping("/cabinet")
     public CabinetResponse getCabinet(@AuthenticationPrincipal User user) {
@@ -92,12 +105,12 @@ public class UserController {
                 .login(userDTO.getLogin())
                 .email(userDTO.getEmail())
                 .passwordHash(userDTO.getPasswordHash())
-                .role(String.valueOf(UserRole.PLAYER))
-                .isBanned(false)
-                .gameWinCount(0L)
-                .gameLoseCount(0L)
-                .gameCount(0L)
-                .coinsTotal(0L)
+                .role(String.valueOf(userDTO.getRole()))
+                .isBanned(userDTO.getIsBanned())
+                .gameWinCount(userDTO.getGameWinCount())
+                .gameLoseCount(userDTO.getGameLoseCount())
+                .gameCount(userDTO.getGameCount())
+                .coinsTotal(userDTO.getCoinsTotal())
                 .build();
     }
 
