@@ -129,6 +129,7 @@ public class GameServiceImpl implements GameService {
                 return connectGameResponse;
             }
         }
+        user.setGameCount(user.getGameCount() + 1);
 
         Game newGame = gameRepository.save(Game.builder()
                 .gameStatus(GameStatus.SEARCH)
@@ -182,8 +183,6 @@ public class GameServiceImpl implements GameService {
             game.setGameStatus(GameStatus.COMPLETE);
             game.setEndedAt(Timestamp.from(Instant.now()));
 
-            user.setGameCount(user.getGameCount() + 1);
-
             gameRepository.save(game);
             userGameRepository.save(userGame);
             userGameRepository.save(opponentUserGame);
@@ -199,12 +198,9 @@ public class GameServiceImpl implements GameService {
             }
             UserGame userGame = userGameService.find(user.getId(), endGameRequest.getGameId());
             userGame.setAttempts(endGameRequest.getAttempts());
-            user.setGameCount(user.getGameCount() + 1);
             userGameRepository.save(userGame);
             userRepository.save(user);
         }
     }
-
-
 }
 
