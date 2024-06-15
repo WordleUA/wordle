@@ -178,10 +178,12 @@
 
     .registration-form-btn {
         border-radius: 5px;
-        font-size: 14px;
-        width: 40%;
-        padding: 5px 12px;
+        font-size: calc(0.6vw + 8px);
+        min-width: 40%;
+        max-width: 50%;
+        padding: 10px 15px;
         margin-top: 2%;
+        flex-wrap: wrap;
     }
 
     .registration-form-btn-tologin {
