@@ -19,6 +19,7 @@ public interface UserGameRepository extends JpaRepository<UserGame, Long> {
             "JOIN ug.game g " +
             "JOIN UserGame ugOpp ON ug.game.id = ugOpp.game.id AND ug.user.id <> ugOpp.user.id " +
             "WHERE ug.user.id = :userId " +
+            "AND g.gameStatus = ua.nure.wordle.entity.enums.GameStatus.COMPLETE " +
             "ORDER BY g.endedAt DESC")
     List<UserGameDTO> findByUserIdWithOpponentWord(Long userId);
 }
