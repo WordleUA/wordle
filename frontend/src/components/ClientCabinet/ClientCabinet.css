@@ -16,7 +16,6 @@
     padding: 20px;
     border-radius: 8px;
     align-items: center;
-    /* Вирівнює елементи по горизонталі в центрі */
 }
 
 .user-info {
@@ -25,7 +24,6 @@
     align-items: center;
     margin-bottom: 20px;
     background-color: #f1f1f1;
-
     gap: 20px;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.25);
     padding: 20px;
@@ -57,16 +55,52 @@
     background-color: #45a049;
 }
 
+/* Center header and align stats */
+.games-headers {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 20px;
+    padding-bottom: 30px;
+    padding-top: 30px;
+}
+
 .games-header {
     font-size: 32px;
-    margin-top: 30px;
-    margin-left: 150px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.user-stats {
+    position: absolute;
+    right: 0;
     text-align: center;
+    font-weight: bolder;
+    font-size: 20px;
+}
+
+.user-stats p {
+    margin-bottom: 5px;
+}
+
+.user-stats p span {
+    margin-left: 10px;
+}
+
+.user-stats-wins {
+    color: #519341;
+}
+
+.user-stats-losses {
+    color: #DF0000;
 }
 
 .games-table {
     width: 100%;
     border-collapse: collapse;
+
 }
 
 .games-table th, .games-table td {
@@ -91,33 +125,11 @@
     border-bottom: none;
 }
 
-.user-stats {
-    float: right;
-    text-align: center;
-    font-weight: bolder;
-    font-size: 20px;
-    margin-bottom: 10px;
-}
-
-.user-stats p {
-    margin-bottom: 5px;
-}
-
-.user-stats p span {
-    margin-left: 10px;
-}
-
-.user-stats-wins {
-    color: #519341;
-}
-
-.user-stats-losses {
-    color: #DF0000;
-}
 .error-message {
     color: red;
     margin-top: 10px;
 }
+
 .modal {
     position: fixed;
     top: 0;
@@ -152,7 +164,6 @@
     padding: 5px;
     border-color: transparent;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.25);
-
 }
 
 .save-button {
@@ -182,8 +193,7 @@
     opacity: 0.8;
 }
 
-@media(max-width: 650px) {
-
+@media (max-width: 900px) {
     .cabinet {
         margin: 20px 0px;
     }
@@ -191,58 +201,57 @@
         font-size: 24px;
         text-align: center;
     }
-
+    .games-headers {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0px;
+        position: relative;
+        padding-bottom: 0px;
+    }
+    .games-header {
+        font-size: 24px;
+        position: relative;
+        left: auto;
+        transform: none;
+        text-align: center;
+    }
+    .user-stats {
+        position: relative;
+        text-align: center;
+        font-weight: bolder;
+        font-size: 14px;
+        margin-bottom: 10px;
+        right: auto;
+    }
     .cabinet-form {
         padding: 10px;
         border-radius: 4px;
         width: 100%;
-
     }
-
     .user-info {
-       flex-direction: column;
+        flex-direction: column;
         gap: 10px;
         border-radius: 4px;
         font-size: 14px;
-        width: 70%;
+        width: 80%;
     }
-
     .user-info span {
         font-size: 14px;
     }
-
     .edit-button {
         padding: 8px 12px;
         font-size: 14px;
         border-radius: 2px;
     }
-
-    .games-header {
-        font-size: 24px;
-        margin-top: 30px;
-        margin-left: 0px;
-        text-align: center;
-    }
-
     .games-table {
         width: 80%;
         border-collapse: collapse;
-    }
 
+    }
     .games-table th, .games-table td {
         padding: 15px;
         text-align: left;
         font-size: 12px;
     }
-
-    .user-stats {
-       float: none;
-        text-align: center;
-        font-weight: bolder;
-        font-size: 14px;
-        margin-bottom: 10px;
-    }
-
-
-
 }

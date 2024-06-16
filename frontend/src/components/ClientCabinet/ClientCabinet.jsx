@@ -101,13 +101,16 @@ function ClientCabinet() {
                     <span>Кількість монет: {userInfo.coins_total}</span>
                     <button className="edit-button" onClick={() => setIsModalOpen(true)}>Редагувати</button>
                 </div>
-                <div className="user-stats">
-                    <p>Виграші/Програші</p>
-                    <span className='user-stats-wins'>{wins}</span>
-                    <span>/</span>
-                    <span className='user-stats-losses'>{losses}</span>
+                <div className="games-headers">
+                    <h1 className="games-header">МОЇ ІГРИ</h1>
+                    <div className="user-stats">
+                        <p>Виграші/Програші</p>
+                        <span className='user-stats-wins'>{wins}</span>
+                        <span>/</span>
+                        <span className='user-stats-losses'>{losses}</span>
+                    </div>
                 </div>
-                <h1 className="games-header">МОЇ ІГРИ</h1>
+
                 <table className="games-table">
                     <thead>
                     <tr>
