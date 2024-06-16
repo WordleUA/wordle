@@ -234,7 +234,8 @@
         gap: 10px;
         border-radius: 4px;
         font-size: 14px;
-        width: 80%;
+        padding: 10px;
+        margin-bottom: 0px;
     }
     .user-info span {
         font-size: 14px;
@@ -245,13 +246,13 @@
         border-radius: 2px;
     }
     .games-table {
-        width: 80%;
+
         border-collapse: collapse;
 
     }
     .games-table th, .games-table td {
         padding: 15px;
         text-align: left;
-        font-size: 12px;
+        font-size: 8px;
     }
 }
