@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ua.nure.wordle.dto.UserDTO;
 import ua.nure.wordle.dto.response.AdministrationResponse;
 import ua.nure.wordle.dto.response.CabinetResponse;
@@ -40,28 +41,26 @@ public class UserController {
         return userService.getGeneralRating();
     }
 
-
     @PatchMapping("/update")
-    public ResponseEntity<?> update(@AuthenticationPrincipal User currentUser,
-                                    @RequestBody @Valid UserDTO userDTO) {
+    public ResponseEntity<?> update(@AuthenticationPrincipal User user,
+                                          @RequestBody @Valid UserDTO userDTO) {
 
         User updatedUser = convertToEntity(userDTO);
         try {
-            if (!currentUser.getLogin().equals(updatedUser.getLogin())) {
+            if (!user.getLogin().equals(updatedUser.getLogin())) {
                 if (userService.getByEmail(updatedUser.getLogin()) != null) {
                     return ResponseEntity.ok().body("Login '" + updatedUser.getLogin() + "' is already in use.");
                 }
             }
-            patcher.patch(currentUser, updatedUser);
-            userService.update(currentUser.getId(), updatedUser);
-            return ResponseEntity.ok(convertToDTO(updatedUser));
+            patcher.patch(user, updatedUser);
+            userService.update(user.getId(), user);
+
+            return ResponseEntity.ok(convertToDTO(user));
 
         } catch (IllegalAccessException e) {
-            log.error("Error occurred while updating user with id: {}", currentUser.getId(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        } catch (EntityNotFoundException e) {
-            log.error("User not found with id: {}", currentUser.getId(), e);
-            return ResponseEntity.notFound().build();
+            log.error("Error occurred while updating user with id: {}", user.getId(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error occurred while updating user. Please try again later.");
         }
     }
 
