@@ -10,6 +10,7 @@ import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ua.nure.wordle.dto.response.MessageResponse;
+import ua.nure.wordle.exception.ConflictException;
 import ua.nure.wordle.exception.JwtTokenException;
 
 @ControllerAdvice
@@ -38,5 +39,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<MessageResponse> handleAuthenticationException(AuthenticationException ex) {
         return new ResponseEntity<>(new MessageResponse(ex.getMessage()), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<MessageResponse> handleConflictException(ConflictException ex) {
+        return new ResponseEntity<>(new MessageResponse(ex.getMessage()), HttpStatus.CONFLICT);
     }
 }

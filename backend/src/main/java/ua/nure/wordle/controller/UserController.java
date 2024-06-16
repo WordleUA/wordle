@@ -18,6 +18,7 @@ import ua.nure.wordle.dto.response.GeneralRatingResponse;
 import ua.nure.wordle.dto.response.MessageResponse;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.enums.UserRole;
+import ua.nure.wordle.exception.ConflictException;
 import ua.nure.wordle.service.implementation.UserServiceImpl;
 import ua.nure.wordle.utils.Patcher;
 
@@ -44,14 +45,14 @@ public class UserController {
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<?> update(@AuthenticationPrincipal User user,
+    public ResponseEntity<UserDTO> update(@AuthenticationPrincipal User user,
                                           @RequestBody @Valid UserDTO userDTO) {
 
         User updatedUser = convertToEntity(userDTO);
         try {
             if (!user.getLogin().equals(updatedUser.getLogin())) {
                 if (userService.getByLogin(updatedUser.getLogin()) != null) {
-                    return ResponseEntity.ok().body(new MessageResponse("Login '" + updatedUser.getLogin() + "' is already in use."));
+                    throw new ConflictException("Login '" + updatedUser.getLogin() + "' is already in use.");
                 }
             }
             patcher.patch(user, updatedUser);
@@ -65,7 +66,6 @@ public class UserController {
                     "Error occurred while updating user. Please try again later.");
         }
     }
-
 
 
     @GetMapping("/cabinet")
