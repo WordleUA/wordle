@@ -47,3 +47,29 @@
     color: #FFFFFF;
     margin-top: 2%;
 }
+
+@media(max-width: 650px) {
+    .input-letter {
+        border-radius: 5px;
+        font-size: 20px;
+        height: 45px;
+        width: 45px;
+    }
+
+    .dictate-word-header {
+        font-size: 24px;
+    }
+
+    .dictate-word-form-btn {
+        border-radius: 5px;
+        font-size: 16px;
+        min-width: 40%;
+        padding: 12px 22px;
+        margin-top: 7%;
+    }
+
+    .dictate-word {
+        padding: 100px 20px;
+    }
+
+}

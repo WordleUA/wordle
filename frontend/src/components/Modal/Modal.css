@@ -32,3 +32,32 @@
     border-radius: 4px;
     cursor: pointer;
 }
+
+@media(max-width: 650px) {
+
+
+    .modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 70%;
+        height: 18%;
+    }
+
+    .modal-content h2 {
+        margin-top: 0;
+    }
+
+    .modal-content-btn {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background: #007bff;
+        border: none;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+}
