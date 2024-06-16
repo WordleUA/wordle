@@ -16,6 +16,7 @@ import ua.nure.wordle.dto.response.AdministrationResponse;
 import ua.nure.wordle.dto.response.CabinetResponse;
 import ua.nure.wordle.dto.response.GeneralRatingResponse;
 import ua.nure.wordle.entity.User;
+import ua.nure.wordle.entity.enums.UserRole;
 import ua.nure.wordle.service.interfaces.UserService;
 import ua.nure.wordle.utils.Patcher;
 
@@ -96,11 +97,12 @@ public class UserController {
 
 
     private User convertToEntity(UserDTO userDTO) {
+        UserRole role = userDTO.getRole();
         return User.builder()
                 .login(userDTO.getLogin())
                 .email(userDTO.getEmail())
                 .passwordHash(userDTO.getPasswordHash())
-                .role(String.valueOf(userDTO.getRole()))
+                .role(role != null ? role.toString() : null)
                 .isBanned(userDTO.getIsBanned())
                 .gameWinCount(userDTO.getGameWinCount())
                 .gameLoseCount(userDTO.getGameLoseCount())
