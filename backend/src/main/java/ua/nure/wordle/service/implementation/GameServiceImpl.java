@@ -76,7 +76,7 @@ public class GameServiceImpl implements GameService {
         Instant tenMinutesAgo = Instant.now().minus(Duration.ofMinutes(10));
         List<Game> gamesInProgress = gameRepository.findAllByGameStatus(GameStatus.IN_PROGRESS);
         gamesInProgress.stream()
-                .filter(game -> game.getStartedAt().isBefore(Timestamp.from(tenMinutesAgo).toLocalDateTime()))                .forEach(game -> {
+                .filter(game -> game.getStartedAt().isBefore(Timestamp.from(tenMinutesAgo).toLocalDateTime())).forEach(game -> {
                     game.setGameStatus(GameStatus.CANCELED);
                     game.setEndedAt(LocalDateTime.now());
                     game.getUserGames().forEach(userGame -> {
