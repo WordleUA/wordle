@@ -234,8 +234,9 @@
         gap: 10px;
         border-radius: 4px;
         font-size: 14px;
-        padding: 10px;
+        padding: 20px;
         margin-bottom: 0px;
+        width: 90%;
     }
     .user-info span {
         font-size: 14px;
