@@ -48,7 +48,7 @@ public class UserController {
         User updatedUser = convertToEntity(userDTO);
         try {
             User existingUser = userService.readById(currentUser.getId())
-                    .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userDTO.getId()));
+                    .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + currentUser.getId()));
 
             if (!existingUser.getLogin().equals(updatedUser.getLogin())) {
                 if (userService.getByEmail(updatedUser.getLogin()) != null) {
