@@ -51,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (!StringUtils.startsWith(authHeader, BEARER_PREFIX)) {
             MessageResponse error = new MessageResponse("Missing 'Bearer' type in 'Authorization' header. Expected 'Authorization: Bearer <JWT>'");
-            sendErrorResponse(response, error);
+            sendErrorResponse(response, error, HttpStatus.FORBIDDEN);
             log.warn(error.getMessage());
             return;
         }
@@ -82,18 +82,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
-            sendErrorResponse(response, new MessageResponse("Token has expired"));
+            sendErrorResponse(response, new MessageResponse("Token has expired"), HttpStatus.UNAUTHORIZED);
             log.warn(e.toString());
         } catch (JwtException e) {
-            sendErrorResponse(response, new MessageResponse("Invalid token"));
+            sendErrorResponse(response, new MessageResponse("Invalid token"), HttpStatus.FORBIDDEN);
             log.warn(e.toString());
         }
     }
 
-    private void sendErrorResponse(HttpServletResponse response, MessageResponse message) throws IOException {
+    private void sendErrorResponse(HttpServletResponse response, MessageResponse message, HttpStatus status) throws IOException {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setStatus(status.value());
         response.getWriter().write(new ObjectMapper().writeValueAsString(message));
         response.getWriter().flush();
         response.getWriter().close();
