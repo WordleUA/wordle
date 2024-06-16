@@ -2,7 +2,7 @@
     font-family: Arial, sans-serif;
     margin: 0 auto;
     padding: 20px;
-
+    text-align: center;
     background-color: #fff;
 }
 
@@ -130,7 +130,7 @@
     align-items: center;
 }
 
-.modal-content {
+.modal-content-cabinet {
     background-color: #f1f1f1;
     padding: 30px;
     border-radius: 5px;
@@ -180,4 +180,69 @@
 .close-button:hover {
     color: #000;
     opacity: 0.8;
+}
+
+@media(max-width: 650px) {
+
+    .cabinet {
+        margin: 20px 0px;
+    }
+    .cabinet-header {
+        font-size: 24px;
+        text-align: center;
+    }
+
+    .cabinet-form {
+        padding: 10px;
+        border-radius: 4px;
+        width: 100%;
+
+    }
+
+    .user-info {
+       flex-direction: column;
+        gap: 10px;
+        border-radius: 4px;
+        font-size: 14px;
+        width: 70%;
+    }
+
+    .user-info span {
+        font-size: 14px;
+    }
+
+    .edit-button {
+        padding: 8px 12px;
+        font-size: 14px;
+        border-radius: 2px;
+    }
+
+    .games-header {
+        font-size: 24px;
+        margin-top: 30px;
+        margin-left: 0px;
+        text-align: center;
+    }
+
+    .games-table {
+        width: 80%;
+        border-collapse: collapse;
+    }
+
+    .games-table th, .games-table td {
+        padding: 15px;
+        text-align: left;
+        font-size: 12px;
+    }
+
+    .user-stats {
+       float: none;
+        text-align: center;
+        font-weight: bolder;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+
+
 }

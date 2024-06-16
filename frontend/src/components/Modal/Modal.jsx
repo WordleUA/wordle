@@ -20,8 +20,8 @@ function Modal({ playerStatus, messageLose, timeTaken, coins, onClose }) {
         <div className="modal-overlay">
             <div className="modal-content">
                 <h2>{getMessage(playerStatus)}</h2>
-                {playerStatus === "LOSE" && <p>{messageLose}</p>}
-                {timeTaken && <p>Час виконання: {timeTaken}</p>}
+                <p>{messageLose}</p>
+                <p>Час виконання: {timeTaken}</p>
                 <p>{playerStatus === "WIN" ? `Нараховано монет: ${coins}` : playerStatus === "LOSE" ? `Списано монет: 1` : 'Нараховано монет: 0'}</p>
                 <button className="modal-content-btn" onClick={onClose}>OK</button>
             </div>

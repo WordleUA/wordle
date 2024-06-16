@@ -90,3 +90,41 @@
     font-size: 20px;
     font-weight: bold;
 }
+
+
+@media(max-width: 650px) {
+    .gamefield {
+        gap: 20px;
+    }
+
+    .gamefield-tries {
+        gap: 5px;
+    }
+
+    .gamefield-tries-row-el {
+        border-radius: 2px;
+        height: 45px;
+        width: 45px;
+        font-size: 18px;
+    }
+
+    .gamefield-keyboard-btn-submit, .gamefield-keyboard-btn-backspace {
+        border-radius: 2px;
+        height: 23px;
+        width: 35px;
+    }
+
+    .gamefield-keyboard-btns {
+        gap: 5px;
+    }
+    .gamefield-timer {
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .gamefield {
+        padding: 50px 20px;
+    }
+
+
+}

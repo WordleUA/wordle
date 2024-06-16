@@ -131,7 +131,7 @@ function ClientCabinet() {
             </div>
             {isModalOpen && (
                 <div className="modal">
-                    <div className="modal-content">
+                    <div className="modal-content-cabinet">
                         <button className="close-button" onClick={handleModalClose}>&times;</button>
                         <h2>Редагування логіну</h2>
                         <input
