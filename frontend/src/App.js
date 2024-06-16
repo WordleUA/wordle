@@ -1,6 +1,6 @@
 import './index.css';
 import GameField from "./components/GameField/GameField";
-import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
+import {BrowserRouter as Router, Navigate, Route, Routes} from "react-router-dom";
 import {SocketProvider} from "./components/WebSocket/SocketContext";
 import DictateWord from "./components/DictateWord/DictateWord";
 import WaitingPage from "./components/WaitingPage/WaitingPage.jsx";
@@ -15,6 +15,7 @@ import PasswordRecovery from "./components/PasswordRecovery/PasswordRecovery";
 import {AuthProvider} from "./components/Auth/AuthContext";
 import ConfirmRegistration from "./components/Confirmation/ConfirmRegistration";
 import PasswordReset from "./components/PasswordReset/PasswordReset";
+import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
     return (
@@ -23,27 +24,30 @@ function App() {
                 <SocketProvider>
                     <AuthProvider>
                         <div>
-                            <NavbarParser/>
+                            <NavbarParser />
                             <Routes>
-                                <Route path="/dictateWord" element={<DictateWord/>}/>
-                                <Route path="/gameField" element={<GameField/>}/>
-                                <Route path="/waitingPage" element={<WaitingPage/>}/>
-                                <Route path="/howToPlay" element={<HowToPlay/>}/>
-                                <Route path="/clientCabinet" element={<ClientCabinet/>}/>
-                                <Route path="/registration" element={<Registration/>}/>
-                                <Route path="/" element={<Login/>}/>
-                                <Route path="/administration" element={<Administration/>}/>
-                                <Route path="/generalStatistic" element={<GeneralStatistic/>}/>
-                                <Route path="/passwordRecovery" element={<PasswordRecovery/>}/>
-                                <Route path="/passwordReset/:code" element={<PasswordReset/>}/>
-                                <Route path="/confirmRegistration/:code" element={<ConfirmRegistration/>}/>
+                                <Route path="*" element={<Navigate to="/" />} />
+
+                                <Route path="/" element={<Login />} />
+                                <Route path="/registration" element={<Registration />} />
+                                <Route path="/howToPlay" element={<HowToPlay />} />
+                                <Route path="/generalStatistic" element={<GeneralStatistic />} />
+                                <Route path="/passwordRecovery" element={<PasswordRecovery />} />
+                                <Route path="/passwordReset/:code" element={<PasswordReset />} />
+                                <Route path="/confirmRegistration/:code" element={<ConfirmRegistration />} />
+
+                                <Route path="/dictateWord" element={<ProtectedRoute allowedRoles={['ADMIN', 'PLAYER']} element={<DictateWord />} />} />
+                                <Route path="/gameField" element={<ProtectedRoute allowedRoles={['ADMIN', 'PLAYER']} element={<GameField />} />} />
+                                <Route path="/waitingPage" element={<ProtectedRoute allowedRoles={['ADMIN', 'PLAYER']} element={<WaitingPage />} />} />
+                                <Route path="/clientCabinet" element={<ProtectedRoute allowedRoles={['ADMIN', 'PLAYER']} element={<ClientCabinet />} />} />
+
+                                <Route path="/administration" element={<ProtectedRoute allowedRoles={['ADMIN']} element={<Administration />} />} />
                             </Routes>
                         </div>
                     </AuthProvider>
                 </SocketProvider>
             </Router>
         </div>
-
     );
 }
 
