@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.nure.wordle.dto.UserDTO;
 import ua.nure.wordle.dto.UserGameDTO;
 import ua.nure.wordle.dto.response.AdministrationResponse;
@@ -100,6 +101,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User update(long id, User user) {
         user.setId(id);
         return userRepository.save(user);
