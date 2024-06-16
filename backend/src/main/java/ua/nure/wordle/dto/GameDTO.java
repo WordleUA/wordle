@@ -6,7 +6,7 @@ import lombok.*;
 import ua.nure.wordle.entity.enums.GameStatus;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -22,11 +22,11 @@ public class GameDTO implements Serializable {
     private GameStatus gameStatus;
 
     @NotNull
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
-    private Timestamp startedAt;
+    private LocalDateTime startedAt;
 
-    private Timestamp endedAt;
+    private LocalDateTime endedAt;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Set<UserGameDTO> userGames = new LinkedHashSet<>();

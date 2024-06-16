@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import ua.nure.wordle.entity.enums.PlayerStatus;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -32,8 +32,15 @@ public class UserGameDTO {
     private Integer attempts;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Timestamp date;
+    private LocalDateTime date;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long coins;
+
+    public UserGameDTO(String opponentWord, LocalDateTime date, Integer attempts, PlayerStatus playerStatus) {
+        this.word = opponentWord;
+        this.date = date;
+        this.attempts = attempts;
+        this.playerStatus = playerStatus;
+    }
 }

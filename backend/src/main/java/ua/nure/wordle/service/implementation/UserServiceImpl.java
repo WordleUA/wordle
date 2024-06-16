@@ -16,14 +16,12 @@ import ua.nure.wordle.dto.response.AdministrationResponse;
 import ua.nure.wordle.dto.response.CabinetResponse;
 import ua.nure.wordle.dto.response.GeneralRatingResponse;
 import ua.nure.wordle.entity.User;
-import ua.nure.wordle.entity.UserGame;
 import ua.nure.wordle.entity.enums.PlayerStatus;
 import ua.nure.wordle.exception.EmailAlreadyExistsException;
+import ua.nure.wordle.repository.UserGameRepository;
 import ua.nure.wordle.repository.UserRepository;
-import ua.nure.wordle.service.interfaces.UserGameService;
 import ua.nure.wordle.service.interfaces.UserService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,9 +30,9 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final UserGameService userGameService;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final UserGameRepository userGameRepository;
 
     public User getByEmail(String email) {
         return userRepository.findByEmail(email)
@@ -125,7 +123,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(pageable);
     }
 
-    public Long getGameWinCount(int attempts, PlayerStatus playerStatus) {
+    public Long calculateGameCoins(int attempts, PlayerStatus playerStatus) {
         return switch (playerStatus) {
             case WIN -> (long) (7 - attempts);
             case LOSE -> (long) -1;
@@ -134,28 +132,29 @@ public class UserServiceImpl implements UserService {
         };
     }
 
-    public CabinetResponse getCabinet(User user) {
-        List<UserGame> userGames = userGameService.readByUserId(user.getId());
-        List<UserGameDTO> userGameDTOS = new ArrayList<>();
-        for (UserGame userGame : userGames) {
-            if (userGame.getPlayerStatus() != null && userGame.getAttempts() != null) {
-                UserGame opponentUserGame = userGameService.findOpponent(user.getId(), userGame.getGame().getId());
-                userGameDTOS.add(UserGameDTO.builder()
-                        .date(userGame.getGame().getCreatedAt())
-                        .word(opponentUserGame.getWord())
-                        .playerStatus(userGame.getPlayerStatus())
-                        .coins(getGameWinCount(userGame.getAttempts(),
-                                userGame.getPlayerStatus()))
-                        .build());
+    public CabinetResponse getCabinetInfo(User user) {
+        List<UserGameDTO> userGames = userGameRepository.findByUserIdWithOpponentWord(user.getId());
+        updateUserGamesWithCoins(userGames);
+        return buildCabinetResponse(user, userGames);
+    }
+
+    private void updateUserGamesWithCoins(List<UserGameDTO> userGames) {
+        userGames.forEach(userGameInfo -> {
+            if (userGameInfo.getPlayerStatus() != null && userGameInfo.getAttempts() != null) {
+                Long coins = calculateGameCoins(userGameInfo.getAttempts(), userGameInfo.getPlayerStatus());
+                userGameInfo.setCoins(coins);
             }
-        }
+        });
+    }
+
+    private static CabinetResponse buildCabinetResponse(User user, List<UserGameDTO> userGames) {
         return CabinetResponse.builder().
                 user(UserDTO.builder()
                         .login(user.getLogin())
                         .email(user.getEmail())
                         .coinsTotal(user.getCoinsTotal())
                         .build())
-                .userGames(userGameDTOS)
+                .userGames(userGames)
                 .wins(user.getGameWinCount())
                 .losses(user.getGameLoseCount())
                 .build();
@@ -168,4 +167,6 @@ public class UserServiceImpl implements UserService {
         } else user.setIsBanned(Boolean.FALSE);
         return update(user.getId(), user);
     }
+
+
 }

@@ -18,7 +18,7 @@ import ua.nure.wordle.dto.response.GeneralRatingResponse;
 import ua.nure.wordle.dto.response.MessageResponse;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.enums.UserRole;
-import ua.nure.wordle.service.interfaces.UserService;
+import ua.nure.wordle.service.implementation.UserServiceImpl;
 import ua.nure.wordle.utils.Patcher;
 
 import java.util.List;
@@ -29,7 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final ModelMapper modelMapper;
     private final Patcher<User> patcher;
 
@@ -70,7 +70,7 @@ public class UserController {
 
     @GetMapping("/cabinet")
     public CabinetResponse getCabinet(@AuthenticationPrincipal User user) {
-        return userService.getCabinet(user);
+        return userService.getCabinetInfo(user);
     }
 
     @GetMapping("/usersByAdmin")

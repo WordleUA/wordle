@@ -26,6 +26,7 @@ import ua.nure.wordle.websocket.GameWebSocketHandler;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,10 +76,9 @@ public class GameServiceImpl implements GameService {
         Instant tenMinutesAgo = Instant.now().minus(Duration.ofMinutes(10));
         List<Game> gamesInProgress = gameRepository.findAllByGameStatus(GameStatus.IN_PROGRESS);
         gamesInProgress.stream()
-                .filter(game -> game.getStartedAt().toInstant().isBefore(tenMinutesAgo))
-                .forEach(game -> {
+                .filter(game -> game.getStartedAt().isBefore(Timestamp.from(tenMinutesAgo).toLocalDateTime()))                .forEach(game -> {
                     game.setGameStatus(GameStatus.CANCELED);
-                    game.setEndedAt(Timestamp.from(Instant.now()));
+                    game.setEndedAt(LocalDateTime.now());
                     game.getUserGames().forEach(userGame -> {
                         userGame.setPlayerStatus(PlayerStatus.DRAW);
                         userGame.setAttempts(0);
@@ -112,7 +112,7 @@ public class GameServiceImpl implements GameService {
                 userGameService.update(opponentUserGame);
 
                 game.setGameStatus(GameStatus.IN_PROGRESS);
-                game.setStartedAt(Timestamp.from(Instant.now()));
+                game.setStartedAt(LocalDateTime.now());
                 gameRepository.save(game);
 
                 ConnectGameResponse connectGameSocketResponse = ConnectGameResponse.builder()
@@ -134,7 +134,7 @@ public class GameServiceImpl implements GameService {
 
         Game newGame = gameRepository.save(Game.builder()
                 .gameStatus(GameStatus.SEARCH)
-                .createdAt(Timestamp.from(Instant.now()))
+                .createdAt(LocalDateTime.now())
                 .startedAt(null)
                 .endedAt(null)
                 .build());
@@ -182,7 +182,7 @@ public class GameServiceImpl implements GameService {
                 opponentUserGame.setAttempts(0);
             }
             game.setGameStatus(GameStatus.COMPLETE);
-            game.setEndedAt(Timestamp.from(Instant.now()));
+            game.setEndedAt(LocalDateTime.now());
             gameRepository.save(game);
             userGameRepository.save(userGame);
             userGameRepository.save(opponentUserGame);
