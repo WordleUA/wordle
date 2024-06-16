@@ -48,7 +48,7 @@ public class UserController {
         User updatedUser = convertToEntity(userDTO);
         try {
             if (!user.getLogin().equals(updatedUser.getLogin())) {
-                if (userService.getByEmail(updatedUser.getLogin()) != null) {
+                if (userService.getByLogin(updatedUser.getLogin()) != null) {
                     return ResponseEntity.ok().body("Login '" + updatedUser.getLogin() + "' is already in use.");
                 }
             }
