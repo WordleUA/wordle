@@ -8,6 +8,10 @@
     flex-wrap: wrap;
 }
 
+btn {
+    text-decoration: none;
+}
+
 .gamefield-keyboard-el {
     background: #d9d9d9;
     border-radius: 7px;
@@ -39,7 +43,7 @@
 
 @media(max-width: 650px) {
     .gamefield-keyboard {
-        max-width: 90%;
+        max-width: 80%;
         gap: 3px;
     }
 
@@ -48,6 +52,7 @@
         height: 30px;
         width: 30px;
         font-size: 10px;
+        color: black;
     }
 
 }

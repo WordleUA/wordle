@@ -30,6 +30,7 @@
     text-align: center;
 }
 
+
 .gamefield-keyboard-btn-submit {
     background: #86C14C;
     border-radius: 7px;
@@ -123,7 +124,11 @@
     }
 
     .gamefield {
-        padding: 50px 20px;
+        padding: 50px 10px;
+    }
+
+    .gamefield-keyboard {
+        width: 100%;
     }
 
 
