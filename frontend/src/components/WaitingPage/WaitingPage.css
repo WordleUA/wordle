@@ -5,3 +5,9 @@
     justify-content: center;
     margin-top: 10%;
 }
+
+@media(max-width: 650px) {
+    .waiting-page-header {
+        font-size: 24px;
+    }
+}
