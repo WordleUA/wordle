@@ -52,7 +52,7 @@ public class UserController {
         try {
             if (!user.getLogin().equals(updatedUser.getLogin())) {
                 if (userService.getByLogin(updatedUser.getLogin()) != null) {
-                    throw new ConflictException("Login '" + updatedUser.getLogin() + "' is already in use.");
+                    throw new ConflictException("Login already exists");
                 }
             }
             patcher.patch(user, updatedUser);
