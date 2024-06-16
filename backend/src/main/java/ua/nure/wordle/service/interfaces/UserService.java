@@ -10,9 +10,9 @@ import ua.nure.wordle.entity.enums.PlayerStatus;
 import java.util.List;
 
 public interface UserService extends Service<User> {
-    Long getGameWinCount(int attempts, PlayerStatus playerStatus);
+    Long calculateGameCoins(int attempts, PlayerStatus playerStatus);
     User blockUser(User user);
-    CabinetResponse getCabinet(User user);
+    CabinetResponse getCabinetInfo(User user);
     User getByEmail(String email);
     User getByLogin(String login);
     UserDetailsService userDetailsService();

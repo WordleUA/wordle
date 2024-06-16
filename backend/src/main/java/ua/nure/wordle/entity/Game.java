@@ -7,7 +7,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 import ua.nure.wordle.entity.enums.GameStatus;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -35,13 +35,13 @@ public class Game {
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at", nullable = false)
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "started_at")
-    private Timestamp startedAt;
+    private LocalDateTime startedAt;
 
     @Column(name = "ended_at")
-    private Timestamp endedAt;
+    private LocalDateTime endedAt;
 
     @OneToMany(mappedBy = "game")
     private Set<UserGame> userGames = new LinkedHashSet<>();
