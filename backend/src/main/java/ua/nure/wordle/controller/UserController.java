@@ -47,15 +47,11 @@ public class UserController {
 
         User updatedUser = convertToEntity(userDTO);
         try {
-            User existingUser = userService.readById(currentUser.getId())
-                    .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + currentUser.getId()));
-
-            if (!existingUser.getLogin().equals(updatedUser.getLogin())) {
+            if (!currentUser.getLogin().equals(updatedUser.getLogin())) {
                 if (userService.getByEmail(updatedUser.getLogin()) != null) {
-                    return ResponseEntity.badRequest().body("Login '" + updatedUser.getLogin() + "' is already in use.");
+                    return ResponseEntity.ok().body("Login '" + updatedUser.getLogin() + "' is already in use.");
                 }
             }
-
             patcher.patch(currentUser, updatedUser);
             userService.update(currentUser.getId(), updatedUser);
             return ResponseEntity.ok(convertToDTO(updatedUser));
