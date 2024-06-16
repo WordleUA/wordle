@@ -15,6 +15,7 @@ import ua.nure.wordle.dto.UserDTO;
 import ua.nure.wordle.dto.response.AdministrationResponse;
 import ua.nure.wordle.dto.response.CabinetResponse;
 import ua.nure.wordle.dto.response.GeneralRatingResponse;
+import ua.nure.wordle.dto.response.MessageResponse;
 import ua.nure.wordle.entity.User;
 import ua.nure.wordle.entity.enums.UserRole;
 import ua.nure.wordle.service.interfaces.UserService;
@@ -50,7 +51,7 @@ public class UserController {
         try {
             if (!user.getLogin().equals(updatedUser.getLogin())) {
                 if (userService.getByLogin(updatedUser.getLogin()) != null) {
-                    return ResponseEntity.ok().body("Login '" + updatedUser.getLogin() + "' is already in use.");
+                    return ResponseEntity.ok().body(new MessageResponse("Login '" + updatedUser.getLogin() + "' is already in use."));
                 }
             }
             patcher.patch(user, updatedUser);
