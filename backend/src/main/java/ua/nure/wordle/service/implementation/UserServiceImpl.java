@@ -40,6 +40,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Користувача з email " + email + " не знайдено"));
     }
+    public User getByLogin(String login) {
+        return userRepository.findByLogin(login);
+    }
 
     public UserDetailsService userDetailsService() {
         return this::getByEmail;

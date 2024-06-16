@@ -14,6 +14,7 @@ public interface UserService extends Service<User> {
     User blockUser(User user);
     CabinetResponse getCabinet(User user);
     User getByEmail(String email);
+    User getByLogin(String login);
     UserDetailsService userDetailsService();
     List<GeneralRatingResponse> getGeneralRating();
     List<AdministrationResponse> getUsersByAdmin();
