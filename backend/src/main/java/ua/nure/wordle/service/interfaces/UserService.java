@@ -21,4 +21,5 @@ public interface UserService extends Service<User> {
     User getByConfirmationCode(String code);
     User getByPasswordResetCode(String passwordResetCode);
     boolean resetPassword(String passwordResetCode, String password);
+    Boolean existsByLogin(String login);
 }

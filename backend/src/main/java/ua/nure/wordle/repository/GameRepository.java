@@ -6,7 +6,6 @@ import ua.nure.wordle.entity.Game;
 import ua.nure.wordle.entity.enums.GameStatus;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface GameRepository extends JpaRepository<Game, Long> {
