@@ -56,7 +56,7 @@ public class UserController {
             patcher.patch(user, updatedUser);
             userService.update(user.getId(), user);
 
-            return ResponseEntity.ok(convertToDTO(user));
+            return ResponseEntity.ok(UserDTO.builder().login(user.getLogin()).build());
 
         } catch (IllegalAccessException e) {
             log.error("Error occurred while updating user with id: {}", user.getId(), e);
