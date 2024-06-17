@@ -3,3 +3,34 @@
     color: white;
     font-weight: bold;
 }
+
+
+@media (max-width: 650px) {
+    .administration-header {
+        font-size: 24px; /* Зменшити розмір шрифту заголовка */
+    }
+
+    .statistics-table {
+        width: 90% !important; /* Зробити таблицю повною шириною */
+        padding-left: 5% !important; /* Видалити відступи */
+        font-size: 8px !important;
+    }
+
+    .statistics-search {
+
+        width: 70% !important;
+        height: 8% !important;
+        font-size: 12px !important;
+    }
+
+
+    .MuiDataGrid-columnHeaders {
+        font-size: 10px; /* Зменшити розмір шрифту заголовків стовпців */
+    }
+
+    .MuiDataGrid-cell {
+        font-size: 14px; /* Зменшити розмір шрифту комірок */
+    }
+
+    /* Інші стилі для адаптивності */
+}

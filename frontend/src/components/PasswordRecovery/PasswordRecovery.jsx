@@ -75,7 +75,7 @@ function PasswordRecovery() {
                         />
                         {errors.email && <p className="error">{errors.email}</p>}
                         {errors.general && <p className="error">{errors.general}</p>}
-                        <button className="login-form-btn" type="submit"
+                        <button className="recovery-form-btn" type="submit"
                                 disabled={loading}> {/* Disable button when loading */}
                             {loading ? 'ЗАВАНТАЖЕННЯ...' : 'ВІДНОВИТИ ПАРОЛЬ'}
                         </button>
