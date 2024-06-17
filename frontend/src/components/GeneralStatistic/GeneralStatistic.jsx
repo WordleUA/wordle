@@ -88,7 +88,7 @@ function GeneralStatistic() {
     return (
         <div>
             <h1 className='administration-header' style={{ textAlign: 'center' }}>РЕЙТИНГ ГРАВЦІВ</h1>
-            <div style={{ height: 'auto', width: '20%', paddingLeft: '20%' }}>
+            <div className="statistics-search" style={{ height: 'auto', width: '20%', paddingLeft: '20%' }}>
                 <TextField
                     label="Пошук за логіном"
                     variant="outlined"
@@ -101,7 +101,7 @@ function GeneralStatistic() {
             {filteredRows.length === 0 ? (
                 <p style={{ textAlign: 'center' }}>Немає результатів</p>
             ) : (
-                <div style={{ height: 'auto', width: '60%', paddingLeft: '20%' }}>
+                <div className="statistics-table" style={{ height: 'auto', width: '60%', paddingLeft: '20%' }}>
                     <DataGrid
                         localeText={ukUA.components.MuiDataGrid.defaultProps.localeText}
                         rows={filteredRows}
