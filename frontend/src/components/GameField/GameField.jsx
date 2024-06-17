@@ -3,7 +3,6 @@ import "./GameField.css";
 import Keyboard from "../KeyBoard/Keyboard";
 import Modal from "../Modal/Modal";
 import {useNavigate} from "react-router";
-import {useLocation} from "react-router-dom";
 import {useSocket} from "../WebSocket/SocketContext";
 import {useAuth} from "../Auth/AuthContext";
 

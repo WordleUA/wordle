@@ -71,14 +71,16 @@ function ClientCabinet() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ login: newLogin })
         })
-            .then(data => {
-                if (!data.error) {
+            .then(response => {
+                if (!response.error) {
                     setUserInfo(prevState => ({ ...prevState, login: newLogin }));
                     setIsModalOpen(false);
                     setNewLogin(''); // Clear input after saving
                     setError("");
+                } else if (response.status === 409) {
+                    setError("Цей логін вже зайнятий.");
                 } else {
-                    console.log('Error updating login');
+                    setError("Виникла помилка. Спробуйте пізніше.");
                 }
             }).catch(error => {
             console.error('Error updating login:', error);
