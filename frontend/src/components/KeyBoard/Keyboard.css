@@ -8,10 +8,6 @@
     flex-wrap: wrap;
 }
 
-btn {
-    text-decoration: none;
-}
-
 .gamefield-keyboard-el {
     background: #d9d9d9;
     border-radius: 7px;
