@@ -293,7 +293,7 @@ function GameField() {
             <div className="gamefield-timer">Час: {formatTime(timeLeft)}</div>
             <div className="gamefield-tries">{renderInputRows()}</div>
             {showModal && <Modal messageLose={messageLose} playerStatus={playerStatus}
-                                 timeTaken={playerStatus === "WIN" ? formatTime(timeTaken) : null} coins={coins}
+                                 timeTaken={formatTime(timeTaken)} coins={coins}
                                  onClose={handleCloseModal}/>}
             <div className="gamefield-keyboard">
                 <Keyboard onClick={handleKeyboardClick} keyboardColors={keyboardColors}/>
