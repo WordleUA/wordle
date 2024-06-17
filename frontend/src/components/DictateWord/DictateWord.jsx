@@ -10,9 +10,7 @@ function DictateWord() {
     const inputRefs = useRef([]);
     const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
     const {authFetch} = useAuth();
-    const getRandomId = (min, max) => {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    };
+
 
 
     useEffect(() => {

@@ -2,7 +2,6 @@ package ua.nure.wordle.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import ua.nure.wordle.entity.enums.UserRole;
