@@ -74,10 +74,15 @@ function GameField() {
     // Handle tab close event
     const handleTabClose = async (event) => {
         if (!isClosingTab.current) {
+            // Standard way to ask for confirmation
             event.preventDefault();
-            setPlayerStatus("LOSE");
+            event.returnValue = "";
+
+            // Set the flag to prevent `endGame` being called multiple times
+            isClosingTab.current = true;
+
+            // Ensure the game ends with "LOSE" status
             await endGame("LOSE");
-            event.returnValue = ""; // Standard way to ask for confirmation
         }
     };
 
@@ -245,7 +250,7 @@ function GameField() {
 
     // End the game and send results to the server
     const endGame = async (status) => {
-        if (status === null || initialGameData === null) return;
+        if (status === null || initialGameData === null || isClosingTab.current) return;
         setTimeTaken(600 - timeLeft);
         const coinsEarned = status === "WIN" ? 7 - validatedAttempts : 0;
         const coinsLost = 1;
@@ -260,8 +265,11 @@ function GameField() {
             game_id: game_id,
             player_status: status,
             attempts: attempts
-        })
-    }
+        });
+
+        // Ensure we do not call endGame again
+        isClosingTab.current = true;
+    };
 
     // Handle modal close
     const handleCloseModal = () => {

@@ -53,3 +53,38 @@
     color: #333;
     padding: 20px;
 }
+
+@media(max-width: 650px) {
+    .confirmation-container {
+        background-color: #F1F1F1;
+        border-radius: 10px;
+        padding: 10px 20px;
+        max-width: 80%;
+        margin-bottom: 150px;
+    }
+
+
+    .confirmation-success h1, .confirmation-fail h1 {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .confirmation-success p, .confirmation-fail p {
+        font-size: 14px;
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+
+    .login-button {
+        display: inline-block;
+        background-color: #519341;
+        color: #ffffff;
+        padding: 10px 20px;
+        font-size: 18px;
+        text-decoration: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-bottom: 10px;
+    }
+}
