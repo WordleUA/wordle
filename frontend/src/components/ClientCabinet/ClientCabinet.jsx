@@ -21,9 +21,6 @@ function ClientCabinet() {
             setLosses(response.data.losses);
         }).catch(error => {
             console.error('Error fetching user data', error);
-            localStorage.clear();
-            navigate("/")
-            window.location.reload();
         })
     }, []);
 
