@@ -10,7 +10,7 @@
 .block-button {
     padding: 8px 12px;
     font-size: 16px;
-    background-color: #DF0000; /* Red for block */
+    background-color: #DF0000;
     color: white;
     border: none;
     border-radius: 4px;
@@ -19,13 +19,13 @@
 }
 
 .block-button:hover {
-    background-color: #be0000; /* Darker red for hover effect */
+    background-color: #be0000;
 }
 
 .unblock-button {
     padding: 8px 12px;
     font-size: 16px;
-    background-color: #86C14C; /* Green for unblock */
+    background-color: #86C14C;
     color: white;
     border: none;
     border-radius: 4px;
@@ -34,7 +34,7 @@
 }
 
 .unblock-button:hover {
-    background-color: #45a049; /* Darker green for hover effect */
+    background-color: #45a049;
 }
 
 

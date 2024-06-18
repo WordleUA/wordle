@@ -7,12 +7,12 @@
 
 @media (max-width: 650px) {
     .administration-header {
-        font-size: 24px; /* Зменшити розмір шрифту заголовка */
+        font-size: 24px;
     }
 
     .statistics-table {
-        width: 90% !important; /* Зробити таблицю повною шириною */
-        padding-left: 5% !important; /* Видалити відступи */
+        width: 90% !important;
+        padding-left: 5% !important;
         font-size: 8px !important;
     }
 
@@ -25,12 +25,11 @@
 
 
     .MuiDataGrid-columnHeaders {
-        font-size: 10px; /* Зменшити розмір шрифту заголовків стовпців */
+        font-size: 10px;
     }
 
     .MuiDataGrid-cell {
-        font-size: 14px; /* Зменшити розмір шрифту комірок */
+        font-size: 14px;
     }
 
-    /* Інші стилі для адаптивності */
 }

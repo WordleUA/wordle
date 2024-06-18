@@ -31,16 +31,16 @@ const columns = [
             let medalType;
             switch (params.row.ranking) {
                 case 1:
-                    medalType = '🥇'; // Золота медаль
+                    medalType = '🥇';
                     break;
                 case 2:
-                    medalType = '🥈'; // Срібна медаль
+                    medalType = '🥈';
                     break;
                 case 3:
-                    medalType = '🥉'; // Бронзова медаль
+                    medalType = '🥉';
                     break;
                 default:
-                    medalType = ''; // Жодна медаль для решти
+                    medalType = '';
             }
 
             return (
@@ -70,16 +70,14 @@ function GeneralStatistic() {
         fetch('https://wordle-4fel.onrender.com/user/getGeneralRating')
             .then((response) => response.json())
             .then((data) => {
-                // Генеруємо рейтинг для кожного рядка
                 const rankedData = data.map((item, index) => ({ ...item, ranking: index + 1 }));
                 setRows(rankedData);
-                setFilteredRows(rankedData); // Встановлюємо початковий стан для фільтрованих рядків
+                setFilteredRows(rankedData);
             })
             .catch((error) => console.error('Error fetching user data:', error));
     }, []);
 
     useEffect(() => {
-        // Фільтрація рядків за логіном
         setFilteredRows(
             rows.filter(row => row.login.toLowerCase().includes(search.toLowerCase()))
         );
