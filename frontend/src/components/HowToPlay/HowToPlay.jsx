@@ -33,14 +33,19 @@ function HowToPlay() {
                     </div>
                 </div>
             </div>
-            <div className="video-container">
-                <iframe
-                    src="https://www.youtube.com/embed/41MhQoDYgQI"
-                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    title="How to play Wordle UA"
-                ></iframe>
+            <div className="video">
+                <h2>Відео-інструкція</h2>
+                <div className="video-container">
+
+                    <iframe
+                        src="https://www.youtube.com/embed/41MhQoDYgQI"
+                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        title="How to play Wordle UA"
+                    ></iframe>
+                </div>
             </div>
+
         </div>
     );
 }
