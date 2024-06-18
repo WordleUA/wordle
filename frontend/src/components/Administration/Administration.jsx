@@ -3,7 +3,7 @@ import {DataGrid} from '@mui/x-data-grid';
 import {Select, MenuItem, FormControl} from '@mui/material';
 import {ukUA} from '@mui/x-data-grid/locales';
 import './Administration.css';
-import {useAuth} from "../Auth/AuthContext";
+import api from "../../api";
 
 const columns = (handleUpdateRow) => [
     {
@@ -67,21 +67,16 @@ const columns = (handleUpdateRow) => [
 
 function Administration() {
     const [rows, setRows] = useState([]);
-    const {authFetch} = useAuth();
 
     useEffect(() => {
         fetchUsers();
     }, []);
 
     const fetchUsers = () => {
-        authFetch('https://wordle-4fel.onrender.com/user/usersByAdmin')
-            .then((data) => {
-                if (!data.error) {
-                    const rowsWithIds = data.map((row) => ({...row, id: row.user_id}));
-                    setRows(rowsWithIds);
-                } else {
-                    console.error('Error fetching user data:', data.error);
-                }
+        api.get('/user/usersByAdmin')
+            .then(response => {
+                const rowsWithIds = response.data.map((row) => ({...row, id: row.user_id}));
+                setRows(rowsWithIds);
             }).catch(error => {
             console.error('Error fetching user data:', error);
         })
@@ -114,21 +109,15 @@ export default Administration;
 function RoleDropdown({id, value, row, handleUpdateRow}) {
     const [role, setRole] = useState(value);
     const {is_banned} = row;
-    const {authFetch} = useAuth();
 
     const handleChange = (event) => {
         const newRole = event.target.value;
         setRole(newRole);
-        authFetch('https://wordle-4fel.onrender.com/user/role', {
-            method: 'PATCH',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({role: newRole, id: id})
-        }).then((data) => {
-            if (!data.error) {
-                handleUpdateRow(id, {role: newRole});
-            } else {
-                console.error('Error updating user role:', data.error);
-            }
+        api.patch('/user/role', {
+            role: newRole,
+            id: id
+        }).then(response => {
+            handleUpdateRow(id, {role: newRole});
         }).catch(error => {
             console.error('Error updating user role:', error);
         })
@@ -147,20 +136,13 @@ function RoleDropdown({id, value, row, handleUpdateRow}) {
 function BlockButton({id, row, handleUpdateRow}) {
     const {is_banned, role} = row;
     const [isBanned, setIsBanned] = useState(is_banned);
-    const {authFetch} = useAuth();
 
     const handleBlockToggle = () => {
-        authFetch('https://wordle-4fel.onrender.com/user/block', {
-            method: 'PATCH',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({id: id})
-        }).then((data) => {
-            if (!data.error) {
-                setIsBanned(!isBanned);
-                handleUpdateRow(id, {is_banned: !isBanned});
-            } else {
-                console.error('Error updating user block status:', data.error);
-            }
+        api.patch('/user/block', {
+            id: id
+        }).then(response => {
+            setIsBanned(!isBanned);
+            handleUpdateRow(id, {is_banned: !isBanned});
         }).catch(error => {
             console.error('Error updating user block status:', error);
         })

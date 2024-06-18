@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import "./ClientCabinet.css";
-import { useAuth } from "../Auth/AuthContext";
+import {useNavigate} from "react-router-dom";
+import api from "../../api";
 
 function ClientCabinet() {
     const [userInfo, setUserInfo] = useState({});
@@ -9,24 +10,22 @@ function ClientCabinet() {
     const [losses, setLosses] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newLogin, setNewLogin] = useState('');
-    const { authFetch } = useAuth();
     const [error, setError] = useState("");
+    const navigate = useNavigate()
 
     useEffect(() => {
-        authFetch(`https://wordle-4fel.onrender.com/user/cabinet`)
-            .then(data => {
-                if (!data.error) {
-                    setUserInfo(data.user);
-                    setUserGames(data.user_games);
-                    setWins(data.wins);
-                    setLosses(data.losses);
-                } else {
-                    console.log('Error fetching user data');
-                }
-            }).catch(error => {
-            console.error('Error fetching user data:', error);
+        api.get('/user/cabinet').then(response => {
+            setUserInfo(response.data.user);
+            setUserGames(response.data.user_games);
+            setWins(response.data.wins);
+            setLosses(response.data.losses);
+        }).catch(error => {
+            console.error('Error fetching user data', error);
+            localStorage.clear();
+            navigate("/")
+            window.location.reload();
         })
-    }, [authFetch]);
+    }, []);
 
     const formatDateString = dateString => {
         const dateObject = new Date(dateString);
@@ -66,25 +65,22 @@ function ClientCabinet() {
             return;
         }
 
-        authFetch(`https://wordle-4fel.onrender.com/user/update`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ login: newLogin })
-        })
-            .then(response => {
-                if (!response.error) {
-                    setUserInfo(prevState => ({ ...prevState, login: newLogin }));
-                    setIsModalOpen(false);
-                    setNewLogin(''); // Clear input after saving
-                    setError("");
-                } else if (response.status === 409) {
-                    setError("Цей логін вже зайнятий.");
-                } else {
-                    setError("Виникла помилка. Спробуйте пізніше.");
-                }
-            }).catch(error => {
-            console.error('Error updating login:', error);
+        api.patch('/user/update', {
+                login: newLogin
+            }
+        ).then(response => {
+            setUserInfo(prevState => ({...prevState, login: newLogin}));
+            setIsModalOpen(false);
+            setNewLogin(''); // Clear input after saving
+            setError("");
+        }).catch(error => {
+            if (error.response && error.response.status === 409) {
+                setError("Цей логін вже зайнятий.");
+            } else {
+                setError("Виникла помилка. Спробуйте пізніше.");
+            }
         });
+
     };
 
     const handleModalClose = () => {

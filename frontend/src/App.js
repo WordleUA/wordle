@@ -12,7 +12,6 @@ import Administration from "./components/Administration/Administration";
 import GeneralStatistic from "./components/GeneralStatistic/GeneralStatistic";
 import NavbarParser from "./components/Navbar/NavbarParser";
 import PasswordRecovery from "./components/PasswordRecovery/PasswordRecovery";
-import {AuthProvider} from "./components/Auth/AuthContext";
 import ConfirmRegistration from "./components/Confirmation/ConfirmRegistration";
 import PasswordReset from "./components/PasswordReset/PasswordReset";
 import ProtectedRoute from "./ProtectedRoute";
@@ -22,29 +21,32 @@ function App() {
         <div>
             <Router>
                 <SocketProvider>
-                    <AuthProvider>
-                        <div>
-                            <NavbarParser />
-                            <Routes>
-                                <Route path="*" element={<Navigate to="/" />} />
+                    <div>
+                        <NavbarParser/>
+                        <Routes>
+                            <Route path="*" element={<Navigate to="/"/>}/>
 
-                                <Route path="/" element={<Login />} />
-                                <Route path="/registration" element={<Registration />} />
-                                <Route path="/howToPlay" element={<HowToPlay />} />
-                                <Route path="/generalStatistic" element={<GeneralStatistic />} />
-                                <Route path="/passwordRecovery" element={<PasswordRecovery />} />
-                                <Route path="/passwordReset/:code" element={<PasswordReset />} />
-                                <Route path="/confirmRegistration/:code" element={<ConfirmRegistration />} />
+                            <Route path="/" element={<Login/>}/>
+                            <Route path="/registration" element={<Registration/>}/>
+                            <Route path="/howToPlay" element={<HowToPlay/>}/>
+                            <Route path="/generalStatistic" element={<GeneralStatistic/>}/>
+                            <Route path="/passwordRecovery" element={<PasswordRecovery/>}/>
+                            <Route path="/passwordReset/:code" element={<PasswordReset/>}/>
+                            <Route path="/confirmRegistration/:code" element={<ConfirmRegistration/>}/>
 
-                                <Route path="/dictateWord" element={<ProtectedRoute allowedRoles={['ADMIN', 'PLAYER']} element={<DictateWord />} />} />
-                                <Route path="/gameField" element={<ProtectedRoute allowedRoles={['ADMIN', 'PLAYER']} element={<GameField />} />} />
-                                <Route path="/waitingPage" element={<ProtectedRoute allowedRoles={['ADMIN', 'PLAYER']} element={<WaitingPage />} />} />
-                                <Route path="/clientCabinet" element={<ProtectedRoute allowedRoles={['ADMIN', 'PLAYER']} element={<ClientCabinet />} />} />
+                            <Route path="/dictateWord" element={<ProtectedRoute allowedRoles={['ADMIN', 'PLAYER']}
+                                                                                element={<DictateWord/>}/>}/>
+                            <Route path="/gameField" element={<ProtectedRoute allowedRoles={['ADMIN', 'PLAYER']}
+                                                                              element={<GameField/>}/>}/>
+                            <Route path="/waitingPage" element={<ProtectedRoute allowedRoles={['ADMIN', 'PLAYER']}
+                                                                                element={<WaitingPage/>}/>}/>
+                            <Route path="/clientCabinet" element={<ProtectedRoute allowedRoles={['ADMIN', 'PLAYER']}
+                                                                                  element={<ClientCabinet/>}/>}/>
 
-                                <Route path="/administration" element={<ProtectedRoute allowedRoles={['ADMIN']} element={<Administration />} />} />
-                            </Routes>
-                        </div>
-                    </AuthProvider>
+                            <Route path="/administration"
+                                   element={<ProtectedRoute allowedRoles={['ADMIN']} element={<Administration/>}/>}/>
+                        </Routes>
+                    </div>
                 </SocketProvider>
             </Router>
         </div>
