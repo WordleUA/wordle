@@ -31,8 +31,15 @@ function HowToPlay() {
                         <div className="howtoplay-form-explanation-row-square" style={{background: "#86c14c"}}></div>
                         <p className="howtoplay-form-text">Літера є у слові і знаходиться на своєму місці</p>
                     </div>
+                </div>
             </div>
-
+            <div className="video-container">
+                <iframe
+                    src="https://www.youtube.com/embed/41MhQoDYgQI"
+                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    title="How to play Wordle UA"
+                ></iframe>
             </div>
         </div>
     );
