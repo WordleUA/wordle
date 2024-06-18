@@ -32,7 +32,7 @@ function NavbarParser() {
 
     return (
         <nav className="nav">
-            {role === null && <NavbarDefault />}
+            {!role && <NavbarDefault />}
             {typeof role === 'string' && role === 'PLAYER' && <NavbarClient />}
             {typeof role === 'object' && role !== null && role === 'PLAYER' && <NavbarClient />}
             {typeof role === 'string' && role === 'ADMIN' && <NavbarAdmin />}

@@ -1,9 +1,9 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./GameField.css";
 import Keyboard from "../KeyBoard/Keyboard";
 import Modal from "../Modal/Modal";
-import {useNavigate} from "react-router";
-import {useSocket} from "../WebSocket/SocketContext";
+import { useNavigate } from "react-router";
+import { useSocket } from "../WebSocket/SocketContext";
 import api from "../../api";
 
 function GameField() {
@@ -22,7 +22,7 @@ function GameField() {
     const [validatedAttempts, setValidatedAttempts] = useState(0);
 
     const inputRefs = useRef([]);
-    const {gameData, message} = useSocket();
+    const { gameData, message } = useSocket();
     const TARGET_WORD = gameData.opponent_word;
     const [messageLose] = useState('Слово було: ' + TARGET_WORD);
 
@@ -31,7 +31,7 @@ function GameField() {
     // Fetch initial game data from socket
     useEffect(() => {
         setInitialGameData(gameData);
-    }, []);
+    }, [gameData]);
 
     // Update canSubmit state based on input values length
     useEffect(() => {
@@ -62,14 +62,14 @@ function GameField() {
             setPlayerStatus(message);
             setShowModal(true);
         }
-    }, [message, playerStatus, TARGET_WORD, currentRow, timeLeft]);
+    }, [message, playerStatus]);
 
     // Handle game end
     useEffect(() => {
         if (playerStatus !== null) {
             endGame(playerStatus);
         }
-    }, [playerStatus, currentRow, timeLeft]);
+    }, [playerStatus]);
 
     // Handle tab close event
     const handleTabClose = async (event) => {
@@ -168,17 +168,7 @@ function GameField() {
         });
 
         setRowColors(newRowColors);
-        const newKeyboardColors = {...keyboardColors};
-        wordArray.forEach((char, index) => {
-            const charColor =
-                newRowColors[startIndex + index] === "green"
-                    ? "green"
-                    : newRowColors[startIndex + index] === "yellow"
-                        ? "yellow"
-                        : keyboardColors[char] || "darkgrey";
-            newKeyboardColors[char] = charColor;
-        });
-        setKeyboardColors(newKeyboardColors);
+        updateKeyboardColors(wordArray, newRowColors, startIndex);
 
         if (word === TARGET_WORD) {
             setPlayerStatus("WIN");
@@ -189,6 +179,23 @@ function GameField() {
         } else {
             setCurrentRow(currentRow + 1);
         }
+    };
+
+    // Update keyboard colors with priority
+    const updateKeyboardColors = (wordArray, newRowColors, startIndex) => {
+        const newKeyboardColors = { ...keyboardColors };
+        wordArray.forEach((char, index) => {
+            const newColor = newRowColors[startIndex + index];
+            const currentColor = keyboardColors[char] || "darkgrey";
+            newKeyboardColors[char] = getHigherPriorityColor(currentColor, newColor);
+        });
+        setKeyboardColors(newKeyboardColors);
+    };
+
+    // Helper function to determine the higher priority color
+    const getHigherPriorityColor = (currentColor, newColor) => {
+        const colorPriority = { "green": 3, "yellow": 2, "darkgrey": 1 };
+        return colorPriority[newColor] > colorPriority[currentColor] ? newColor : currentColor;
     };
 
     // Render input rows
@@ -256,38 +263,38 @@ function GameField() {
         })
     }
 
-// Handle modal close
-const handleCloseModal = () => {
-    setShowModal(false);
+    // Handle modal close
+    const handleCloseModal = () => {
+        setShowModal(false);
 
-    // Temporarily disable the `beforeunload` listener
-    isClosingTab.current = true;
-    window.removeEventListener("beforeunload", handleTabClose);
+        // Temporarily disable the `beforeunload` listener
+        isClosingTab.current = true;
+        window.removeEventListener("beforeunload", handleTabClose);
 
-    navigate('/howToPlay');
-    window.location.reload();
-};
+        navigate('/howToPlay');
+        window.location.reload();
+    };
 
-return (
-    <div className="gamefield">
-        <div className="gamefield-timer">Час: {formatTime(timeLeft)}</div>
-        <div className="gamefield-tries">{renderInputRows()}</div>
-        {showModal && <Modal messageLose={messageLose} playerStatus={playerStatus}
-                             timeTaken={formatTime(timeTaken)} coins={coins}
-                             onClose={handleCloseModal}/>}
-        <div className="gamefield-keyboard">
-            <Keyboard onClick={handleKeyboardClick} keyboardColors={keyboardColors}/>
-            <div className="gamefield-keyboard-btns">
-                <button className="gamefield-keyboard-btn-backspace"
-                        onClick={() => handleBackspace(inputValues.lastIndexOf(""))}>←
-                </button>
-                <button className="gamefield-keyboard-btn-submit"
-                        onClick={canSubmit ? validateCurrentRow : null}>OK
-                </button>
+    return (
+        <div className="gamefield">
+            <div className="gamefield-timer">Час: {formatTime(timeLeft)}</div>
+            <div className="gamefield-tries">{renderInputRows()}</div>
+            {showModal && <Modal messageLose={messageLose} playerStatus={playerStatus}
+                                 timeTaken={formatTime(timeTaken)} coins={coins}
+                                 onClose={handleCloseModal}/>}
+            <div className="gamefield-keyboard">
+                <Keyboard onClick={handleKeyboardClick} keyboardColors={keyboardColors} />
+                <div className="gamefield-keyboard-btns">
+                    <button className="gamefield-keyboard-btn-backspace"
+                            onClick={() => handleBackspace(inputValues.lastIndexOf(""))}>←
+                    </button>
+                    <button className="gamefield-keyboard-btn-submit"
+                            onClick={canSubmit ? validateCurrentRow : null}>OK
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-);
+    );
 }
 
 export default GameField;
