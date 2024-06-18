@@ -1,7 +1,7 @@
 import "./DictateWord.css";
 import React, {useRef, useState, useEffect} from "react";
 import {useNavigate} from "react-router";
-import {useAuth} from "../Auth/AuthContext";
+import api from "../../api";
 
 function DictateWord() {
     const navigate = useNavigate();
@@ -9,8 +9,6 @@ function DictateWord() {
     const [message, setMessage] = useState("");
     const inputRefs = useRef([]);
     const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
-    const {authFetch} = useAuth();
-
 
 
     useEffect(() => {
@@ -56,28 +54,16 @@ function DictateWord() {
 
     const handleSubmit = async () => {
         const word = letters.join("");
-        const gameStartDTO = {
+        console.log("Payload being sent:", word);
+        api.post('/game/connect', {
             word: word
-        };
-        console.log("Payload being sent:", gameStartDTO);
-        authFetch('https://wordle-4fel.onrender.com/game/connect', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(gameStartDTO)
-        }).then(data => {
-            if (!data.error) {
-                setMessage("Game connected successfully!");
-                console.log("Game connected:", data);
-                navigate('/waitingPage', {state: {gameData: data}});
-            } else {
-                setMessage(`Failed to connect game: ${data.error}`);
-                console.error("Failed to connect game:", data);
-            }
+        }).then(response => {
+            setMessage("Game connected successfully!");
+            console.log("Game connected:", response.data);
+            navigate('/waitingPage', {state: {gameData: response.data}});
         }).catch(error => {
-            setMessage(`Error: ${error.message}`);
-            console.error("Error:", error);
+            setMessage(`Failed to connect game: ${error.message}`);
+            console.error("Failed to connect game:", error);
         });
 
 

@@ -4,7 +4,7 @@ import Keyboard from "../KeyBoard/Keyboard";
 import Modal from "../Modal/Modal";
 import {useNavigate} from "react-router";
 import {useSocket} from "../WebSocket/SocketContext";
-import {useAuth} from "../Auth/AuthContext";
+import api from "../../api";
 
 function GameField() {
     const navigate = useNavigate();
@@ -19,7 +19,6 @@ function GameField() {
     const [playerStatus, setPlayerStatus] = useState(null);
     const [initialGameData, setInitialGameData] = useState(null);
     const [keyboardColors, setKeyboardColors] = useState({});
-    const {authFetch} = useAuth();
     const [validatedAttempts, setValidatedAttempts] = useState(0);
 
     const inputRefs = useRef([]);
@@ -250,63 +249,45 @@ function GameField() {
         const attempts = validatedAttempts;
 
         const game_id = initialGameData.game_id;
-        const requestBody = {
-            game_id,
+        await api.patch('/game/end', {
+            game_id: game_id,
             player_status: status,
-            attempts
-        };
-        console.log("request body", requestBody);
-        try {
-            authFetch('https://wordle-4fel.onrender.com/game/end', {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestBody),
-            }).then(data => {
-                if (!data.error) {
-                    console.log("Game result recorded successfully.");
-                    console.log("Request Body:", requestBody);
-                    console.error("Failed to record game result. Server response:", data.error);
-                }
-            })
-        } catch (error) {
-            console.error("Error recording game result:", error);
-        }
-    };
+            attempts: attempts
+        })
+    }
 
-    // Handle modal close
-    const handleCloseModal = () => {
-        setShowModal(false);
+// Handle modal close
+const handleCloseModal = () => {
+    setShowModal(false);
 
-        // Temporarily disable the `beforeunload` listener
-        isClosingTab.current = true;
-        window.removeEventListener("beforeunload", handleTabClose);
+    // Temporarily disable the `beforeunload` listener
+    isClosingTab.current = true;
+    window.removeEventListener("beforeunload", handleTabClose);
 
-        navigate('/howToPlay');
-        window.location.reload();
-    };
+    navigate('/howToPlay');
+    window.location.reload();
+};
 
-    return (
-        <div className="gamefield">
-            <div className="gamefield-timer">Час: {formatTime(timeLeft)}</div>
-            <div className="gamefield-tries">{renderInputRows()}</div>
-            {showModal && <Modal messageLose={messageLose} playerStatus={playerStatus}
-                                 timeTaken={formatTime(timeTaken)} coins={coins}
-                                 onClose={handleCloseModal}/>}
-            <div className="gamefield-keyboard">
-                <Keyboard onClick={handleKeyboardClick} keyboardColors={keyboardColors}/>
-                <div className="gamefield-keyboard-btns">
-                    <button className="gamefield-keyboard-btn-backspace"
-                            onClick={() => handleBackspace(inputValues.lastIndexOf(""))}>←
-                    </button>
-                    <button className="gamefield-keyboard-btn-submit"
-                            onClick={canSubmit ? validateCurrentRow : null}>OK
-                    </button>
-                </div>
+return (
+    <div className="gamefield">
+        <div className="gamefield-timer">Час: {formatTime(timeLeft)}</div>
+        <div className="gamefield-tries">{renderInputRows()}</div>
+        {showModal && <Modal messageLose={messageLose} playerStatus={playerStatus}
+                             timeTaken={formatTime(timeTaken)} coins={coins}
+                             onClose={handleCloseModal}/>}
+        <div className="gamefield-keyboard">
+            <Keyboard onClick={handleKeyboardClick} keyboardColors={keyboardColors}/>
+            <div className="gamefield-keyboard-btns">
+                <button className="gamefield-keyboard-btn-backspace"
+                        onClick={() => handleBackspace(inputValues.lastIndexOf(""))}>←
+                </button>
+                <button className="gamefield-keyboard-btn-submit"
+                        onClick={canSubmit ? validateCurrentRow : null}>OK
+                </button>
             </div>
         </div>
-    );
+    </div>
+);
 }
 
 export default GameField;
