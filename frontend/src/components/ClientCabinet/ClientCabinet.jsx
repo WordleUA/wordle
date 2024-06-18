@@ -68,7 +68,7 @@ function ClientCabinet() {
         ).then(response => {
             setUserInfo(prevState => ({...prevState, login: newLogin}));
             setIsModalOpen(false);
-            setNewLogin(''); // Clear input after saving
+            setNewLogin('');
             setError("");
         }).catch(error => {
             if (error.response && error.response.status === 409) {
@@ -82,8 +82,8 @@ function ClientCabinet() {
 
     const handleModalClose = () => {
         setIsModalOpen(false);
-        setNewLogin(''); // Clear input when modal is closed
-        setError(''); // Clear error when modal is closed
+        setNewLogin('');
+        setError('');
     };
 
     return (

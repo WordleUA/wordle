@@ -10,7 +10,7 @@
     background-color: #F1F1F1;
     border-radius: 20px;
     padding: 20px 40px;
-    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.11); /* Reduced blur radius */
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.11);
     max-width: 600px;
     width: 100%;
 }

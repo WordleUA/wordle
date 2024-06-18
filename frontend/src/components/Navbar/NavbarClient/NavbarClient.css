@@ -1,4 +1,4 @@
-/* Загальні стилі */
+
 .container {
     display: flex;
     justify-content: space-between;
@@ -38,7 +38,7 @@
     cursor: pointer;
 }
 
-/* Бургерне меню */
+
 .nav-burger {
     display: none;
     cursor: pointer;
@@ -49,7 +49,7 @@
     position: absolute;
     top: 35px;
     right: 20px;
-    z-index: 2000; /* Високий z-index щоб бути поверх інших елементів */
+    z-index: 2000;
 }
 
 .burger-line {
@@ -60,7 +60,7 @@
     transition: all 0.3s ease-in-out;
 }
 
-/* Стан для відкритого бургерного меню */
+
 .nav-burger.open .burger-line:nth-child(1) {
     transform: translateY(8px) rotate(45deg);
 }
@@ -74,7 +74,7 @@
     transform: translateY(-8px) rotate(-45deg);
 }
 
-/* Адаптація для ширини менше 999px */
+
 @media (max-width: 1100px) {
     .container {
         font-size: 15px;
@@ -90,7 +90,7 @@
     }
 }
 
-/* Бургерне меню для малих екранів */
+
 @media (max-width: 750px) {
     .nav-burger {
         display: flex;
@@ -106,7 +106,7 @@
         right: 0;
         height: 100%;
         width: 100%;
-        background-color: #F1F1F1; /* Однорідний колір фону */
+        background-color: #F1F1F1;
         padding-top: 60px;
         padding-bottom: 20px;
         transform: translateX(100%);
@@ -120,13 +120,13 @@
     }
 
     .nav-list__item {
-        width: 100%; /* Забезпечує, що всі елементи займають всю ширину контейнера */
+        width: 100%;
         padding: 15px 0;
         font-size: 16px;
         color: black;
         text-align: center;
-        position: relative; /* Для псевдоелементів */
-        background-color: #F1F1F1; /* Однорідний колір фону */
+        position: relative;
+        background-color: #F1F1F1;
     }
 
     .nav-list__item::before {
@@ -135,19 +135,19 @@
         bottom: 0;
         left: 50%;
         transform: translateX(-50%);
-        width: 90%; /* Забезпечує коротші лінії, ніж ширина елемента */
+        width: 90%;
         height: 1px;
-        background-color: #ccc; /* Колір роздільної лінії */
+        background-color: #ccc;
     }
 
     .nav-list__item:last-child::before {
-        display: none; /* Прибирає лінію у останнього елемента */
+        display: none;
     }
 
     .nav-list__item:hover {
         text-decoration: underline;
         cursor: pointer;
-        background-color: #e1e1e1; /* Колір фону при наведенні */
+        background-color: #e1e1e1;
     }
 
     .container {

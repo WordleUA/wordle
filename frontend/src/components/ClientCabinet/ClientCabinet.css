@@ -301,11 +301,6 @@
         font-size: 14px;
     }
 
-    .games-table {
-
-        border-collapse: collapse;
-
-    }
     .games-table th, .games-table td {
         padding: 15px;
         text-align: left;
