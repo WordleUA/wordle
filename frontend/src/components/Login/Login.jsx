@@ -50,7 +50,7 @@ function Login() {
                     localStorage.setItem('role', data.role);
 
                     console.log(data);
-                    navigate('/clientCabinet');
+                    navigate('/howToPlay');
                     window.location.reload();
 
                 });
