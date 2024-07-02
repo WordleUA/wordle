@@ -67,8 +67,7 @@ For downloading the project locally you can use two variants:
 For running the code you needn't install server and configure it, because the Spring Boot starter
 makes it instead of you.
 
-For running the app on the server you need only run the main method in Java class. Also, you can
-package app to the jar/war file and deploy the file on the server manually.
+For running the app on the server you need only run the main method in Java class.
 
 ##### Frontend Server configuration
 
