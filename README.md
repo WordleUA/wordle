@@ -19,8 +19,6 @@ For downloading the project locally you can use two variants:
 
 1. Download the ZIP archive from the repository page.
 
-   The method is easy, the next steps helps you:
-
     1. Find the button `Code` and press it.
     2. Find the button `Download ZIP` and press it. The downloading must start.
     3. Unzip the archive in soe directory and run the IDEA in this directory.
