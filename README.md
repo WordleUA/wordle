@@ -36,9 +36,9 @@ For downloading the project locally you can use two variants:
     3. Adds this repository to yours with name `origin` (you can change it, if you want):
 
        ```
-       $ git remote add origin git@github.com:StasonMendelso/KhNURE-Timetable-Synchronizer.git
+       $ git remote add origin git@github.com:wordleUA/wordle.git
        ```
-       But you need configure your SSH connection to your GitHub profile in Git Bash. See more [here][7].
+       But you need configure your SSH connection to your GitHub profile in Git Bash.
        For viewing that the repository has been added successfully to your local
        repository, you need execute the next command and get the following result:
 
@@ -55,10 +55,7 @@ For downloading the project locally you can use two variants:
        ```
 
        After these steps your project directory must contain the project files from
-       GitHub repository. In addition to, you can create a new branch, make some
-       changes and create a pull request for suggesting your improvements. Also, all
-       changes are observed by the `git` and you can always make a rollback of
-       all changes `git reset --hard`.
+       GitHub repository.
 
 ### Run manually
 
